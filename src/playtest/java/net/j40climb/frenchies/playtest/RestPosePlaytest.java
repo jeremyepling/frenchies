@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.clock.ClockTimeMarkers;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -50,6 +51,7 @@ public final class RestPosePlaytest {
         int[] dogId = new int[1];
         t.server("Prepare one stationary Frenchie and a lit platform in the disposable Overworld", owner -> {
             var level = owner.level().getServer().overworld();
+            level.getServer().setDifficulty(Difficulty.NORMAL, true);
             time(level, false);
             level.getServer().setWeatherParameters(6000, 0, false, false);
             for (var pos : BlockPos.betweenClosed(CENTER.offset(-5, -1, -5), CENTER.offset(5, 4, 5))) {
