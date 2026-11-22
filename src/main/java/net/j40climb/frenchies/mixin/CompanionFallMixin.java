@@ -1,6 +1,6 @@
 package net.j40climb.frenchies.mixin;
 
-import net.j40climb.frenchies.common.entity.frenchie.CompanionEvents;
+import net.j40climb.frenchies.common.entity.frenchie.reaction.CompanionEvents;
 import net.minecraft.world.damagesource.CombatTracker;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;

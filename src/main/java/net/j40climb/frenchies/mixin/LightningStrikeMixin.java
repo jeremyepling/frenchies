@@ -1,6 +1,6 @@
 package net.j40climb.frenchies.mixin;
 
-import net.j40climb.frenchies.common.entity.frenchie.CompanionEvents;
+import net.j40climb.frenchies.common.entity.frenchie.reaction.CompanionEvents;
 import net.minecraft.world.entity.LightningBolt;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
