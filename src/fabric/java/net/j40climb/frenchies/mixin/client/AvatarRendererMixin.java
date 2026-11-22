@@ -1,7 +1,7 @@
 package net.j40climb.frenchies.mixin.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackAppearance;
+import net.j40climb.frenchies.common.entity.frenchie.frontpack.client.FrontpackAppearance;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;

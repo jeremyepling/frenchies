@@ -2,11 +2,11 @@ package net.j40climb.frenchies.setup;
 
 import net.j40climb.frenchies.Frenchies;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
-import net.j40climb.frenchies.common.entity.frenchie.PlayBubbleEntity;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackElytraRecipe;
+import net.j40climb.frenchies.common.entity.frenchie.play.PlayBubbleEntity;
+import net.j40climb.frenchies.common.item.BubbleToyItem;
 import net.j40climb.frenchies.common.item.FrenchieWhistleItem;
 import net.j40climb.frenchies.common.item.SqueakyToyItem;
-import net.j40climb.frenchies.common.item.BubbleToyItem;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;

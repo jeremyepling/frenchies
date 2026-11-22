@@ -1,7 +1,7 @@
 package net.j40climb.frenchies.test;
 
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
-import net.j40climb.frenchies.common.entity.frenchie.PlayPose;
+import net.j40climb.frenchies.common.entity.frenchie.play.PlayPose;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;

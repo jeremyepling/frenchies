@@ -1,7 +1,7 @@
 package net.j40climb.frenchies.test;
 
 import java.util.Optional;
-import net.j40climb.frenchies.common.entity.frenchie.DeathTrackingGoal;
+import net.j40climb.frenchies.common.entity.frenchie.travel.DeathTrackingGoal;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.gametest.framework.GameTestHelper;

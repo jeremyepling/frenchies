@@ -1,7 +1,7 @@
 package net.j40climb.frenchies.mixin;
 
 import java.util.concurrent.Executor;
-import net.j40climb.frenchies.common.entity.frenchie.LegacyCompanionIndex;
+import net.j40climb.frenchies.common.entity.frenchie.recall.LegacyCompanionIndex;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.storage.EntityStorage;
 import net.minecraft.world.level.chunk.storage.SimpleRegionStorage;

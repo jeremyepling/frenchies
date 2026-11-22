@@ -1,9 +1,9 @@
 package net.j40climb.frenchies.test;
 
 import net.j40climb.frenchies.Frenchies;
-import net.j40climb.frenchies.common.entity.frenchie.DiggingAssistantGameTests;
-import net.j40climb.frenchies.common.entity.frenchie.AmbientSnowGameTests;
-import net.j40climb.frenchies.common.entity.frenchie.PlayInterruptionGameTests;
+import net.j40climb.frenchies.common.entity.frenchie.assistance.DiggingAssistantGameTests;
+import net.j40climb.frenchies.common.entity.frenchie.play.PlayInterruptionGameTests;
+import net.j40climb.frenchies.common.entity.frenchie.weather.AmbientSnowGameTests;
 import net.minecraft.core.Holder;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.gametest.framework.GameTestInfo;

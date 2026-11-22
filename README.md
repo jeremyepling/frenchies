@@ -69,7 +69,20 @@ Fabric and NeoForge generate `config/florafauna_frenchies.properties` on startup
 
 ### Building and testing
 
-The Frenchie entity package contains the goal selector and synchronized state. Its `weather` package owns exposure and shaking, `reaction` owns owner concern, lava retreat, and quiet company, and `client` contains the model and render layers. Front-pack equipment remains in `frontpack`.
+`FrenchieEntity` connects Minecraft interactions, goal priorities and synchronized entity state. The packages beneath `common.entity.frenchie` group the code by feature.
+
+| Package | What lives there |
+| --- | --- |
+| `play` | Toys, fetch, tree-stick retrieval, bubbles, tricks, celebrations, and shared play rules |
+| `assistance` | Livestock herding and digging assistance |
+| `travel` | Boat boarding and dismounting, and following a trail to the owner's last death |
+| `delivery` | Courier trips, parcel handoffs, the destination picker, and its packets |
+| `recall` | Whistle commands, companion selection, the saved roster, and legacy indexing |
+| `rest` | Bedside behavior and the Well Rested effect |
+| `weather` | Snow and rain exposure, shaking, and snow play |
+| `reaction` | Creeper warnings, danger responses, owner concern, and quiet companionship |
+| `client` | The Frenchie model, animations, and render layers |
+| `frontpack` | Equipment, crafting, attachments, and accessory integration. Its `client` package owns rendering, HUD, and client input. |
 
 Use Java 25 and this checkout's Gradle wrapper. The four Gradle projects use the form `:<minecraft-version>-<loader>`. For example, run `./gradlew :26.1-fabric:build :26.1-fabric:runGameTestServer` to build and test Fabric, or `./gradlew :26.3-neoforge:runClient` for a NeoForge development client. Run all four targets before a release. The spawn egg models and other runtime resources are checked in. Jars are under `versions/<minecraft-version>-<loader>/build/libs/`.
 

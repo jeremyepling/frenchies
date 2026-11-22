@@ -1,11 +1,11 @@
 package net.j40climb.frenchies;
 
-import net.j40climb.frenchies.common.entity.frenchie.DeliveryDialog;
 import net.j40climb.frenchies.common.entity.frenchie.CompanionSettings;
-import net.j40climb.frenchies.common.entity.frenchie.DeliveryPopupPayload;
-import net.j40climb.frenchies.common.entity.frenchie.FrenchieCommands;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
+import net.j40climb.frenchies.common.entity.frenchie.delivery.DeliveryDialog;
+import net.j40climb.frenchies.common.entity.frenchie.delivery.DeliveryPopupPayload;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.networking.PutDownFrenchiePayload;
+import net.j40climb.frenchies.common.entity.frenchie.recall.FrenchieCommands;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.j40climb.frenchies.test.CompanionTests;
 import net.minecraft.server.level.ServerPlayer;

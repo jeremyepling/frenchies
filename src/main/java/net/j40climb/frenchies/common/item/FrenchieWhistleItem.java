@@ -1,6 +1,6 @@
 package net.j40climb.frenchies.common.item;
 
-import net.j40climb.frenchies.common.entity.frenchie.CompanionRoster;
+import net.j40climb.frenchies.common.entity.frenchie.recall.CompanionRoster;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;

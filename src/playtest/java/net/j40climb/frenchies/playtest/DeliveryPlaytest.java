@@ -3,8 +3,8 @@ package net.j40climb.frenchies.playtest;
 //? if >=26.3 {
 /*import net.minecraft.world.phys.Vec3;
 *///?}
-import net.j40climb.frenchies.common.entity.frenchie.DeliveryScreen;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
+import net.j40climb.frenchies.common.entity.frenchie.delivery.DeliveryScreen;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;

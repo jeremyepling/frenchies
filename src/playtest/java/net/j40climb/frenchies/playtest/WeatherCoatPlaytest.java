@@ -1,8 +1,8 @@
 package net.j40climb.frenchies.playtest;
 
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
-import net.j40climb.frenchies.common.entity.frenchie.PlayStages;
 import net.j40climb.frenchies.common.entity.frenchie.client.FrenchieRenderer;
+import net.j40climb.frenchies.common.entity.frenchie.play.PlayStages;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.arguments.EntityAnchorArgument.Anchor;

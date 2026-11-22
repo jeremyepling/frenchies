@@ -1,9 +1,9 @@
 package net.j40climb.frenchies.setup;
 
 import net.j40climb.frenchies.Frenchies;
-import net.j40climb.frenchies.common.entity.frenchie.WellRestedEffect;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackData;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackWarning;
+import net.j40climb.frenchies.common.entity.frenchie.rest.WellRestedEffect;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;

@@ -3,7 +3,7 @@ package net.j40climb.frenchies.common.entity.frenchie.client;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieStatusIcon;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieVariant;
-import net.j40climb.frenchies.common.entity.frenchie.PlayPose;
+import net.j40climb.frenchies.common.entity.frenchie.play.PlayPose;
 
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;

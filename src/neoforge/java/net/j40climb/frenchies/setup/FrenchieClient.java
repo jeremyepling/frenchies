@@ -1,11 +1,11 @@
 package net.j40climb.frenchies.setup;
 
 import net.j40climb.frenchies.Frenchies;
-import net.j40climb.frenchies.common.entity.frenchie.DeliveryPopupPayload;
-import net.j40climb.frenchies.common.entity.frenchie.DeliveryScreen;
 import net.j40climb.frenchies.common.entity.frenchie.client.FrenchieModel;
 import net.j40climb.frenchies.common.entity.frenchie.client.FrenchieRenderer;
 import net.j40climb.frenchies.common.entity.frenchie.client.PlayBubbleRenderer;
+import net.j40climb.frenchies.common.entity.frenchie.delivery.DeliveryPopupPayload;
+import net.j40climb.frenchies.common.entity.frenchie.delivery.DeliveryScreen;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;

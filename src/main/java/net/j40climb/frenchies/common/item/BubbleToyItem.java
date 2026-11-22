@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
-import net.j40climb.frenchies.common.entity.frenchie.PlayBubbleEntity;
+import net.j40climb.frenchies.common.entity.frenchie.play.PlayBubbleEntity;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;

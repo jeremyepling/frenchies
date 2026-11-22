@@ -2,8 +2,8 @@ package net.j40climb.frenchies.playtest;
 
 import com.mojang.logging.LogUtils;
 import net.j40climb.frenchies.Frenchies;
-import net.j40climb.frenchies.common.entity.frenchie.DeliveryScreen;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
+import net.j40climb.frenchies.common.entity.frenchie.delivery.DeliveryScreen;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;

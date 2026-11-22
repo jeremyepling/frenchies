@@ -1,16 +1,16 @@
 package net.j40climb.frenchies.setup;
 
 import net.j40climb.frenchies.Frenchies;
-import net.j40climb.frenchies.common.entity.frenchie.CompanionRoster;
-import net.j40climb.frenchies.common.entity.frenchie.CourierTrips;
-import net.j40climb.frenchies.common.entity.frenchie.DiggingAssistantEvents;
-import net.j40climb.frenchies.common.entity.frenchie.TreeStickSearch;
-import net.j40climb.frenchies.common.entity.frenchie.FrenchieAwareness;
-import net.j40climb.frenchies.common.entity.frenchie.FrenchieCommands;
-import net.j40climb.frenchies.common.entity.frenchie.LegacyCompanionIndex;
-import net.j40climb.frenchies.common.entity.frenchie.weather.SnowballPlayEvents;
+import net.j40climb.frenchies.common.entity.frenchie.assistance.DiggingAssistantEvents;
+import net.j40climb.frenchies.common.entity.frenchie.delivery.CourierTrips;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackEvents;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackWarning;
+import net.j40climb.frenchies.common.entity.frenchie.play.TreeStickSearch;
+import net.j40climb.frenchies.common.entity.frenchie.recall.CompanionRoster;
+import net.j40climb.frenchies.common.entity.frenchie.recall.FrenchieCommands;
+import net.j40climb.frenchies.common.entity.frenchie.recall.LegacyCompanionIndex;
+import net.j40climb.frenchies.common.entity.frenchie.rest.BedtimeBuddyGoal;
+import net.j40climb.frenchies.common.entity.frenchie.weather.SnowballPlayEvents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -63,7 +63,7 @@ public final class NeoForgeGameplayEvents {
 
     @SubscribeEvent
     public static void onWake(PlayerWakeUpEvent event) {
-        FrenchieAwareness.onWake(event.getEntity(), event.wakeImmediately(), event.updateLevel());
+        BedtimeBuddyGoal.onWake(event.getEntity(), event.wakeImmediately(), event.updateLevel());
     }
 
     @SubscribeEvent

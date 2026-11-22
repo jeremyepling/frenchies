@@ -2,8 +2,8 @@ package net.j40climb.frenchies.playtest;
 
 import com.mojang.logging.LogUtils;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
-import net.j40climb.frenchies.common.entity.frenchie.PlayBubbleEntity;
-import net.j40climb.frenchies.common.entity.frenchie.PlayPose;
+import net.j40climb.frenchies.common.entity.frenchie.play.PlayBubbleEntity;
+import net.j40climb.frenchies.common.entity.frenchie.play.PlayPose;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

@@ -1,8 +1,8 @@
 package net.j40climb.frenchies.test;
 
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
-import net.j40climb.frenchies.common.entity.frenchie.PlayBubbleEntity;
-import net.j40climb.frenchies.common.entity.frenchie.PlayPose;
+import net.j40climb.frenchies.common.entity.frenchie.play.PlayBubbleEntity;
+import net.j40climb.frenchies.common.entity.frenchie.play.PlayPose;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static net.j40climb.frenchies.common.entity.frenchie.PlayPose.*;
+import static net.j40climb.frenchies.common.entity.frenchie.play.PlayPose.*;
 
 final class BubblePlayTests {
     private static final InteractionHand HAND = InteractionHand.MAIN_HAND;

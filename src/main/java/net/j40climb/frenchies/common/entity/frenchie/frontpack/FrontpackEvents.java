@@ -1,8 +1,8 @@
 package net.j40climb.frenchies.common.entity.frenchie.frontpack;
 
-import net.j40climb.frenchies.common.entity.frenchie.CompanionRoster;
-import net.j40climb.frenchies.common.entity.frenchie.CourierTrips;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
+import net.j40climb.frenchies.common.entity.frenchie.delivery.CourierTrips;
+import net.j40climb.frenchies.common.entity.frenchie.recall.CompanionRoster;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

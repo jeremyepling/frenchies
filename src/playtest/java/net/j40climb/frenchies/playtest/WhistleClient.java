@@ -1,8 +1,8 @@
 package net.j40climb.frenchies.playtest;
 
 import net.j40climb.frenchies.Frenchies;
-import net.j40climb.frenchies.common.entity.frenchie.DeliveryScreen;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
+import net.j40climb.frenchies.common.entity.frenchie.delivery.DeliveryScreen;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;

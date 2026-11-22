@@ -3,7 +3,7 @@ package net.j40climb.frenchies.test;
 //? if >=26.3 {
 /*import net.minecraft.world.entity.EntityTypes;
 *///?}
-import net.j40climb.frenchies.common.entity.frenchie.FrenchieAwareness;
+import net.j40climb.frenchies.common.entity.frenchie.reaction.FrenchieAwareness;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

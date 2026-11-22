@@ -1,8 +1,8 @@
 package net.j40climb.frenchies.common.entity.frenchie.client;
 
-import net.j40climb.frenchies.common.entity.frenchie.DangerReaction;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieVariant;
-import net.j40climb.frenchies.common.entity.frenchie.PlayPose;
+import net.j40climb.frenchies.common.entity.frenchie.play.PlayPose;
+import net.j40climb.frenchies.common.entity.frenchie.reaction.DangerReaction;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;

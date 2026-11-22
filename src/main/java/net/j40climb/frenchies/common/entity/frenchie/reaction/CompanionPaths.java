@@ -1,8 +1,8 @@
 package net.j40climb.frenchies.common.entity.frenchie.reaction;
 
 import java.util.HashSet;
-import net.j40climb.frenchies.common.entity.frenchie.CompanionRoster;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
+import net.j40climb.frenchies.common.entity.frenchie.recall.CompanionRoster;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;

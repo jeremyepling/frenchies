@@ -2,7 +2,7 @@ package net.j40climb.frenchies.mixin.client;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackClient;
+import net.j40climb.frenchies.common.entity.frenchie.frontpack.client.FrontpackClient;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.networking.PutDownFrenchiePayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;

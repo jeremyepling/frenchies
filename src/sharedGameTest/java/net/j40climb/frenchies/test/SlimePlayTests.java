@@ -13,7 +13,7 @@ import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
-import static net.j40climb.frenchies.common.entity.frenchie.PlayPose.*;
+import static net.j40climb.frenchies.common.entity.frenchie.play.PlayPose.*;
 
 final class SlimePlayTests {
     private static Slime stationarySlime(GameTestHelper h, int size) {

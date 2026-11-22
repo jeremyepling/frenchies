@@ -1,6 +1,6 @@
 package net.j40climb.frenchies.setup;
 
-import net.j40climb.frenchies.common.entity.frenchie.DeliveryPopupPayload;
+import net.j40climb.frenchies.common.entity.frenchie.delivery.DeliveryPopupPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 

@@ -3,7 +3,7 @@ package net.j40climb.frenchies.common.entity.frenchie.reaction;
 import java.util.EnumSet;
 import net.j40climb.frenchies.common.entity.frenchie.CompanionSettings;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
-import net.j40climb.frenchies.common.entity.frenchie.PlaySafety;
+import net.j40climb.frenchies.common.entity.frenchie.play.PlaySafety;
 import net.j40climb.frenchies.mixin.MiningState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;

@@ -1,7 +1,7 @@
 package net.j40climb.frenchies.common.entity.frenchie.frontpack;
 
 import io.netty.buffer.ByteBuf;
-import net.j40climb.frenchies.common.entity.frenchie.FrenchieAwareness;
+import net.j40climb.frenchies.common.entity.frenchie.reaction.FrenchieAwareness;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
