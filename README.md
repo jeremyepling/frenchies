@@ -52,6 +52,8 @@ Use `/frenchie recall` anywhere to call back traveling or waiting dogs, includin
 
 Craft a Frenchie Front Pack with string in the left and right squares of one row and three leather in the row below. Right-click the air with the pack to equip it on your chest. Crouch and right-click your adult Frenchie to pick it up, then crouch and right-click the air to set it down. Carrying pauses its current job.
 
+On a quiet nighttime walk, your passenger can close its eyes, lower its head, and let out an occasional soft snore. It perks up if you sprint, take flight, or it spots a creeper.
+
 **Pick a color.** Combine the pack with any of the 16 dyes. Multiple dyes blend with the existing color. Wash the pouch in a water cauldron to restore its original color for one level of water.
 
 **Give it wings.** Combine a front pack and an elytra anywhere in the crafting grid. Wear the winged pack on your chest to glide with your dog's head peeking out in front. The recipe keeps the dye, remaining wing durability, and enchantments from both items, taking the higher level for matching enchantments. You can still dye the pouch and repair the wings with a phantom membrane at an anvil.
@@ -69,7 +71,7 @@ Fabric and NeoForge generate `config/florafauna_frenchies.properties` on startup
 | `thunderFear` | Seek company or cover after a lightning strike when `weatherReactions` is enabled |
 | `automaticHerding` | Assisting sheep and cows that follow wheat |
 | `fallReactions` | Checking on an owner who loses at least two hearts to a fall |
-| `ambientCompanionship` | Voluntarily sitting and resting beside an idle owner |
+| `ambientCompanionship` | Voluntarily resting beside an idle owner and dozing in the front pack at night |
 | `sideSleeping` | Choosing between the two sleeping poses. Set to `false` to always use the original belly-down pose |
 | `lavaReactions` | Retreating before reaching an exposed lava edge |
 | `stickRetrieval` | Fetching a dropped stick after tree chopping |
@@ -100,3 +102,5 @@ For the NeoForge scripted clients on Windows with PowerShell 7, run `./scripts/t
 To play with FloraFauna, Hammer and Frenchies together, run `./gradlew -PdevMods=all :26.1-neoforge:runClient` or `:26.3-neoforge:runClient` from a matching FloraFauna checkout. [FloraFauna development setup](https://github.com/jeremyepling/florafauna#play-with-the-hammer-and-frenchies)
 
 For companion reactions, run the NeoForge GameTests with `-PgameTestFilter=florafauna_frenchies:companion_reaction_*`. The scripted client accepts `-Scenario weather` to capture the same dog as its snow coat builds, shakes off, and begins to build again.
+
+Use `-Scenario rest` to see the standing idle and both sleep poses beside a bed, then watch the packed dog doze, snore, and wake for a creeper or daylight. The shared GameTest `florafauna_frenchies:frenchie_sleep_pose_save` covers saved poses and older worlds.
