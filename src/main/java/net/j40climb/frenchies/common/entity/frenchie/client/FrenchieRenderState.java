@@ -34,6 +34,7 @@ public class FrenchieRenderState extends LivingEntityRenderState {
     public float weatherAge;
     public PoseStack.Pose noseBubbleFacing;
     public boolean isSleeping;
+    public float sideSleepAmount;
     public boolean isSwimming;
     public boolean isSitting;
     public final AnimationState idleAnimationState = new AnimationState();

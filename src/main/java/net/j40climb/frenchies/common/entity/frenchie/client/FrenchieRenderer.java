@@ -121,6 +121,7 @@ public class FrenchieRenderer extends MobRenderer<FrenchieEntity, FrenchieRender
         reusedState.weatherAge = entity.weatherAge(partialTick);
 
         reusedState.isSleeping = entity.isFrenchieSleeping();
+        reusedState.sideSleepAmount = entity.sideSleepAmount(partialTick);
         reusedState.isSwimming = entity.isSwimming();
         reusedState.isSitting = entity.getPose() == Pose.SITTING;
         reusedState.idleAnimationState.copyFrom(entity.idleAnimationState);

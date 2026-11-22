@@ -209,6 +209,7 @@ public class FrenchieModel extends EntityModel<FrenchieRenderState> {
         this.standToSleepAnimation.apply(renderState.standToSleepAnimationState, renderState.ageInTicks, 1.0F);
         this.sleepToStandAnimation.apply(renderState.sleepToStandAnimationState, renderState.ageInTicks, 1.0F);
         this.sleepingAnimation.apply(renderState.sleepAnimationState, renderState.ageInTicks, 1.0F);
+        if (renderState.sideSleepAmount > 0) applySideSleep(renderState.sideSleepAmount);
 
         // Apply sitting transitions and pose
         this.standToSitAnimation.apply(renderState.standToSitAnimationState, renderState.ageInTicks, 1.0F);
@@ -233,6 +234,18 @@ public class FrenchieModel extends EntityModel<FrenchieRenderState> {
             head.getChild("earL").y -= lift;
             head.getChild("earR").y -= lift;
         }
+    }
+
+    private void applySideSleep(float blend) {
+        // Roll the curled pose around the ribcage and bring the cheek to the ground.
+        float roll = blend * blend * (3 - 2 * blend);
+        body.zRot += 1.38F * roll;
+        body.x += 2.6F * roll;
+        body.y += 0.65F * roll;
+        head.zRot -= 0.22F * roll;
+        head.yRot -= 0.32F * roll;
+        body.getChild("leg_front_left").xRot -= 0.85F * roll;
+        body.getChild("leg_front_right").xRot -= 0.55F * roll;
     }
 
     private void applyDangerReaction(FrenchieRenderState state) {

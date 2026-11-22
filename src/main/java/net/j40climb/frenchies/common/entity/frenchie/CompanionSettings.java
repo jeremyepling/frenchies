@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Properties;
 
-/** Loaded once at startup. All eight decisions are made on the logical server. */
+/** Loaded at startup. Companion behavior choices are made on the logical server. */
 public final class CompanionSettings {
     private static Properties options = new Properties();
 
@@ -26,6 +26,7 @@ public final class CompanionSettings {
                         automaticHerding=true
                         fallReactions=true
                         ambientCompanionship=true
+                        sideSleeping=true
                         lavaReactions=true
                         stickRetrieval=true
                         """, StandardOpenOption.CREATE_NEW);
@@ -51,6 +52,7 @@ public final class CompanionSettings {
     public static boolean automaticHerding() { return enabled("automaticHerding"); }
     public static boolean fallReactions() { return enabled("fallReactions"); }
     public static boolean ambientCompanionship() { return enabled("ambientCompanionship"); }
+    public static boolean sideSleeping() { return enabled("sideSleeping"); }
     public static boolean lavaReactions() { return enabled("lavaReactions"); }
     public static boolean stickRetrieval() { return enabled("stickRetrieval"); }
 }

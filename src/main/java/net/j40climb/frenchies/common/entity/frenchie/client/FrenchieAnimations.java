@@ -7,8 +7,19 @@ import net.minecraft.client.animation.Keyframe;
 import net.minecraft.client.animation.KeyframeAnimations;
 
 public class FrenchieAnimations {
-        public static final AnimationDefinition ANIM_IDLE = AnimationDefinition.Builder.withLength(2.0F).looping()
-
+        public static final AnimationDefinition ANIM_IDLE = AnimationDefinition.Builder.withLength(4.0F).looping()
+                .addAnimation("chest", new AnimationChannel(AnimationChannel.Targets.SCALE,
+                        new Keyframe(0.0F, KeyframeAnimations.scaleVec(1, 1, 1), AnimationChannel.Interpolations.CATMULLROM),
+                        new Keyframe(2.0F, KeyframeAnimations.scaleVec(1.055F, 1.07F, 1), AnimationChannel.Interpolations.CATMULLROM),
+                        new Keyframe(4.0F, KeyframeAnimations.scaleVec(1, 1, 1), AnimationChannel.Interpolations.CATMULLROM)
+                ))
+                .addAnimation("earL", new AnimationChannel(AnimationChannel.Targets.ROTATION,
+                        new Keyframe(0.0F, KeyframeAnimations.degreeVec(0, 0, 0), AnimationChannel.Interpolations.LINEAR),
+                        new Keyframe(2.0F, KeyframeAnimations.degreeVec(0, 0, 0), AnimationChannel.Interpolations.LINEAR),
+                        new Keyframe(2.18F, KeyframeAnimations.degreeVec(0, 6, 9), AnimationChannel.Interpolations.LINEAR),
+                        new Keyframe(2.52F, KeyframeAnimations.degreeVec(0, 0, 0), AnimationChannel.Interpolations.LINEAR),
+                        new Keyframe(4.0F, KeyframeAnimations.degreeVec(0, 0, 0), AnimationChannel.Interpolations.LINEAR)
+                ))
                 .build();
 
         public static final AnimationDefinition ANIM_STAND_TO_SIT = AnimationDefinition.Builder.withLength(0.5F)

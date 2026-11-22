@@ -139,7 +139,8 @@ public class FrenchieEntity extends TamableAnimal {
         }
     }
 
-    private int idleAnimationTimeout = 0;
+    private float previousSideSleepAmount;
+    private float sideSleepAmount;
     private final FrenchieAwareness awareness = new FrenchieAwareness(this);
     private static final EntityDataAccessor<Long> WARNING_START =
             SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.LONG);
@@ -154,6 +155,8 @@ public class FrenchieEntity extends TamableAnimal {
     private static final EntityDataAccessor<Integer> VARIANT =
             SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> IS_SLEEPING =
+            SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> SIDE_SLEEPING =
             SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Byte> JOB =
             SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.BYTE);
@@ -358,6 +361,7 @@ public class FrenchieEntity extends TamableAnimal {
         builder.define(LAST_POSE_CHANGE_TICK, 0L);
         builder.define(LAST_SLEEP_CHANGE_TICK, 0L);
         builder.define(IS_SLEEPING, false);
+        builder.define(SIDE_SLEEPING, false);
         builder.define(WARNING_START, (long)-FrenchieAwareness.COOLDOWN_TICKS);
         builder.define(BEDTIME, (byte)0);
         builder.define(HANDOFF, 0);
@@ -441,6 +445,21 @@ public class FrenchieEntity extends TamableAnimal {
     }
 
     public void setFrenchieSleeping(boolean sleeping) {
+        if (sleeping && !isFrenchieSleeping() && !level().isClientSide()) {
+            entityData.set(SIDE_SLEEPING, CompanionSettings.sideSleeping() && random.nextBoolean());
+        }
+        applySleepState(sleeping);
+    }
+
+    public boolean usesSideSleepPose() {
+        return entityData.get(SIDE_SLEEPING);
+    }
+
+    public float sideSleepAmount(float partialTick) {
+        return previousSideSleepAmount + partialTick * (sideSleepAmount - previousSideSleepAmount);
+    }
+
+    private void applySleepState(boolean sleeping) {
         if (this.entityData.get(IS_SLEEPING) != sleeping) {
             if (!level().isClientSide()) {
                 if (sleeping) {
@@ -799,6 +818,7 @@ public class FrenchieEntity extends TamableAnimal {
         output.putInt("Variant", this.getTypeVariant());
         output.putString("Pose", this.getPose().name());
         output.putBoolean("IsSleeping", this.isFrenchieSleeping());
+        if (isFrenchieSleeping() && usesSideSleepPose()) output.putBoolean("SideSleeping", true);
         trail.save(output);
         delivery.save(output);
         output.putLong("LastPoseChangeTick", this.entityData.get(LAST_POSE_CHANGE_TICK));
@@ -829,7 +849,8 @@ public class FrenchieEntity extends TamableAnimal {
         }
         this.setPose(savedPose);
         boolean sleeping = input.getBooleanOr("IsSleeping", false);
-        this.setFrenchieSleeping(sleeping);
+        entityData.set(SIDE_SLEEPING, sleeping && CompanionSettings.sideSleeping() && input.getBooleanOr("SideSleeping", false));
+        applySleepState(sleeping);
         long lastPoseChangeTick = input.getLongOr("LastPoseChangeTick", 0L);
         this.entityData.set(LAST_POSE_CHANGE_TICK, lastPoseChangeTick);
         long lastSleepChangeTick = input.getLongOr("LastSleepChangeTick", 0L);
@@ -849,13 +870,9 @@ public class FrenchieEntity extends TamableAnimal {
         if (isRemoved()) return;
 
         if(this.level().isClientSide()) {
-            // Idle animation
-            if (this.idleAnimationTimeout <= 0) {
-                this.idleAnimationTimeout = 40; // 40 ticks = 2 seconds
-                this.idleAnimationState.start(this.tickCount);
-            } else {
-                --this.idleAnimationTimeout;
-            }
+            idleAnimationState.animateWhen(onGround() && getPose() == Pose.STANDING && !isInWater()
+                    && !isPassenger() && !isFrenchieSleeping() && getSleepTime() >= 20 && getPoseTime() >= 10
+                    && walkAnimation.speed() < 0.05F && playPose() == PlayPose.NONE, tickCount);
 
             // Swim animation (simple boolean state)
             this.swimAnimationState.animateWhen(this.isInWater(), this.tickCount);
@@ -919,6 +936,10 @@ public class FrenchieEntity extends TamableAnimal {
     private void handleSleepingAnimations() {
         boolean sleeping = this.isFrenchieSleeping();
         long sleepTime = this.getSleepTime();
+        boolean onSide = sleeping && usesSideSleepPose();
+        if (tickCount == 1 && onSide && sleepTime >= 20) sideSleepAmount = 1;
+        previousSideSleepAmount = sideSleepAmount;
+        sideSleepAmount = onSide ? Math.min(1, sideSleepAmount + 0.05F) : Math.max(0, sideSleepAmount - 0.05F);
 
         if (sleeping) {
             // Transitioning from standing to sleeping

@@ -19,6 +19,7 @@ class CompanionSettingsTest {
                 "automaticHerding", CompanionSettings::automaticHerding,
                 "fallReactions", CompanionSettings::fallReactions,
                 "ambientCompanionship", CompanionSettings::ambientCompanionship,
+                "sideSleeping", CompanionSettings::sideSleeping,
                 "lavaReactions", CompanionSettings::lavaReactions,
                 "stickRetrieval", CompanionSettings::stickRetrieval);
         CompanionSettings.load(config);
