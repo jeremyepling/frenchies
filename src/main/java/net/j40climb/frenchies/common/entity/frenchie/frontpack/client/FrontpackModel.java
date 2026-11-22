@@ -93,6 +93,11 @@ public class FrontpackModel extends EntityModel<AvatarRenderState> {
         earL.addOrReplaceChild("earL_behind_r1", CubeListBuilder.create().texOffs(1, 21).addBox(0.0F, -2.8377F, 2.9587F, 3.0F, 3.0F, 0.0F, new CubeDeformation(0.0F))
                 .texOffs(1, 24).addBox(0.0F, -2.8377F, 2.9087F, 3.0F, 3.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.2618F));
 
+        // The eyes occupy one texel each. Lower a strip of forehead fur over each pupil.
+        head.addOrReplaceChild("eyelids", CubeListBuilder.create()
+                        .texOffs(5, 34).addBox(-1.983F, 0, 0, 1, 1, 0)
+                        .texOffs(8, 34).addBox(1.017F, 0, 0, 1, 1, 0),
+                PartPose.offset(0, -1.3875F, -3.90F));
         FrenchieTravelGesture.addTongue(head);
 
         PartDefinition chest = body.addOrReplaceChild("chest", CubeListBuilder.create().texOffs(1, 1).addBox(-3.5F, -4.25F, -5.5F, 7.0F, 7.0F, 11.0F, new CubeDeformation(0.0F)), PartPose.offset(0.5F, 1.25F, 1.5F));
@@ -144,7 +149,18 @@ public class FrontpackModel extends EntityModel<AvatarRenderState> {
         if (fabricOnly) return;
         this.idlingAnimation.apply(this.idleAnimationState, renderState.ageInTicks, 1.0F);
         var tongue = head.getChild("tongue");
-        if (renderState.isFallFlying) {
+        var lids = head.getChild("eyelids");
+        float doze = renderState.isFallFlying || pack.alertYaw() != null ? 0F : pack.doze();
+        lids.visible = doze > 0F;
+        if (doze > 0F) {
+            float breath = (float) Math.sin((renderState.ageInTicks + renderState.id) * 0.10F);
+            lids.yScale = 0.82F * doze;
+            head.xRot += (0.42F + 0.025F * breath) * doze;
+            head.yRot += 0.12F * doze;
+            head.getChild("earR").zRot += 0.14F * doze;
+            head.getChild("earL").zRot -= 0.14F * doze;
+            tongue.visible = false;
+        } else if (renderState.isFallFlying) {
             FrenchieTravelGesture.applyInFlight(head, renderState.ageInTicks, renderState.id, glide);
             tongue.visible = true;
         } else {

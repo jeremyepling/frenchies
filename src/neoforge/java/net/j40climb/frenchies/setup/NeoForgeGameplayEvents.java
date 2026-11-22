@@ -4,6 +4,7 @@ import net.j40climb.frenchies.Frenchies;
 import net.j40climb.frenchies.common.entity.frenchie.assistance.DiggingAssistantEvents;
 import net.j40climb.frenchies.common.entity.frenchie.delivery.CourierTrips;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackEvents;
+import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackDoze;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackWarning;
 import net.j40climb.frenchies.common.entity.frenchie.play.TreeStickSearch;
 import net.j40climb.frenchies.common.entity.frenchie.recall.CompanionRoster;
@@ -48,6 +49,7 @@ public final class NeoForgeGameplayEvents {
         if (event.getEntity() instanceof ServerPlayer player) {
             FrontpackEvents.releaseWhenUnequipped(player);
             FrontpackWarning.onTick(player);
+            FrontpackDoze.tick(player);
         }
     }
 
