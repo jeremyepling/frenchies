@@ -25,7 +25,7 @@ public final class PlaySafety {
         return dangerNearby(dog, null);
     }
 
-    static boolean dangerNearby(FrenchieEntity dog, LivingEntity recentlyFallenOwner) {
+    public static boolean dangerNearby(FrenchieEntity dog, LivingEntity recentlyFallenOwner) {
         return !dog.level().getEntitiesOfClass(LivingEntity.class, dog.getBoundingBox().inflate(8),
                 other -> other != dog && other.isAlive() && !other.isSpectator() && dog.distanceToSqr(other) <= 64
                         && isThreatOrFighting(other, recentlyFallenOwner) && dog.hasLineOfSight(other)).isEmpty();
@@ -45,7 +45,7 @@ public final class PlaySafety {
         return clearGroundSegment(mob, from, to, false);
     }
 
-    static boolean clearGroundSegment(Mob mob, Vec3 from, Vec3 to, boolean retreating) {
+    public static boolean clearGroundSegment(Mob mob, Vec3 from, Vec3 to, boolean retreating) {
         if (Math.abs(from.y - to.y) > 0.125) return false;
         var level = mob.level();
         double radius = mob.getBbWidth() * 0.5 + 0.025;

@@ -1,6 +1,9 @@
-package net.j40climb.frenchies.common.entity.frenchie;
+package net.j40climb.frenchies.common.entity.frenchie.reaction;
 
 import java.util.EnumSet;
+import net.j40climb.frenchies.common.entity.frenchie.CompanionRoster;
+import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
+import net.j40climb.frenchies.common.entity.frenchie.PlaySafety;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
@@ -20,17 +23,8 @@ final class OwnerConcernGoal extends Goal {
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
     }
 
-    private boolean available() {
-        return dog.isAlive() && !dog.isNoAi() && !dog.isOrderedToSit() && !dog.isPassenger()
-                && !dog.isLeashed() && !dog.hasCompanionJob() && !dog.hasToyJob()
-                && !dog.respondingToWhistle() && !dog.isEscapingDanger() && !dog.hasBedtimePlan()
-                && !dog.isInWater() && !dog.isInLava()
-                && dog.dangerReaction() == DangerReaction.NONE && dog.getTarget() == null
-                && !dog.isInLove() && (dog.deliveryDialog == null || !dog.deliveryDialog.isOpen());
-    }
-
     void hearThunder() {
-        if (!available()) return;
+        if (!dog.canRespondToOwner()) return;
         long now = dog.level().getGameTime();
         thunderUntil = Math.max(thunderUntil, now + 300 + dog.getRandom().nextInt(301));
         dog.setFrenchieSleeping(false);
@@ -38,7 +32,7 @@ final class OwnerConcernGoal extends Goal {
 
     void ownerFell() {
         long now = dog.level().getGameTime();
-        if (now < nextFall || now < thunderUntil || !available()) return;
+        if (now < nextFall || now < thunderUntil || !dog.canRespondToOwner()) return;
         nextFall = now + 600;
         fallUntil = now + 110;
         dog.setFrenchieSleeping(false);
@@ -48,13 +42,13 @@ final class OwnerConcernGoal extends Goal {
 
     boolean pending() {
         long now = dog.level().getGameTime();
-        return (now < thunderUntil || now < fallUntil) && available();
+        return (now < thunderUntil || now < fallUntil) && dog.canRespondToOwner();
     }
 
     @Override
     public boolean canUse() {
         long now = dog.level().getGameTime();
-        if ((now >= thunderUntil && now >= fallUntil) || !available()) return false;
+        if ((now >= thunderUntil && now >= fallUntil) || !dog.canRespondToOwner()) return false;
         if (now >= nextThreatCheck) {
             nearbyThreat = PlaySafety.dangerNearby(dog, dog.getOwner());
             nextThreatCheck = now + 10;
@@ -80,8 +74,9 @@ final class OwnerConcernGoal extends Goal {
         boolean frightened = now < thunderUntil;
         if (owner == null || !owner.isAlive() || owner.isSpectator() || dog.distanceToSqr(owner) > 32 * 32) {
             if (!frightened) { fallUntil = 0; return; }
-            if (nextPath == 0) {
+            if (nextPath != Long.MAX_VALUE) {
                 nextPath = Long.MAX_VALUE;
+                dog.getNavigation().stop();
                 seekCover();
             }
         } else {

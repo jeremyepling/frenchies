@@ -1,6 +1,8 @@
-package net.j40climb.frenchies.common.entity.frenchie;
+package net.j40climb.frenchies.common.entity.frenchie.reaction;
 
 import java.util.HashSet;
+import net.j40climb.frenchies.common.entity.frenchie.CompanionRoster;
+import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -22,6 +24,10 @@ final class CompanionPaths {
     }
 
     static boolean walk(FrenchieEntity dog, @Nullable Path path, double speed) {
+        return safeToWalk(dog, path) && dog.getNavigation().moveTo(path, speed);
+    }
+
+    static boolean safeToWalk(FrenchieEntity dog, @Nullable Path path) {
         if (path == null || !path.canReach()) return false;
         int lastY = dog.blockPosition().getY();
         for (int i = 0; i < path.getNodeCount(); ++i) {
@@ -32,6 +38,6 @@ final class CompanionPaths {
             if (!dog.level().getBlockState(pos.below()).isFaceSturdy(dog.level(), pos.below(), Direction.UP)) return false;
             lastY = node.y;
         }
-        return dog.getNavigation().moveTo(path, speed);
+        return true;
     }
 }
