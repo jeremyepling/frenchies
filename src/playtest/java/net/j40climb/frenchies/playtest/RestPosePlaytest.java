@@ -69,21 +69,25 @@ public final class RestPosePlaytest {
             var dog = FrenchieRegistry.FRENCHIE.get().spawn(level, CENTER, EntitySpawnReason.COMMAND);
             Playtest.require(dog != null, "Missing Frenchie");
             dog.tame(owner);
-            // Prevent wandering or looking at the camera. Sleep still follows the real environment tick.
-            dog.setNoAi(true);
-            dog.snapTo(Vec3.atBottomCenterOf(CENTER), 180, 0);
+            // A short natural landing gives tracking clients the grounded state used by the idle animation.
+
+            dog.snapTo(Vec3.atBottomCenterOf(CENTER).add(0, 0.3, 0), 180, 0);
             dog.yBodyRot = dog.yHeadRot = 180;
             dogId[0] = dog.getId();
         });
-        t.awaitServer("Inspect the stationary Frenchie after initial tracking", player -> {
+        t.awaitServer("Let the Frenchie land normally before fixing its position for photographs", player -> {
             var dog = (FrenchieEntity) player.level().getEntity(dogId[0]);
-            if (dog == null || dog.tickCount < 35) return false;
+            if (dog == null || !dog.onGround()) return false;
+            dog.setNoAi(true);
+            dog.setDeltaMovement(Vec3.ZERO);
+            dog.snapTo(Vec3.atBottomCenterOf(CENTER), 180, 0);
+            dog.yBodyRot = dog.yHeadRot = 180;
             logPose("server", dog);
             return true;
         });
         t.awaitClient("Wait for a quiet, grounded Frenchie at the camera mark", mc -> {
             if (!(mc.level.getEntity(dogId[0]) instanceof FrenchieEntity dog)) return false;
-            if (dog.tickCount % 30 == 0) logPose("client", dog);
+            if (dog.onGround() && dog.idleAnimationState.isStarted()) logPose("client", dog);
             return dog.onGround() && dog.idleAnimationState.isStarted() && !dog.isFrenchieSleeping();
         });
         Vec3 center = Vec3.atBottomCenterOf(CENTER);
