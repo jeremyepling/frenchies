@@ -2,9 +2,11 @@ package net.j40climb.frenchies.test;
 
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
 import net.j40climb.frenchies.common.entity.frenchie.PlayPose;
+import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.protocol.game.ServerboundPlayerLoadedPacket;
 import net.minecraft.world.InteractionHand;
 //? if <26.3 {
 import net.minecraft.world.entity.EntityType;
@@ -57,6 +59,7 @@ final class CompanionReactionTests {
 
     static void fall(GameTestHelper h) {
         var owner = player(h, 8.5, 7.5);
+        owner.connection.handleAcceptPlayerLoad(new ServerboundPlayerLoadedPacket());
         var dog = CompanionWhistleTests.dog(h, owner, 2, 5);
         dog.standUp();
         var level = h.getLevel();
@@ -70,6 +73,27 @@ final class CompanionReactionTests {
                 .thenWaitUntil(() -> h.assertTrue(running(dog, "OwnerConcernGoal") && dog.distanceToSqr(owner) <= 9,
                         "Dog did not reach and check on the injured owner"))
                 .thenWaitUntil(() -> h.assertTrue(!running(dog, "OwnerConcernGoal"), "Fall reaction never finished"))
+                .thenExecute(() -> disconnect(owner)).thenSucceed();
+    }
+
+    static void ravine(GameTestHelper h) {
+        var owner = player(h, 8.5, 5.5);
+        owner.connection.handleAcceptPlayerLoad(new ServerboundPlayerLoadedPacket());
+        for (var pos : BlockPos.betweenClosed(new BlockPos(2, 1, 3), new BlockPos(5, 4, 7))) {
+            h.setBlock(pos, Blocks.STONE);
+        }
+        var dog = h.spawn(FrenchieRegistry.FRENCHIE.get(), 4, 5, 5);
+        dog.tame(owner);
+        dog.standUp();
+        int ledgeY = h.absolutePos(new BlockPos(4, 5, 5)).getY();
+        h.startSequence().thenWaitUntil(() -> h.assertTrue(dog.onGround(), "Dog did not settle on the ledge"))
+                .thenExecute(() -> h.assertTrue(owner.hurtServer(h.getLevel(), owner.damageSources().fall(), 6),
+                        "The owner below the cliff did not take fall damage"))
+                .thenWaitUntil(() -> h.assertTrue(running(dog, "OwnerConcernGoal"), "Dog did not notice the ravine fall"))
+                .thenExecuteFor(60, () -> h.assertTrue(dog.getY() >= ledgeY - 0.25,
+                        "Concerned Frenchie jumped from an unreachable four-block ledge"))
+                .thenWaitUntil(() -> h.assertTrue(!running(dog, "OwnerConcernGoal"),
+                        "Dog remained stuck trying to reach the ravine floor"))
                 .thenExecute(() -> disconnect(owner)).thenSucceed();
     }
 

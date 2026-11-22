@@ -35,6 +35,7 @@ public record CompanionTests(
                 CompanionWeatherTests::rain);
         registerPlayTest(yard, "companion_reaction_thunder", 720, CompanionReactionTests::thunder);
         registerPlayTest(yard, "companion_reaction_fall", 250, CompanionReactionTests::fall);
+        registerPlayTest(yard, "companion_reaction_ravine", 250, CompanionReactionTests::ravine);
         registerPlayTest(yard, "companion_reaction_quiet", 1700, CompanionReactionTests::quiet);
         registerPlayTest(yard, "companion_reaction_lava", 180, CompanionReactionTests::lava);
         registerPlayTest(yard, "companion_reaction_herd_cow", 200, h -> CompanionReactionTests.herd(h, false));
@@ -129,7 +130,7 @@ public record CompanionTests(
                                   TestEnvironmentDefinition.Weather.Type weather, Consumer<GameTestHelper> test) {
         var environment = addEnvironment.apply(Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, name),
                 new TestEnvironmentDefinition.Weather(weather));
-        registerStructureTest(environment, name, yard, ticks, h -> {
+        registerStructureTest(environment, name, yard, ticks, weather != TestEnvironmentDefinition.Weather.Type.CLEAR, h -> {
             // The registered dimension clock is available when the server starts the case.
             var level = h.getLevel();
             var clock = level.dimensionType().defaultClock().orElseThrow();
@@ -151,14 +152,22 @@ public record CompanionTests(
             int maxTicks,
             Consumer<GameTestHelper> testFunction
     ) {
+        registerStructureTest(env, name, structure, maxTicks, false, testFunction);
+    }
+
+    private void registerStructureTest(Holder<TestEnvironmentDefinition<?>> env, String name, Identifier structure,
+                                       int maxTicks, boolean skyAccess, Consumer<GameTestHelper> testFunction) {
         Identifier testId = Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, name);
 
         TestData<Holder<TestEnvironmentDefinition<?>>> testData = new TestData<>(
                 env,
+                //? if >=26.3 {
+                /*net.minecraft.world.level.Level.OVERWORLD,
+                *///?}
                 structure,
                 maxTicks,
                 20,   // setupTicks - give block entities time to load
-                true  // required
+                true, net.minecraft.world.level.block.Rotation.NONE, false, 1, 1, skyAccess, 0
         );
 
         addTest.accept(testId, new SimpleGameTestInstance(testData, testFunction));
