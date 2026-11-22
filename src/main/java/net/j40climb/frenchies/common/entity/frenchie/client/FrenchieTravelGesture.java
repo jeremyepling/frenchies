@@ -1,4 +1,4 @@
-package net.j40climb.frenchies.common.entity.frenchie;
+package net.j40climb.frenchies.common.entity.frenchie.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelPart;

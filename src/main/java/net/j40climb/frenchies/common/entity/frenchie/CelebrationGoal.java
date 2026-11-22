@@ -1,5 +1,7 @@
 package net.j40climb.frenchies.common.entity.frenchie;
 
+import static net.j40climb.frenchies.common.entity.frenchie.PlayStages.Celebration.*;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
@@ -14,7 +16,6 @@ import java.util.EnumSet;
 
 /** A short-lived movement goal. Commands and jobs can preempt any stage. */
 final class CelebrationGoal extends Goal {
-    static final int NONE = 0, BOW = 1, RUN = 2, HOP = 3, SPLOOT = 4;
     private static final int[][] LAP = {
             {1, 1}, {0, 2}, {-1, 1}, {-2, 0}, {-1, -1}, {0, -2}, {1, -1}, {2, 0}
     };
@@ -46,7 +47,7 @@ final class CelebrationGoal extends Goal {
     }
 
     private boolean available() {
-        return dog.weatherStage() == WeatherPlayGoal.NONE && !dog.personalityInterrupted()
+        return dog.weatherStage() == PlayStages.Weather.NONE && !dog.personalityInterrupted()
                 && dog.isAlive() && dog.isTame() && !dog.isOrderedToSit() && !dog.isSitting()
                 && !dog.isFrenchieSleeping() && !dog.isPassenger() && !dog.isLeashed()
                 && !dog.isInWater() && !dog.isInLava() && !dog.isOnFire() && dog.hurtTime == 0

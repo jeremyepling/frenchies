@@ -5,7 +5,7 @@ param(
     [ValidateSet('26.1', '26.3')]
     [string]$Target = '26.1',
     [Parameter(ParameterSetName = 'Selected', Position = 0)]
-    [ValidateSet('frenchie', 'frontpack', 'companions', 'delivery')]
+    [ValidateSet('frenchie', 'frontpack', 'companions', 'delivery', 'weather')]
     [string[]]$Scenario,
     [Parameter(ParameterSetName = 'Full')]
     [switch]$All,
@@ -17,7 +17,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $false
 if ($All) {
-    $Scenario = @('frenchie', 'frontpack', 'companions', 'delivery')
+    $Scenario = @('frenchie', 'frontpack', 'companions', 'delivery', 'weather')
 } elseif (!$Scenario) {
     throw 'Choose a client scenario, e.g. -Scenario delivery, or use -All for the full gameplay suite.'
 }
@@ -79,7 +79,7 @@ try {
     $failed = @()
     foreach ($name in $Scenario) {
         $gameDir = Join-Path $runRoot $name
-        $phases = if ($name -in 'frenchie', 'companions') { @(1) } else { @(1, 2) }
+        $phases = if ($name -in 'frenchie', 'companions', 'weather') { @(1) } else { @(1, 2) }
         foreach ($phase in $phases) {
             Write-Host "Launching $name phase $phase ..."
             $log = Join-Path $gameDir "phase-$phase.log"

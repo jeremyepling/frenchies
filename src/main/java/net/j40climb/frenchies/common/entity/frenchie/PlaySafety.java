@@ -18,7 +18,7 @@ import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-final class PlaySafety {
+public final class PlaySafety {
     private PlaySafety() {}
 
     static boolean dangerNearby(FrenchieEntity dog) {
@@ -41,7 +41,7 @@ final class PlaySafety {
     }
 
     /** Check a short run or hop on level ground, with room for the whole dog along the diagonal. */
-    static boolean clearGroundSegment(Mob mob, Vec3 from, Vec3 to) {
+    public static boolean clearGroundSegment(Mob mob, Vec3 from, Vec3 to) {
         return clearGroundSegment(mob, from, to, false);
     }
 

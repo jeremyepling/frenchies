@@ -6,9 +6,9 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
 import net.j40climb.frenchies.common.entity.frenchie.DeliveryPopupPayload;
 import net.j40climb.frenchies.common.entity.frenchie.DeliveryScreen;
-import net.j40climb.frenchies.common.entity.frenchie.FrenchieModel;
-import net.j40climb.frenchies.common.entity.frenchie.FrenchieRenderer;
-import net.j40climb.frenchies.common.entity.frenchie.PlayBubbleRenderer;
+import net.j40climb.frenchies.common.entity.frenchie.client.FrenchieModel;
+import net.j40climb.frenchies.common.entity.frenchie.client.FrenchieRenderer;
+import net.j40climb.frenchies.common.entity.frenchie.client.PlayBubbleRenderer;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FabricFrontpackClient;
 import net.minecraft.client.Minecraft;
 

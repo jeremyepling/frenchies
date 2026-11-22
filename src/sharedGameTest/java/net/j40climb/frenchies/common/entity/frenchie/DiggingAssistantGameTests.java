@@ -43,13 +43,13 @@ public final class DiggingAssistantGameTests {
                     h.assertTrue(dog.requestDigging(dug), "Safe nearby patch was not selected");
                     h.assertTrue(!dog.requestDigging(dug), "Repeated shovel event restarted the request");
                 })
-                .thenWaitUntil(() -> h.assertTrue(dog.digStage() == DiggingAssistantGoal.DIG,
+                .thenWaitUntil(() -> h.assertTrue(dog.digStage() == PlayStages.Digging.DIG,
                         "Frenchie did not reach its cosmetic digging patch; stage=" + dog.digStage()
                                 + ", pos=" + h.relativePos(dog.blockPosition()) + ", awake=" + !dog.isFrenchieSleeping()
                                 + ", order=" + dog.isOrderedToSit() + ", available=" + dog.canPlay()))
                 .thenExecute(() -> h.assertTrue(!dog.getMouthItem().is(Items.STICK),
                         "Stick appeared before the reveal"))
-                .thenWaitUntil(() -> h.assertTrue(dog.digStage() == DiggingAssistantGoal.REVEAL,
+                .thenWaitUntil(() -> h.assertTrue(dog.digStage() == PlayStages.Digging.REVEAL,
                         "Frenchie did not finish its short digging session"))
                 .thenExecute(() -> {
                     h.assertTrue(dog.getMouthItem().is(Items.STICK), "Reusable toy stick did not appear");
@@ -67,7 +67,7 @@ public final class DiggingAssistantGameTests {
                     h.assertTrue(dog.getMouthItem().is(Items.DIAMOND), "Toy stick obscured an existing mouth item");
                     dog.setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
                 })
-                .thenWaitUntil(() -> h.assertTrue(dog.digStage() == DiggingAssistantGoal.NONE,
+                .thenWaitUntil(() -> h.assertTrue(dog.digStage() == PlayStages.Digging.NONE,
                         "Digging pose was left active"))
                 .thenExecute(() -> {
                     h.assertTrue(!dog.requestDigging(dug), "Digging ignored its cooldown");
@@ -97,13 +97,13 @@ public final class DiggingAssistantGameTests {
         h.startSequence()
                 .thenWaitUntil(() -> h.assertTrue(dog.onGround(), "Frenchie has not landed"))
                 .thenExecute(() -> h.assertTrue(dog.requestDigging(dug), "Safe patch rejected"))
-                .thenWaitUntil(() -> h.assertTrue(dog.digStage() == DiggingAssistantGoal.DIG,
+                .thenWaitUntil(() -> h.assertTrue(dog.digStage() == PlayStages.Digging.DIG,
                         "Frenchie did not begin digging"))
                 .thenExecute(dog::sitDown)
-                .thenWaitUntil(() -> h.assertTrue(dog.digStage() == DiggingAssistantGoal.NONE && dog.isOrderedToSit(),
+                .thenWaitUntil(() -> h.assertTrue(dog.digStage() == PlayStages.Digging.NONE && dog.isOrderedToSit(),
                         "Sit order did not interrupt digging"))
                 .thenExecuteFor(50, () -> h.assertTrue(dog.getMouthItem().isEmpty()
-                                && dog.digStage() == DiggingAssistantGoal.NONE,
+                                && dog.digStage() == PlayStages.Digging.NONE,
                         "Interrupted digging revealed a stick or restarted"))
                 .thenSucceed();
     }

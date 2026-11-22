@@ -3,7 +3,7 @@ package net.j40climb.frenchies.common.entity.frenchie;
 public enum DangerReaction {
     NONE(0), STARTLE(14), DUCK(24), TUMBLE(18);
 
-    final int duration;
+    public final int duration;
 
     DangerReaction(int duration) {
         this.duration = duration;

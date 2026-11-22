@@ -261,7 +261,7 @@ final class FrenchieDeliveryGameTests {
         //?} else {
         /*var barkPosition = Vec3.atBottomCenterOf(moved);
         *///?}
-        var barks = GameTestSounds.observe(recipient, bark.value(), barkPosition, 36);
+        var barks = GameTestEffects.sounds(recipient, bark.value(), barkPosition, 36);
         recipient.snapTo(address, 0, 0);
         for (int slot = 0; slot < Inventory.INVENTORY_SIZE; slot++) {
             recipient.getInventory().setItem(slot, new ItemStack(Items.STONE, 64));

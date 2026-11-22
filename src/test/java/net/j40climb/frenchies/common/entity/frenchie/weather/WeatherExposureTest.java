@@ -1,4 +1,4 @@
-package net.j40climb.frenchies.common.entity.frenchie;
+package net.j40climb.frenchies.common.entity.frenchie.weather;
 
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.biome.Biome.Precipitation;

@@ -1,4 +1,4 @@
-package net.j40climb.frenchies.common.entity.frenchie;
+package net.j40climb.frenchies.common.entity.frenchie.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.j40climb.frenchies.Frenchies;

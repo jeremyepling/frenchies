@@ -1,4 +1,6 @@
-package net.j40climb.frenchies.common.entity.frenchie;
+package net.j40climb.frenchies.common.entity.frenchie.client;
+
+import net.j40climb.frenchies.common.entity.frenchie.PlayBubbleEntity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

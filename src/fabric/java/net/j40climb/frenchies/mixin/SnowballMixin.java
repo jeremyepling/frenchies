@@ -1,6 +1,6 @@
 package net.j40climb.frenchies.mixin;
 
-import net.j40climb.frenchies.common.entity.frenchie.SnowballPlayEvents;
+import net.j40climb.frenchies.common.entity.frenchie.weather.SnowballPlayEvents;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball;
 import net.minecraft.world.phys.HitResult;
 import org.spongepowered.asm.mixin.Mixin;

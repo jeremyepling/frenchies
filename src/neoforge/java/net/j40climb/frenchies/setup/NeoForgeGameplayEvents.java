@@ -9,7 +9,7 @@ import net.j40climb.frenchies.common.entity.frenchie.TreeStickSearch;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieAwareness;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieCommands;
 import net.j40climb.frenchies.common.entity.frenchie.LegacyCompanionIndex;
-import net.j40climb.frenchies.common.entity.frenchie.SnowballPlayEvents;
+import net.j40climb.frenchies.common.entity.frenchie.weather.SnowballPlayEvents;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackEvents;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackWarning;
 import net.minecraft.server.level.ServerLevel;

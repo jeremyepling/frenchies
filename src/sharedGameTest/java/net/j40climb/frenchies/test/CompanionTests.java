@@ -29,6 +29,17 @@ public record CompanionTests(
                 Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "default"),
                 new TestEnvironmentDefinition.AllOf());
         var yard = Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "companion_yard");
+        registerPlayTest(yard, "companion_reaction_snow", 1400, TestEnvironmentDefinition.Weather.Type.RAIN,
+                CompanionWeatherTests::snow);
+        registerPlayTest(yard, "companion_reaction_rain", 3200, TestEnvironmentDefinition.Weather.Type.RAIN,
+                CompanionWeatherTests::rain);
+        registerPlayTest(yard, "companion_reaction_thunder", 720, CompanionReactionTests::thunder);
+        registerPlayTest(yard, "companion_reaction_fall", 250, CompanionReactionTests::fall);
+        registerPlayTest(yard, "companion_reaction_quiet", 1700, CompanionReactionTests::quiet);
+        registerPlayTest(yard, "companion_reaction_lava", 180, CompanionReactionTests::lava);
+        registerPlayTest(yard, "companion_reaction_herd_cow", 200, h -> CompanionReactionTests.herd(h, false));
+        registerPlayTest(yard, "companion_reaction_herd_sheep", 200, h -> CompanionReactionTests.herd(h, true));
+        registerPlayTest(yard, "companion_reaction_stick", 480, CompanionReactionTests::stick);
         registerPlayTest(yard, "companion_whistle_unloaded_dismiss", 5000, CompanionWhistleTests::unloadedDismiss);
         registerPlayTest(yard, "companion_whistle_offline_void", 350, CompanionSafetyTests::offlineVoid);
         registerPlayTest(yard, "companion_whistle_fall", 180, CompanionSafetyTests::falling);
@@ -110,10 +121,14 @@ public record CompanionTests(
     }
 
     // Audience scans, production limits, and creeper warnings reach into adjacent structures.
-    private void registerPlayTest(Identifier yard, String name,
-                                         int ticks, Consumer<GameTestHelper> test) {
+    private void registerPlayTest(Identifier yard, String name, int ticks, Consumer<GameTestHelper> test) {
+        registerPlayTest(yard, name, ticks, TestEnvironmentDefinition.Weather.Type.CLEAR, test);
+    }
+
+    private void registerPlayTest(Identifier yard, String name, int ticks,
+                                  TestEnvironmentDefinition.Weather.Type weather, Consumer<GameTestHelper> test) {
         var environment = addEnvironment.apply(Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, name),
-                new TestEnvironmentDefinition.Weather(TestEnvironmentDefinition.Weather.Type.CLEAR));
+                new TestEnvironmentDefinition.Weather(weather));
         registerStructureTest(environment, name, yard, ticks, h -> {
             // The registered dimension clock is available when the server starts the case.
             var level = h.getLevel();

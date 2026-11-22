@@ -45,7 +45,7 @@ final class BubblePlayTests {
         var player = blower(h, 5.5, 3.5);
         var toy = player.getMainHandItem().copy();
         List<PlayBubbleEntity> first;
-        try (var sounds = GameTestSounds.observe(player, SoundEvents.BUBBLE_COLUMN_BUBBLE_POP, player.position(), 4)) {
+        try (var sounds = GameTestEffects.sounds(player, SoundEvents.BUBBLE_COLUMN_BUBBLE_POP, player.position(), 4)) {
             blow(player);
             first = bubbles(player);
             h.assertTrue(first.size() == 3, "A first use created " + first.size() + " bubbles");

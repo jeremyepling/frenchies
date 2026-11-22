@@ -1,7 +1,7 @@
 package net.j40climb.frenchies.playtest;
 
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
-import net.j40climb.frenchies.common.entity.frenchie.FrenchieRenderer;
+import net.j40climb.frenchies.common.entity.frenchie.client.FrenchieRenderer;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.InBedChatScreen;

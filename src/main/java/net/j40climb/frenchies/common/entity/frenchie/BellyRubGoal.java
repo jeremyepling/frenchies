@@ -1,5 +1,7 @@
 package net.j40climb.frenchies.common.entity.frenchie;
 
+import static net.j40climb.frenchies.common.entity.frenchie.PlayStages.BellyRub.*;
+
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.goal.Goal;
 
@@ -7,7 +9,6 @@ import java.util.EnumSet;
 
 /** A deliberately invited, stationary belly-rub session. */
 final class BellyRubGoal extends Goal {
-    static final int NONE = 0, ROLL_OVER = 1, WAITING = 2, RUBBING = 3, ROLL_UP = 4;
     private final FrenchieEntity dog;
     private int invitationTicks;
     private long nextInvitation;
@@ -66,7 +67,7 @@ final class BellyRubGoal extends Goal {
         return dog.isTame() && dog.isAlive() && dog.onGround() && !dog.isOrderedToSit()
                 && !dog.isFrenchieSleeping() && !dog.isPassenger() && !dog.isLeashed()
                 && !dog.hasCompanionJob() && !dog.hasToyJob() && !dog.personalityInterrupted()
-                && dog.trickStage() == TrickGoal.NONE
+                && dog.trickStage() == PlayStages.Trick.NONE
                 && !dog.isInWater() && !dog.isOnFire() && !dog.isInLava()
                 && dog.getTarget() == null && dog.hurtTime == 0 && !dog.isInLove()
                 && dog.getNavigation().isDone() && dog.getDeltaMovement().horizontalDistanceSqr() < 0.0064

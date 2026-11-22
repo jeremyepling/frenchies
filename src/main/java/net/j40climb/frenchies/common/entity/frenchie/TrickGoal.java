@@ -1,5 +1,7 @@
 package net.j40climb.frenchies.common.entity.frenchie;
 
+import static net.j40climb.frenchies.common.entity.frenchie.PlayStages.Trick.*;
+
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.phys.Vec3;
 
@@ -7,7 +9,6 @@ import java.util.EnumSet;
 
 /** Owner-requested cartoon flop. Only the small upright lap moves the entity. */
 final class TrickGoal extends Goal {
-    static final int NONE = 0, CROUCH = 1, SPRING = 2, FLOP = 3, WIGGLE = 4, ROLL_UP = 5, LAP = 6;
     private final FrenchieEntity dog;
     private long requestUntil = -1;
     private long nextTrick;
@@ -36,7 +37,7 @@ final class TrickGoal extends Goal {
         return dog.isTame() && dog.isAlive() && dog.onGround() && !dog.isOrderedToSit()
                 && !dog.isFrenchieSleeping() && !dog.isPassenger() && !dog.isLeashed()
                 && !dog.hasCompanionJob() && !dog.hasToyJob() && !dog.personalityInterrupted()
-                && dog.bellyStage() == BellyRubGoal.NONE
+                && dog.bellyStage() == PlayStages.BellyRub.NONE
                 && !dog.isInWater() && !dog.isOnFire() && !dog.isInLava()
                 && dog.getTarget() == null && dog.hurtTime == 0 && !dog.isInLove();
     }

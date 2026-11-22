@@ -4,6 +4,7 @@ import net.j40climb.frenchies.setup.NeoForgeGameplayEvents;
 import com.mojang.logging.LogUtils;
 import net.j40climb.frenchies.Frenchies;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
+import net.j40climb.frenchies.common.entity.frenchie.weather.WeatherPlayGoal;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -318,10 +319,9 @@ public final class PlayfulInteractionServer {
         if (!condition) throw new AssertionError(message);
     }
 
-    private static Object weatherGoal(FrenchieEntity dog) throws ClassNotFoundException {
-        var type = Class.forName("net.j40climb.frenchies.common.entity.frenchie.WeatherPlayGoal");
+    private static WeatherPlayGoal weatherGoal(FrenchieEntity dog) {
         for (var entry : dog.goalSelector.getAvailableGoals()) {
-            if (type.isInstance(entry.getGoal())) return entry.getGoal();
+            if (entry.getGoal() instanceof WeatherPlayGoal weather) return weather;
         }
         throw new AssertionError("Frenchie has no registered weather goal");
     }
