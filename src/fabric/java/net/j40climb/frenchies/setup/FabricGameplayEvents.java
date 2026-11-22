@@ -1,12 +1,14 @@
 package net.j40climb.frenchies.setup;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.j40climb.frenchies.Frenchies;
 import net.j40climb.frenchies.common.entity.frenchie.CompanionRoster;
 import net.j40climb.frenchies.common.entity.frenchie.CourierTrips;
 import net.j40climb.frenchies.common.entity.frenchie.DiggingAssistantEvents;
@@ -14,6 +16,7 @@ import net.j40climb.frenchies.common.entity.frenchie.FrenchieCommands;
 import net.j40climb.frenchies.common.entity.frenchie.LegacyCompanionIndex;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackEvents;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackWarning;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -22,7 +25,10 @@ public final class FabricGameplayEvents {
     public static void register() {
         ServerLifecycleEvents.SERVER_STARTED.register(LegacyCompanionIndex::start);
         ServerEntityEvents.ENTITY_UNLOAD.register(CompanionRoster::leave);
-        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
+        // The roster must see the copied front pack before deciding which dogs to recall.
+        var afterAttachments = Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "after_attachment_copy");
+        ServerPlayerEvents.AFTER_RESPAWN.addPhaseOrdering(Event.DEFAULT_PHASE, afterAttachments);
+        ServerPlayerEvents.AFTER_RESPAWN.register(afterAttachments, (oldPlayer, newPlayer, alive) -> {
             if (!alive) CompanionRoster.respawn(newPlayer);
         });
         ServerTickEvents.END_SERVER_TICK.register(server -> {
