@@ -1,6 +1,8 @@
 package net.j40climb.frenchies.setup;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.j40climb.frenchies.common.entity.frenchie.CompanionEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -23,6 +25,9 @@ import net.minecraft.world.InteractionResult;
 
 public final class FabricGameplayEvents {
     public static void register() {
+        ServerLivingEntityEvents.AFTER_DAMAGE.register((victim, source, base, damage, blocked) -> {
+            if (!blocked) CompanionEvents.afterDamage(victim, source, damage);
+        });
         ServerLifecycleEvents.SERVER_STARTED.register(LegacyCompanionIndex::start);
         ServerEntityEvents.ENTITY_UNLOAD.register(CompanionRoster::leave);
         // The roster must see the copied front pack before deciding which dogs to recall.

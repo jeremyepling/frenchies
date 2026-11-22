@@ -1,6 +1,7 @@
 package net.j40climb.frenchies.setup;
 
 import net.j40climb.frenchies.Frenchies;
+import net.j40climb.frenchies.common.entity.frenchie.CompanionEvents;
 import net.j40climb.frenchies.common.entity.frenchie.CompanionRoster;
 import net.j40climb.frenchies.common.entity.frenchie.CourierTrips;
 import net.j40climb.frenchies.common.entity.frenchie.DiggingAssistantEvents;
@@ -16,6 +17,7 @@ import net.minecraft.world.InteractionResult;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -31,6 +33,11 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 @EventBusSubscriber(modid = Frenchies.MOD_ID)
 public final class NeoForgeGameplayEvents {
+    @SubscribeEvent
+    public static void afterDamage(LivingDamageEvent.Post event) {
+        CompanionEvents.afterDamage(event.getEntity(), event.getSource(), event.getNewDamage());
+    }
+
     @SubscribeEvent
     public static void start(ServerStartedEvent event) {
         LegacyCompanionIndex.start(event.getServer());

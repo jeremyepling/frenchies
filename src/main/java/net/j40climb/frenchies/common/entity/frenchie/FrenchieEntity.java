@@ -76,6 +76,9 @@ public class FrenchieEntity extends TamableAnimal {
     private static final EntityDataAccessor<Long> BELLY_STAGE_START =
             SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.LONG);
     private EscapeDangerGoal escapeDanger;
+    OwnerConcernGoal concern;
+    LavaEdgeGoal lavaEdge;
+    private QuietCompanyGoal quietCompany;
     private FrenchiePlay play;
     private long nextDangerReaction;
     private long respondingUntil;
@@ -254,10 +257,14 @@ public class FrenchieEntity extends TamableAnimal {
         this.escapeDanger = new EscapeDangerGoal(this);
         this.goalSelector.addGoal(0, escapeDanger);
         this.goalSelector.addGoal(0, new FloatGoal(this));
+        lavaEdge = new LavaEdgeGoal(this);
+        this.goalSelector.addGoal(0, lavaEdge);
         this.goalSelector.addGoal(1, new WhistleApproachGoal(this));
         this.goalSelector.addGoal(1, new BedtimeBuddyGoal(this));
         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
+        concern = new OwnerConcernGoal(this);
+        this.goalSelector.addGoal(2, concern);
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.25, Ingredient.of(Items.GLOW_BERRIES), false) {
             @Override
             public boolean canUse() {
@@ -276,6 +283,8 @@ public class FrenchieEntity extends TamableAnimal {
         this.goalSelector.addGoal(6, play.weather);
         this.goalSelector.addGoal(6, play.bubbles);
         this.goalSelector.addGoal(7, new SlimeTeaseGoal(this));
+        quietCompany = new QuietCompanyGoal(this);
+        this.goalSelector.addGoal(7, quietCompany);
         this.goalSelector.addGoal(8, new RandomStrollGoal(this, 1.0) {
             @Override public boolean canUse() {
                 return !play.bellyRub.invitationPending() && super.canUse();
@@ -863,6 +872,7 @@ public class FrenchieEntity extends TamableAnimal {
         if (!this.level().isClientSide()) {
             play.weather.observeWater();
             play.bellyRub.observeInvitation();
+            quietCompany.observeOwner();
             CaptainControls.followOwner(this);
             if (getVehicle() instanceof AbstractBoat boat) {
                 if (tripOrigin == null) tripOrigin = boat.position();
@@ -966,7 +976,8 @@ public class FrenchieEntity extends TamableAnimal {
     /* Sleeping */
 
     private void updateSleepState() {
-        if (respondingToWhistle() || isEscapingDanger() || dangerReaction() != DangerReaction.NONE) {
+        if (respondingToWhistle() || isEscapingDanger() || lavaEdge.active() || concern.pending()
+                || dangerReaction() != DangerReaction.NONE) {
             entityData.set(BEDTIME, (byte) 0);
             setFrenchieSleeping(false);
             return;

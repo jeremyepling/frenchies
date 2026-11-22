@@ -30,7 +30,7 @@ final class FrenchiePlay {
 
     boolean interruptedByOtherActivity() {
         return dog.respondingToWhistle() || dog.dangerReaction() != DangerReaction.NONE
-                || dog.isEscapingDanger() || dog.hasBedtimePlan()
+                || dog.isEscapingDanger() || dog.lavaEdge.active() || dog.concern.active() || dog.hasBedtimePlan()
                 || dog.level().getGameTime() - dog.warningStart() < FrenchieAwareness.WARNING_TICKS;
     }
 
@@ -55,7 +55,7 @@ final class FrenchiePlay {
 
     private boolean stopsOnSleep(Goal goal) {
         return goal == bubbles || goal == digging || goal == weather || goal == trick || goal == bellyRub
-                || goal instanceof SlimeTeaseGoal;
+                || goal instanceof SlimeTeaseGoal || goal instanceof QuietCompanyGoal;
     }
 
     void fallAsleep(GoalSelector selector) {
@@ -64,7 +64,7 @@ final class FrenchiePlay {
     }
 
     void interrupt(GoalSelector selector) {
-        stopRunning(selector, goal -> goal == toy || goal == celebration || stopsOnSleep(goal));
+        stopRunning(selector, goal -> goal == toy || goal == celebration || goal == dog.concern || stopsOnSleep(goal));
 
         // A thrown toy, invitation or sleeping spectator can be pending outside the selector.
         toy.stop();

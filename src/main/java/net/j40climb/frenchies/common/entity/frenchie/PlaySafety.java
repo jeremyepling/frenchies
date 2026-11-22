@@ -22,13 +22,18 @@ final class PlaySafety {
     private PlaySafety() {}
 
     static boolean dangerNearby(FrenchieEntity dog) {
-        return !dog.level().getEntitiesOfClass(LivingEntity.class, dog.getBoundingBox().inflate(8),
-                other -> other != dog && other.isAlive() && !other.isSpectator() && dog.distanceToSqr(other) <= 64
-                        && isThreatOrFighting(other) && dog.hasLineOfSight(other)).isEmpty();
+        return dangerNearby(dog, null);
     }
 
-    private static boolean isThreatOrFighting(LivingEntity other) {
-        if (other.hurtTime > 0 || other.getLastHurtMob() != null
+    static boolean dangerNearby(FrenchieEntity dog, LivingEntity recentlyFallenOwner) {
+        return !dog.level().getEntitiesOfClass(LivingEntity.class, dog.getBoundingBox().inflate(8),
+                other -> other != dog && other.isAlive() && !other.isSpectator() && dog.distanceToSqr(other) <= 64
+                        && isThreatOrFighting(other, recentlyFallenOwner) && dog.hasLineOfSight(other)).isEmpty();
+    }
+
+    private static boolean isThreatOrFighting(LivingEntity other, LivingEntity recentlyFallenOwner) {
+        if (other.hurtTime > 0 && other != recentlyFallenOwner || other.getLastHurtByMob() != null
+                && other.tickCount - other.getLastHurtByMobTimestamp() < 40 || other.getLastHurtMob() != null
                 && other.tickCount - other.getLastHurtMobTimestamp() < 40) return true;
         // A tiny vanilla slime can target a player normally throughout the game.
         if (other.getType() == EntityType.SLIME && ((Slime) other).getSize() == 1) return false;
@@ -37,6 +42,10 @@ final class PlaySafety {
 
     /** Check a short run or hop on level ground, with room for the whole dog along the diagonal. */
     static boolean clearGroundSegment(FrenchieEntity dog, Vec3 from, Vec3 to) {
+        return clearGroundSegment(dog, from, to, false);
+    }
+
+    static boolean clearGroundSegment(FrenchieEntity dog, Vec3 from, Vec3 to, boolean retreating) {
         if (Math.abs(from.y - to.y) > 0.125) return false;
         var level = dog.level();
         double radius = dog.getBbWidth() * 0.5 + 0.025;
@@ -58,8 +67,10 @@ final class PlaySafety {
             for (BlockPos feet : BlockPos.betweenClosed(BlockPos.containing(sweep.minX, sweep.minY, sweep.minZ),
                     BlockPos.containing(sweep.maxX, sweep.minY, sweep.maxZ))) {
                 BlockPos floor = feet.below();
+                var type = WalkNodeEvaluator.getPathTypeStatic(path, feet.mutable());
                 if (!level.getBlockState(floor).isFaceSturdy(level, floor, Direction.UP)
-                        || WalkNodeEvaluator.getPathTypeStatic(path, feet.mutable()) != PathType.WALKABLE) return false;
+                        || dog.getType().isBlockDangerous(level.getBlockState(floor))
+                        || type != PathType.WALKABLE && !(retreating && type == PathType.DANGER_FIRE)) return false;
             }
             start = end;
         }

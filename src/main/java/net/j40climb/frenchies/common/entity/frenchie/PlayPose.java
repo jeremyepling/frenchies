@@ -4,7 +4,8 @@ package net.j40climb.frenchies.common.entity.frenchie;
 public enum PlayPose {
     NONE,
     BUBBLE_WATCH, BUBBLE_APPROACH, BUBBLE_BOW, BUBBLE_POUNCE, BUBBLE_NOSE,
-    SLIME_NOTICE, SLIME_APPROACH, SLIME_BOW, SLIME_HOP, SLIME_CIRCLE;
+    SLIME_NOTICE, SLIME_APPROACH, SLIME_BOW, SLIME_HOP, SLIME_CIRCLE,
+    AMBIENT_SIT, AMBIENT_REST;
 
     private static final PlayPose[] POSES = values();
 
