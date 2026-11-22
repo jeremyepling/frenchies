@@ -26,6 +26,7 @@ public class FrenchieRenderState extends LivingEntityRenderState {
     public DangerReaction dangerReaction = DangerReaction.NONE;
     public float dangerAge;
     public int weatherStage;
+    public int snowLayer;
     public float weatherAge;
     public PoseStack.Pose noseBubbleFacing;
     public boolean isSleeping;
