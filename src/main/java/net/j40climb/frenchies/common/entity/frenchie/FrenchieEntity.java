@@ -67,6 +67,8 @@ public class FrenchieEntity extends TamableAnimal {
             SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Long> WEATHER_START =
             SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.LONG);
+    private static final EntityDataAccessor<Byte> SNOW_LAYER =
+            SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Integer> TRICK_STAGE =
             SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Long> TRICK_STAGE_START =
@@ -175,6 +177,10 @@ public class FrenchieEntity extends TamableAnimal {
     boolean celebrationRequestedOrRunning() { return play.celebration.requestedOrRunning(); }
 
     public int weatherStage() { return entityData.get(WEATHER_STAGE); }
+
+    public int snowLayer() { return entityData.get(SNOW_LAYER); }
+
+    void setSnowLayer(int layer) { entityData.set(SNOW_LAYER, (byte) layer); }
 
     void setWeatherStage(int stage) {
         entityData.set(WEATHER_STAGE, (byte) stage);
@@ -359,6 +365,7 @@ public class FrenchieEntity extends TamableAnimal {
         builder.define(DANGER_START, 0L);
         builder.define(WEATHER_STAGE, (byte) 0);
         builder.define(WEATHER_START, 0L);
+        builder.define(SNOW_LAYER, (byte) 0);
         builder.define(PLAY_POSE, (byte) PlayPose.NONE.ordinal());
         builder.define(DIG_STAGE, DiggingAssistantGoal.NONE);
         builder.define(DIG_STAGE_START, 0L);
@@ -871,7 +878,7 @@ public class FrenchieEntity extends TamableAnimal {
             handleSleepingAnimations();
         }
         if (!this.level().isClientSide()) {
-            play.weather.observeWater();
+            play.weather.observeWeather();
             play.bellyRub.observeInvitation();
             quietCompany.observeOwner();
             CaptainControls.followOwner(this);
