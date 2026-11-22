@@ -1,7 +1,8 @@
 package net.j40climb.frenchies.playtest;
 
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
-import net.j40climb.frenchies.common.entity.frenchie.FrenchieRenderer;
+import net.j40climb.frenchies.common.entity.frenchie.PlayStages;
+import net.j40climb.frenchies.common.entity.frenchie.client.FrenchieRenderer;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.arguments.EntityAnchorArgument.Anchor;
@@ -67,12 +68,12 @@ final class WeatherCoatPlaytest {
                 ((FrenchieEntity) player.level().getEntity(id[0])).standUp());
         t.awaitClient("Frame the full-body shake while it is moving", mc -> {
             var dog = frame(mc, id[0]);
-            return dog != null && dog.weatherStage() == 1 && dog.weatherAge(0) >= 2;
+            return dog != null && dog.weatherStage() == PlayStages.Weather.SHAKE && dog.weatherAge(0) >= 2;
         });
         t.screenshot("owner-three-quarter-coat-shaking");
         t.awaitClient("Observe the cleared coat during the shake", mc -> {
             var dog = frame(mc, id[0]);
-            return dog != null && dog.weatherStage() == 1 && dog.snowLayer() == 0;
+            return dog != null && dog.weatherStage() == PlayStages.Weather.SHAKE && dog.snowLayer() == 0;
         });
         t.screenshot("owner-three-quarter-coat-after-burst");
         t.awaitClient("See fresh snow accumulate after the dog finishes shaking", mc -> {

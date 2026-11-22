@@ -12,6 +12,7 @@ import net.minecraft.world.entity.EntityType;
 /*import net.minecraft.world.entity.EntityTypes;
 *///?}
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.animal.wolf.WolfSoundVariants;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -143,6 +144,9 @@ final class CompanionReactionTests {
     static void stick(GameTestHelper h) {
         var owner = player(h, 6.5, 6.5);
         var dog = CompanionWhistleTests.dog(h, owner, 4, 5);
+        for (int slot = 0; slot < Inventory.INVENTORY_SIZE; ++slot) {
+            owner.getInventory().setItem(slot, new ItemStack(Items.STONE, 64));
+        }
         dog.standUp();
         var log = new BlockPos(5, 1, 5);
         h.setBlock(log, Blocks.OAK_LOG);
@@ -172,13 +176,22 @@ final class CompanionReactionTests {
                     h.assertTrue(drop.isAlive() && ItemStack.matches(drop.getItem(), three.copyWithCount(2))
                                     && owner.getInventory().countItem(Items.STICK) == 0,
                             "Pickup did not leave exactly two named sticks on the ground");
+                })
+                .thenWaitUntil(() -> h.assertTrue(dog.distanceToSqr(owner) <= 3.2,
+                        "Fetching dog never brought the stick to its owner"))
+                .thenExecuteAfter(8, () -> {
+                    h.assertTrue(owner.getInventory().countItem(Items.STICK) == 0 && ItemStack.matches(dog.getOffhandItem(), one),
+                            "An automatic handoff to a full inventory lost or duplicated the stick");
                     restored[0] = CompanionTravelTests.reload(h, dog);
                     h.assertTrue(ItemStack.matches(restored[0].getOffhandItem(), one), "Reload lost the genuine stick");
-                    owner.snapTo(restored[0].position().add(0.8, 0, 0), 0, 0);
-                    GameTestPlayers.interact(owner, restored[0], InteractionHand.MAIN_HAND);
-                    h.assertTrue(ItemStack.matches(owner.getMainHandItem(), one) && restored[0].getOffhandItem().isEmpty()
+                    owner.getInventory().setItem(7, ItemStack.EMPTY);
+                })
+                .thenWaitUntil(() -> h.assertTrue(ItemStack.matches(owner.getInventory().getItem(7), one),
+                        "The dog did not automatically deliver its named stick after a slot opened"))
+                .thenExecute(() -> {
+                    h.assertTrue(owner.getInventory().countItem(Items.STICK) == 1 && restored[0].getOffhandItem().isEmpty()
                                     && ItemStack.matches(drop.getItem(), three.copyWithCount(2)),
-                            "Recovery changed components, lost a stick or created an extra one");
+                            "Automatic delivery changed components, lost a stick or created an extra one");
                     disconnect(owner);
                 }).thenSucceed();
     }

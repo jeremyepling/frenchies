@@ -1,5 +1,7 @@
 package net.j40climb.frenchies.test;
 
+import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
+import net.j40climb.frenchies.common.entity.frenchie.PlayStages;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -21,7 +23,7 @@ final class CompanionWeatherTests {
         var heated = CompanionWhistleTests.dog(h, owner, 7, 4);
         var sheltered = CompanionWhistleTests.dog(h, owner, 5, 7);
         h.setBlock(new BlockPos(5, 3, 7), Blocks.STONE);
-        var restored = new net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity[1];
+        var restored = new FrenchieEntity[1];
         h.startSequence()
                 .thenWaitUntil(() -> h.assertTrue(exposed.snowLayer() > 0 && exposed.snowLayer() < 5,
                         "Exposed snowy biome never produced an intermediate coat layer"))
@@ -57,12 +59,12 @@ final class CompanionWeatherTests {
         var dog = h.spawn(FrenchieRegistry.FRENCHIE.get(), 5, 1, 5);
         var splashes = GameTestEffects.particles(player, ParticleTypes.SPLASH, dog.position(), 100);
         h.startSequence()
-                .thenExecuteFor(880, () -> h.assertTrue(dog.weatherStage() != 1 && splashes.count() == 0,
+                .thenExecuteFor(880, () -> h.assertTrue(dog.weatherStage() != PlayStages.Weather.SHAKE && splashes.count() == 0,
                         "Rain shake triggered before its minimum exposure cooldown"))
-                .thenWaitUntil(() -> h.assertTrue(dog.weatherStage() == 1, "Rain-soaked companion never shook"))
+                .thenWaitUntil(() -> h.assertTrue(dog.weatherStage() == PlayStages.Weather.SHAKE, "Rain-soaked companion never shook"))
                 .thenWaitUntil(() -> h.assertTrue(splashes.count() > 0, "Rain shake sent no droplets to the observer"))
                 .thenWaitUntil(() -> h.assertTrue(dog.weatherStage() == 0, "Rain shake never finished"))
-                .thenExecuteFor(300, () -> h.assertTrue(dog.weatherStage() != 1 && splashes.count() == 1,
+                .thenExecuteFor(300, () -> h.assertTrue(dog.weatherStage() != PlayStages.Weather.SHAKE && splashes.count() == 1,
                         "Rain shake immediately repeated or kept emitting droplets"))
                 .thenExecute(() -> {
                     splashes.close();
