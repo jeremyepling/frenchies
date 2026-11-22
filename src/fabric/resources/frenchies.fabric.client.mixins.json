@@ -1,0 +1,7 @@
+{
+  "required": true,
+  "package": "net.j40climb.frenchies.mixin.client",
+  "compatibilityLevel": "JAVA_25",
+  "client": ["AvatarRendererMixin", "EmptyHandUseMixin"],
+  "injectors": { "defaultRequire": 1 }
+}

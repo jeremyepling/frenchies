@@ -14,6 +14,7 @@ import net.minecraft.resources.Identifier;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Locale;
 import java.util.Optional;
 
 /** A small airmail card that leaves the dog and its surroundings visible. */
@@ -40,7 +41,8 @@ public final class DeliveryScreen extends Screen {
         super(label(data.preview().isPresent() ? "confirm_title" : "title"));
         this.data = data;
         address = data.preview().map(preview -> {
-            var clock = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(minecraft.getLanguageManager().getJavaLocale());
+            var locale = Locale.forLanguageTag(minecraft.getLanguageManager().getSelected().replace('_', '-'));
+            var clock = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale);
             String arrival = clock.format(ZonedDateTime.now().plusSeconds(preview.seconds()));
             var name = preview.destination().label().copy().withStyle(ChatFormatting.BOLD);
             var dimension = preview.dimension();
@@ -132,7 +134,7 @@ public final class DeliveryScreen extends Screen {
                 g.fill(x, y, x + w, y + h, color);
                 g.outline(x, y, w, h, highlight || primary ? INK : RULE);
                 String full = message.getString();
-                String text = font.width(full) <= w - 6 ? full : font.plainSubstrByWidth(full, w - 6 - font.width("…")) + "…";
+                String text = font.width(full) <= w - 6 ? full : font.plainSubstrByWidth(full, w - 6 - font.width("â€¦")) + "â€¦";
                 g.text(font, text, x + (w - font.width(text)) / 2, y + (h - font.lineHeight + 1) / 2,
                         !active ? 0xFF716958 : primary || highlight ? 0xFFFFF7DE : INK, false);
             }

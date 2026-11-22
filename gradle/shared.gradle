@@ -1,0 +1,63 @@
+version = mod_version
+group = mod_group_id
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    exclusiveContent {
+        forRepository { maven { url = 'https://api.modrinth.com/maven' } }
+        filter { includeGroup 'maven.modrinth' }
+    }
+}
+
+def loaderSources = sourceSets.create(loader)
+stonecutter.constants.put('fabric', loader == 'fabric')
+stonecutter.constants.put('neoforge', loader == 'neoforge')
+sourceSets.main.java.source(loaderSources.java)
+sourceSets.main.resources.source(loaderSources.resources)
+sourceSets.main.java.srcDir 'target/java'
+sourceSets.main.resources.srcDir 'target/resources'
+sourceSets.main.resources.srcDir rootProject.file("versions/${minecraft_version}/resources")
+
+sourceSets.create('sharedGameTest')
+sourceSets.test {
+    compileClasspath += sourceSets.main.compileClasspath
+    runtimeClasspath += sourceSets.main.runtimeClasspath
+}
+dependencies {
+    // Trinkets Updated ships a universal Fabric and NeoForge jar.
+    compileOnly "maven.modrinth:XaT8sLP6:${minecraft_version == '26.1' ? 'CFk62USu' : 'lVR1OKgV'}"
+    testImplementation 'org.junit.jupiter:junit-jupiter:6.1.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+tasks.named('test') { useJUnitPlatform() }
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+
+stonecutter {
+    replacements {
+        string {
+            direction = project.minecraft_version == '26.3'
+            replace('BlockPos.withinManhattan(', 'BlockPos.withinBoxByManhattanDistance(')
+            replace('mc.screen', 'mc.gui.screen()')
+            replace('mc.setScreen(', 'mc.gui.setScreen(')
+            replace('minecraft.setScreen(', 'minecraft.gui.setScreen(')
+            replace('Minecraft.getInstance().setScreen(', 'Minecraft.getInstance().gui.setScreen(')
+            replace('mc.getToastManager()', 'mc.gui.toastManager()')
+            replace('monster.Slime;', 'monster.cubemob.Slime;')
+            replace('mc.gameRenderer.getMainCamera()', 'mc.gameRenderer.mainCamera()')
+            replace('Minecraft.getInstance().gameRenderer.getGameRenderState()', 'Minecraft.getInstance().gameRenderer.gameRenderState()')
+            replace('!Minecraft.renderNames()', 'Minecraft.getInstance().gui.hud.isHidden()')
+            replace('Items.RED_DYE', 'Items.DYE.red()')
+            replace('Items.BLUE_DYE', 'Items.DYE.blue()')
+            replace('Items.WHITE_DYE', 'Items.DYE.white()')
+            replace('Blocks.RED_BED', 'Blocks.BED.red()')
+            replace('Blocks.BLUE_BED', 'Blocks.BED.blue()')
+        }
+        regex {
+            direction = project.minecraft_version == '26.3'
+            replace(/(?<![\w.])EntityType\.(?=[A-Z_]+\b)/, 'EntityTypes.',
+                    /(?<![\w.])EntityTypes\.(?=[A-Z_]+\b)/, 'EntityType.')
+        }
+    }
+}

@@ -1,5 +1,6 @@
 package net.j40climb.frenchies.test;
 
+import net.j40climb.frenchies.setup.NeoForgeGameplayEvents;
 import net.minecraft.world.entity.player.Player;
 import io.netty.buffer.Unpooled;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
@@ -67,20 +68,20 @@ final class FrenchieGameTests {
         var pack = FrenchieRegistry.FRENCH_FRONTPACK_DATA;
         var item = new ItemStack(FrenchieRegistry.FRONT_PACK.get());
         var mainClick = clickDog(owner, InteractionHand.MAIN_HAND, dog);
-        FrontpackEvents.onEntityInteract(mainClick);
+        NeoForgeGameplayEvents.interact(mainClick);
         helper.assertTrue(!dog.isRemoved() && !owner.getData(pack).hasCarriedFrenchie(), "Empty-handed pickup without a worn pack succeeded");
         for (InteractionHand hand : InteractionHand.values()) {
             owner.setItemInHand(hand, item);
-            FrontpackEvents.onEntityInteract(clickDog(owner, hand, dog));
+            NeoForgeGameplayEvents.interact(clickDog(owner, hand, dog));
             helper.assertTrue(!dog.isRemoved() && !owner.getData(pack).hasCarriedFrenchie()
                             && owner.getItemInHand(hand) == item, "A pack held in " + hand + " counted as worn");
             owner.setItemInHand(hand, ItemStack.EMPTY);
         }
         owner.getInventory().setItem(9, item);
-        FrontpackEvents.onEntityInteract(mainClick);
+        NeoForgeGameplayEvents.interact(mainClick);
         helper.assertTrue(!dog.isRemoved() && !owner.getData(pack).hasCarriedFrenchie(), "A pack stowed in inventory counted as worn");
         owner.setItemSlot(EquipmentSlot.CHEST, owner.getInventory().removeItemNoUpdate(9));
-        FrontpackEvents.onEntityInteract(clickDog(owner, InteractionHand.MAIN_HAND, dog));
+        NeoForgeGameplayEvents.interact(clickDog(owner, InteractionHand.MAIN_HAND, dog));
         helper.assertTrue(dog.isRemoved(), "Pickup left the original dog in the level");
 
         var respawned = helper.makeMockPlayer(GameType.SURVIVAL);

@@ -14,7 +14,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.j40climb.frenchies.setup.FrenchieNetworking;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -45,7 +45,7 @@ public final class DeliveryDialog {
                 .forEach(p -> destinations.put(p.getStringUUID(), p.getName()));
         var choices = destinations.entrySet().stream()
                 .map(entry -> new DeliveryPopupPayload.Choice(entry.getKey(), entry.getValue())).toList();
-        PacketDistributor.sendToPlayer(owner, new DeliveryPopupPayload(dog.getUUID(), choices, Optional.empty()));
+        FrenchieNetworking.sendPopup(owner, new DeliveryPopupPayload(dog.getUUID(), choices, Optional.empty()));
     }
 
     boolean isOpen() {
@@ -130,7 +130,7 @@ public final class DeliveryDialog {
             selected = destination;
             var preview = new DeliveryPopupPayload.Preview(new DeliveryPopupPayload.Choice(destination, name),
                     targetLevel.dimension().identifier(), CourierTrips.arrivalSeconds(owner.level(), dog.position(), targetLevel, target));
-            PacketDistributor.sendToPlayer(owner, new DeliveryPopupPayload(dog.getUUID(), List.of(), Optional.of(preview)));
+            FrenchieNetworking.sendPopup(owner, new DeliveryPopupPayload(dog.getUUID(), List.of(), Optional.of(preview)));
         } else {
             if (!destination.equals(selected)) return false;
             dog.deliveryDialog = null;

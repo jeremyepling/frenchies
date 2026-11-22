@@ -1,7 +1,7 @@
 package net.j40climb.frenchies.test;
 
+import net.j40climb.frenchies.setup.NeoForgeGameplayEvents;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
-import net.j40climb.frenchies.common.entity.frenchie.SnowballPlayEvents;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -32,7 +32,7 @@ final class WeatherPlayTests {
                 .thenExecute(() -> {
                     var snowball = EntityType.SNOWBALL.create(h.getLevel(), EntitySpawnReason.COMMAND);
                     h.assertTrue(snowball != null, "Could not create snowball fixture");
-                    SnowballPlayEvents.onImpact(new ProjectileImpactEvent(snowball,
+                    NeoForgeGameplayEvents.impact(new ProjectileImpactEvent(snowball,
                             new BlockHitResult(landing, Direction.UP, BlockPos.containing(landing), false)));
                 })
                 .thenWaitUntil(() -> h.assertTrue(dog.weatherStage() == 6, "Snowball did not start a safe approach"))

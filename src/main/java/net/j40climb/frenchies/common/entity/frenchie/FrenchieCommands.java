@@ -1,24 +1,20 @@
 package net.j40climb.frenchies.common.entity.frenchie;
 
 import com.mojang.brigadier.CommandDispatcher;
-import net.j40climb.frenchies.Frenchies;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.core.GlobalPos;
 import net.minecraft.commands.arguments.UuidArgument;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.state.properties.BedPart;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 
-@EventBusSubscriber(modid = Frenchies.MOD_ID)
 public final class FrenchieCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("frenchie")
@@ -57,20 +53,15 @@ public final class FrenchieCommands {
                 .stream().min(Comparator.comparingDouble(owner::distanceToSqr)).orElse(null);
     }
 
-    @SubscribeEvent
-    public static void useBed(PlayerInteractEvent.RightClickBlock event) {
-        if (!(event.getEntity() instanceof ServerPlayer owner) || !owner.isShiftKeyDown()
-                || event.getHand() != InteractionHand.MAIN_HAND || !owner.getMainHandItem().isEmpty()) return;
-        var pos = event.getPos();
+    public static InteractionResult useBed(ServerPlayer owner, InteractionHand hand, BlockPos pos) {
+        if (!owner.isShiftKeyDown()
+                || hand != InteractionHand.MAIN_HAND || !owner.getMainHandItem().isEmpty()) return InteractionResult.PASS;
         var state = owner.level().getBlockState(pos);
-        if (!(state.getBlock() instanceof BedBlock)) return;
+        if (!(state.getBlock() instanceof BedBlock)) return InteractionResult.PASS;
         if (state.getValue(BedBlock.PART) == BedPart.FOOT) pos = pos.relative(state.getValue(BedBlock.FACING));
         var bed = GlobalPos.of(owner.level().dimension(), pos);
-        if (!bed.equals(DeliveryDialog.ownerBed(owner))) return;
+        if (!bed.equals(DeliveryDialog.ownerBed(owner))) return InteractionResult.PASS;
         var dog = nearbyDog(owner);
-        if (dog != null && dog.sendHome(owner, bed)) {
-            event.setCanceled(true);
-            event.setCancellationResult(InteractionResult.SUCCESS);
-        }
+        return dog != null && dog.sendHome(owner, bed) ? InteractionResult.SUCCESS : InteractionResult.PASS;
     }
 }

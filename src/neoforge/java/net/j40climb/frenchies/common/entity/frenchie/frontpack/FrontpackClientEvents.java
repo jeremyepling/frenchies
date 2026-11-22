@@ -2,25 +2,21 @@ package net.j40climb.frenchies.common.entity.frenchie.frontpack;
 
 import com.google.common.reflect.TypeToken;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Mth;
-import net.minecraft.util.context.ContextKey;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 import net.j40climb.frenchies.Frenchies;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.networking.PutDownFrenchiePayload;
-import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RenderPlayerEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -30,9 +26,6 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
  */
 @EventBusSubscriber(modid = Frenchies.MOD_ID, value = Dist.CLIENT)
 public class FrontpackClientEvents {
-    static final ContextKey<Float> ALERT_YAW = new ContextKey<>(Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "frontpack_alert_yaw"));
-    private static final Identifier CREEPER_SPRITE = Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "frenchie/creeper");
-
     @SubscribeEvent
     public static void registerItemTints(RegisterColorHandlersEvent.ItemTintSources event) {
         event.register(Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "front_pack"), FrontpackTint.CODEC);
@@ -45,21 +38,7 @@ public class FrontpackClientEvents {
 
     @SubscribeEvent
     public static void registerWarningHud(RegisterGuiLayersEvent event) {
-        event.registerAboveAll(Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "frontpack_warning"), (gui, delta) -> {
-            var mc = Minecraft.getInstance();
-            //? if <26.3 {
-            boolean hideGui = mc.options.hideGui;
-            //?} else {
-            /*boolean hideGui = mc.gui.hud.isHidden();
-            *///?}
-            if (mc.player == null || hideGui || !mc.options.getCameraType().isFirstPerson()) return;
-            var warning = mc.player.getExistingDataOrNull(FrenchieRegistry.FRENCHIE_WARNING);
-            long now = mc.player.level().getGameTime();
-            if (warning == null || !warning.visible(now)) return;
-            var pack = mc.player.getExistingDataOrNull(FrenchieRegistry.FRENCH_FRONTPACK_DATA);
-            if (pack == null || !pack.hasCarriedFrenchie()) return;
-            gui.blitSprite(RenderPipelines.GUI_TEXTURED, CREEPER_SPRITE, gui.guiWidth() / 2 - 8, gui.guiHeight() - 51, 16, 16);
-        });
+        event.registerAboveAll(FrontpackClient.WARNING_HUD, FrontpackClient::drawWarning);
     }
 
     /**
@@ -94,26 +73,19 @@ public class FrontpackClientEvents {
 
     @SubscribeEvent
     public static void registerRenderStateModifiers(RegisterRenderStateModifiersEvent event) {
-        event.registerEntityModifier(new TypeToken<AvatarRenderer<?>>() {}, (avatar, state) -> {
-            var data = avatar.getExistingDataOrNull(FrenchieRegistry.FRENCH_FRONTPACK_DATA);
-            var warning = avatar.getExistingDataOrNull(FrenchieRegistry.FRENCHIE_WARNING);
-            state.setRenderData(ALERT_YAW, warning != null && warning.visible(avatar.level().getGameTime())
-                    ? Mth.clamp(Mth.wrapDegrees(warning.bearing() - state.bodyRot), -60F, 60F) : null);
-            var pack = FrontpackEquipment.wornBy(avatar);
-            state.setRenderData(FrontpackLayer.WORN, !pack.isEmpty());
-            state.setRenderData(FrontpackLayer.CARRIED_COAT, data == null || pack.isEmpty() ? null : data.carriedCoat());
-            state.setRenderData(FrontpackLayer.FABRIC_TINT, pack.isEmpty() ? null : FrontpackTint.dyedFabric(pack));
-        });
+        event.registerEntityModifier(new TypeToken<AvatarRenderer<?>>() {}, FrontpackAppearance::extract);
     }
 
     @SubscribeEvent
     public static void onRightClickEmpty(PlayerInteractEvent.RightClickEmpty event) {
-        Player player = event.getEntity();
-        // Minecraft checks the empty main hand before it tries to equip the offhand pack.
-        if (player.getOffhandItem().is(FrontpackEquipment.PACKS) || player.getOffhandItem().is(FrenchieRegistry.FRENCHIE_WHISTLE.get())) return;
-        var data = player.getExistingDataOrNull(FrenchieRegistry.FRENCH_FRONTPACK_DATA);
-        if (player.isShiftKeyDown() && data != null && data.hasCarriedFrenchie()) {
+        if (FrontpackClient.shouldPutDown(event.getEntity())) {
             ClientPacketDistributor.sendToServer(PutDownFrenchiePayload.INSTANCE);
         }
+    }
+
+    @SubscribeEvent
+    public static void drawLabel(RenderPlayerEvent.Post<?> event) {
+        var camera = Minecraft.getInstance().gameRenderer.getGameRenderState().levelRenderState.cameraRenderState;
+        FrontpackAppearance.drawLabel(event.getRenderState(), event.getPoseStack(), event.getSubmitNodeCollector(), camera);
     }
 }

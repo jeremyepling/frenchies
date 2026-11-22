@@ -1,7 +1,5 @@
 package net.j40climb.frenchies.common.entity.frenchie.frontpack;
 
-import eu.pb4.trinkets.api.TrinketSlotAccess;
-import eu.pb4.trinkets.api.TrinketsApi;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
@@ -16,7 +14,16 @@ public final class FrontpackAccessorySlots {
             var pack = CuriosSlots.find(entity);
             if (!pack.isEmpty()) return pack;
         }
-        return ModList.get().isLoaded("trinkets_updated") ? TrinketSlots.find(entity) : ItemStack.EMPTY;
+        if (ModList.get().isLoaded("trinkets_updated")) {
+            var pack = TrinketSlots.find(entity);
+            if (!pack.isEmpty()) return pack;
+        }
+        //? if <26.3 {
+        if (entity instanceof net.minecraft.world.entity.Avatar avatar && ModList.get().isLoaded("baubles")) {
+            return BaublesFrontpack.findEquipped(avatar);
+        }
+        //?}
+        return ItemStack.EMPTY;
     }
 
     private static final class CuriosSlots {
@@ -26,16 +33,6 @@ public final class FrontpackAccessorySlots {
             // The predicate overload sees equips and removals immediately, including in the same tick.
             return slots.findFirstCurio(stack -> stack.is(FrontpackEquipment.PACKS))
                     .map(SlotResult::stack).orElse(ItemStack.EMPTY);
-        }
-    }
-
-    private static final class TrinketSlots {
-        private static ItemStack find(LivingEntity entity) {
-            var slots = TrinketsApi.getAttachment(entity);
-            if (slots == null) return ItemStack.EMPTY;
-            // Limit matches to slots that can apply effects, so cosmetic packs do not count as equipment.
-            return slots.findFirst(FrontpackEquipment.PACKS, true)
-                    .map(TrinketSlotAccess::get).orElse(ItemStack.EMPTY);
         }
     }
 }

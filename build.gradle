@@ -7,19 +7,13 @@ plugins {
     id 'idea'
 }
 
-version = mod_version
-group = mod_group_id
+ext.loader = 'neoforge'
+apply from: rootProject.file('gradle/shared.gradle')
 
 repositories {
-    mavenLocal()
-    mavenCentral()
     exclusiveContent {
         forRepository { maven { url = 'https://maven.theillusivec4.top' } }
         filter { includeGroup 'top.theillusivec4.curios' }
-    }
-    exclusiveContent {
-        forRepository { maven { url = 'https://api.modrinth.com/maven' } }
-        filter { includeGroup 'maven.modrinth' }
     }
 }
 
@@ -27,7 +21,7 @@ base {
     archivesName = "${mod_id}-${minecraft_version}"
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+sourceSets.main.java.source(sourceSets.sharedGameTest.java)
 
 def wt = rootProject.projectDir.name
 def devSave = providers.gradleProperty('devSave').orElse('dev').get()
@@ -46,44 +40,10 @@ if (deliveryTestId != null && (!(deliveryTestId ==~ /[0-9a-f]{32}/) || !(deliver
 if (playtestId != null && (!(playtestId ==~ /[0-9a-f]{32}/) || !(playtestScenario ==~ /[a-z]+/) || !(playtestPhase in ['1', '2']))) {
     throw new GradleException('Use scripts/test_dev_world.ps1 to prepare an isolated world playtest.')
 }
-sourceSets.main.java.srcDir 'target/java'
-sourceSets.main.resources.srcDir 'target/resources'
-
-stonecutter {
-    replacements {
-        string {
-            direction = project.minecraft_version == '26.3'
-            replace('BlockPos.withinManhattan(', 'BlockPos.withinBoxByManhattanDistance(')
-            replace('mc.screen', 'mc.gui.screen()')
-            replace('mc.setScreen(', 'mc.gui.setScreen(')
-            replace('minecraft.setScreen(', 'minecraft.gui.setScreen(')
-            replace('Minecraft.getInstance().setScreen(', 'Minecraft.getInstance().gui.setScreen(')
-            replace('mc.getToastManager()', 'mc.gui.toastManager()')
-            replace('monster.Slime;', 'monster.cubemob.Slime;')
-            replace('mc.gameRenderer.getMainCamera()', 'mc.gameRenderer.mainCamera()')
-            replace('Minecraft.getInstance().gameRenderer.getGameRenderState()', 'Minecraft.getInstance().gameRenderer.gameRenderState()')
-            replace('!Minecraft.renderNames()', 'Minecraft.getInstance().gui.hud.isHidden()')
-            replace('Items.RED_DYE', 'Items.DYE.red()')
-            replace('Items.BLUE_DYE', 'Items.DYE.blue()')
-            replace('Items.WHITE_DYE', 'Items.DYE.white()')
-            replace('Blocks.RED_BED', 'Blocks.BED.red()')
-            replace('Blocks.BLUE_BED', 'Blocks.BED.blue()')
-        }
-        regex {
-            direction = project.minecraft_version == '26.3'
-            replace(/(?<![\w.])EntityType\.(?=[A-Z_]+\b)/, 'EntityTypes.',
-                    /(?<![\w.])EntityTypes\.(?=[A-Z_]+\b)/, 'EntityType.')
-        }
-    }
-}
 
 sourceSets.create('playtest') {
     java.srcDir 'target/playtest'
     compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
-    runtimeClasspath += sourceSets.main.runtimeClasspath
-}
-sourceSets.test {
-    compileClasspath += sourceSets.main.compileClasspath
     runtimeClasspath += sourceSets.main.runtimeClasspath
 }
 
@@ -182,22 +142,13 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
 dependencies {
     if (minecraft_version == '26.1') {
         compileOnly 'top.theillusivec4.curios:curios-neoforge:15.0.0-beta.1+26.1:api'
-        compileOnly 'maven.modrinth:XaT8sLP6:CFk62USu' // Trinkets Updated 4.0.0-alpha.9+26.1
         compileOnly 'maven.modrinth:DHpbnc1G:t4UkCgZP' // Baubles 2, version 1.0
     } else {
         compileOnly 'top.theillusivec4.curios:curios-neoforge:17.0.1+26.3:api'
-        compileOnly 'maven.modrinth:XaT8sLP6:lVR1OKgV' // Trinkets Updated 4.2.1+26.3
     }
-    testImplementation 'org.junit.jupiter:junit-jupiter:6.1.3'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
@@ -232,8 +183,4 @@ publishing {
             url "file://${project.projectDir}/repo"
         }
     }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }

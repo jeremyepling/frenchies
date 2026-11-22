@@ -1,9 +1,9 @@
 package net.j40climb.frenchies.playtest;
 
+import net.j40climb.frenchies.setup.NeoForgeGameplayEvents;
 import com.mojang.logging.LogUtils;
 import net.j40climb.frenchies.Frenchies;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
-import net.j40climb.frenchies.common.entity.frenchie.SnowballPlayEvents;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -193,7 +193,7 @@ public final class PlayfulInteractionServer {
                     var ball = EntityType.SNOWBALL.create(level, EntitySpawnReason.COMMAND);
                     require(ball != null, "Could not create snowball interest");
                     Vec3 impact = new Vec3(1.5, 200.125, 0.5);
-                    SnowballPlayEvents.onImpact(new net.neoforged.neoforge.event.entity.ProjectileImpactEvent(
+                    NeoForgeGameplayEvents.impact(new net.neoforged.neoforge.event.entity.ProjectileImpactEvent(
                             ball, new BlockHitResult(impact, Direction.UP, BlockPos.containing(impact), false)));
                     advance(Step.SNOW, now);
                 }

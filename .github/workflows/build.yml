@@ -14,6 +14,10 @@ concurrency:
 
 jobs:
   build:
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [26.1-neoforge, 26.3-neoforge, 26.1-fabric, 26.3-fabric]
     runs-on: ubuntu-latest
     env:
       CI_GRADLE_JVMARGS: -Xms256m -Xmx4g -XX:MaxMetaspaceSize=1g
@@ -37,16 +41,16 @@ jobs:
 
       - name: Compile and run unit tests for a draft
         if: github.event.pull_request.draft == true
-        run: ./gradlew :26.1-neoforge:check :26.3-neoforge:check --no-daemon --max-workers=2 --stacktrace "-Dorg.gradle.jvmargs=$CI_GRADLE_JVMARGS"
+        run: ./gradlew :${{ matrix.target }}:check --no-daemon --max-workers=2 --stacktrace "-Dorg.gradle.jvmargs=$CI_GRADLE_JVMARGS"
 
-      - name: Build both versions and run GameTests
+      - name: Build the target and run GameTests
         if: github.event.pull_request.draft != true
-        run: ./gradlew :26.1-neoforge:build :26.1-neoforge:runGameTestServer :26.3-neoforge:build :26.3-neoforge:runGameTestServer --no-daemon --max-workers=2 --stacktrace "-Dorg.gradle.jvmargs=$CI_GRADLE_JVMARGS"
+        run: ./gradlew :${{ matrix.target }}:build :${{ matrix.target }}:runGameTestServer --no-daemon --max-workers=2 --stacktrace "-Dorg.gradle.jvmargs=$CI_GRADLE_JVMARGS"
 
       - name: Upload build artifacts
         if: github.event.pull_request.draft != true
         uses: actions/upload-artifact@v4
         with:
-          name: florafauna-frenchies
-          path: versions/*-neoforge/build/libs/*.jar
+          name: florafauna-frenchies-${{ matrix.target }}
+          path: versions/${{ matrix.target }}/build/libs/*.jar
           retention-days: 14

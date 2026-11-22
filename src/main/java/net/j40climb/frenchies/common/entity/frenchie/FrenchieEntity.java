@@ -39,7 +39,9 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
+//? if neoforge {
 import net.neoforged.neoforge.event.EventHooks;
+//?}
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -697,14 +699,15 @@ public class FrenchieEntity extends TamableAnimal {
                 if (!pPlayer.getAbilities().instabuild) {
                     itemstack.shrink(1);
                 }
-                if (!EventHooks.onAnimalTame(this, pPlayer)) {
-                    super.tame(pPlayer);
-                    this.navigation.recomputePath();
-                    this.setTarget(null);
-                    this.level().broadcastEntityEvent(this, (byte)7);
-                    toggleSitting();
-                    if (pPlayer instanceof ServerPlayer owner) CompanionRoster.tamed(owner, this);
-                }
+                //? if neoforge {
+                if (EventHooks.onAnimalTame(this, pPlayer)) return InteractionResult.SUCCESS;
+                //?}
+                super.tame(pPlayer);
+                this.navigation.recomputePath();
+                this.setTarget(null);
+                this.level().broadcastEntityEvent(this, (byte)7);
+                toggleSitting();
+                if (pPlayer instanceof ServerPlayer owner) CompanionRoster.tamed(owner, this);
                 return InteractionResult.SUCCESS;
             }
         }

@@ -1,6 +1,5 @@
 package net.j40climb.frenchies.common.entity.frenchie;
 
-import net.j40climb.frenchies.Frenchies;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -10,14 +9,11 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.wolf.WolfSoundVariants;
 import net.minecraft.world.entity.monster.Creeper;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 
-@EventBusSubscriber(modid = Frenchies.MOD_ID)
 public final class FrenchieAwareness {
     public static final int SECOND_BARK_TICK = 7;
     public static final int WARNING_TICKS = SECOND_BARK_TICK + 5;
@@ -58,11 +54,9 @@ public final class FrenchieAwareness {
         return age >= 0 && (age < 5 || (age >= SECOND_BARK_TICK && age < WARNING_TICKS));
     }
 
-    @SubscribeEvent
-    public static void onWake(PlayerWakeUpEvent event) {
-        var owner = event.getEntity();
+    public static void onWake(Player owner, boolean wakeImmediately, boolean updateLevel) {
         // The level calls stopSleepInBed(false, false) when it finishes the night's sleep.
-        if (!(owner.level() instanceof ServerLevel level) || event.wakeImmediately() || event.updateLevel()
+        if (!(owner.level() instanceof ServerLevel level) || wakeImmediately || updateLevel
                 || !owner.isSleepingLongEnough()) return;
         boolean hasBuddy = !level.getEntitiesOfClass(FrenchieEntity.class, owner.getBoundingBox().inflate(4),
                 dog -> dog.isAlive() && dog.isOwnedBy(owner) && dog.isBedtimeBuddy()

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": ["${mod_authors}"],
+  "license": "${mod_license}",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["net.j40climb.frenchies.FabricFrenchies"],
+    "client": ["net.j40climb.frenchies.setup.FabricFrenchieClient"]
+  },
+  "mixins": [
+    "frenchies.mixins.json",
+    "frenchies.fabric-gameplay.mixins.json",
+    { "config": "frenchies.fabric.client.mixins.json", "environment": "client" }
+  ],
+  "depends": {
+    "minecraft": "${minecraft_version}",
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric-api": ">=${fabric_api_version}",
+    "java": ">=25"
+  },
+  "breaks": { "florafauna": "<0.0.2" }
+}

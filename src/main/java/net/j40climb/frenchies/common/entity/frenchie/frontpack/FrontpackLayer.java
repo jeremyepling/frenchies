@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.context.ContextKey;
 
 /**
  * Renders the Frenchie frontpack on players who are carrying a Frenchie.
@@ -20,12 +19,6 @@ import net.minecraft.util.context.ContextKey;
  */
 public class FrontpackLayer extends RenderLayer<AvatarRenderState, PlayerModel> {
 
-    static final ContextKey<Boolean> WORN = new ContextKey<>(
-            Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "frontpack_worn"));
-    static final ContextKey<FrenchieVariant> CARRIED_COAT = new ContextKey<>(
-            Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "frontpack_coat"));
-    static final ContextKey<Integer> FABRIC_TINT = new ContextKey<>(
-            Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "frontpack_fabric_tint"));
     static final Identifier FABRIC = Identifier.withDefaultNamespace("textures/block/white_wool.png");
 
     private final FrontpackModel frontpackModel;
@@ -54,10 +47,10 @@ public class FrontpackLayer extends RenderLayer<AvatarRenderState, PlayerModel> 
     public void submit(PoseStack poseStack, SubmitNodeCollector nodeCollector,
                       int packedLight, AvatarRenderState renderState, float yRot, float xRot) {
 
-        FrenchieVariant coat = renderState.getRenderData(CARRIED_COAT);
-        if (!Boolean.TRUE.equals(renderState.getRenderData(WORN)) || renderState.isInvisible) return;
+        var pack = FrontpackRenderData.get(renderState);
+        if (pack == null || renderState.isInvisible) return;
 
-        Identifier texture = coat == FrenchieVariant.BRINDLE ? BRINDLE_TEXTURE : FAWN_TEXTURE;
+        Identifier texture = pack.coat() == FrenchieVariant.BRINDLE ? BRINDLE_TEXTURE : FAWN_TEXTURE;
 
         // Position the frontpack model on the player's front
         poseStack.pushPose();
@@ -80,7 +73,7 @@ public class FrontpackLayer extends RenderLayer<AvatarRenderState, PlayerModel> 
                 0 // No outline
         );
 
-        Integer tint = renderState.getRenderData(FABRIC_TINT);
+        Integer tint = pack.tint();
         if (tint != null) {
             renderColoredCutoutModel(dyedFabricModel, FABRIC, poseStack, nodeCollector, packedLight,
                     renderState, tint, renderState.outlineColor);

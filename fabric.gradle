@@ -1,0 +1,51 @@
+plugins {
+    id 'java-library'
+    id 'net.fabricmc.fabric-loom' version '1.16.3'
+}
+
+ext.loader = 'fabric'
+apply from: rootProject.file('gradle/shared.gradle')
+
+base.archivesName = "${mod_id}-${minecraft_version}-fabric"
+def fabricLoaderVersion = '0.19.5'
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${fabricLoaderVersion}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+}
+
+// The NeoForge suite uses its own event-based test registration.
+sourceSets.main.java.exclude('**/frenchies/test/**', '**/*GameTests.java')
+def gameTests = sourceSets.create('gametest') {
+    java.source(sourceSets.sharedGameTest.java)
+    compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+    runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+}
+tasks.named('check') { dependsOn tasks.named('gametestClasses') }
+
+loom {
+    mods {
+        florafauna_frenchies { sourceSet sourceSets.main }
+        florafauna_frenchies_gametest { sourceSet gameTests }
+    }
+    runs {
+        client { runDir 'run/client' }
+        server { runDir providers.gradleProperty('fabricServerDir').getOrElse('run/server') }
+        gameTestServer {
+            server()
+            source gameTests
+            runDir 'run/gameTestServer'
+            vmArg '-Dfabric-api.gametest'
+            vmArg "-Dfabric-api.gametest.report-file=${file('build/test-results/gametest.xml')}"
+        }
+    }
+}
+
+processResources {
+    def metadata = [mod_id: mod_id, mod_name: mod_name, mod_version: mod_version,
+                    mod_description: mod_description, mod_authors: mod_authors, mod_license: mod_license,
+                    minecraft_version: minecraft_version, fabric_loader_version: fabricLoaderVersion,
+                    fabric_api_version: fabric_api_version]
+    inputs.properties metadata
+    filesMatching('fabric.mod.json') { expand metadata }
+}

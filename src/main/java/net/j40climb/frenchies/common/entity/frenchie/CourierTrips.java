@@ -24,9 +24,6 @@ import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -37,7 +34,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 /** The world's only copy of each traveling dog, including the parcel inside its entity save. */
-@EventBusSubscriber(modid = Frenchies.MOD_ID)
 public final class CourierTrips extends SavedData {
     private record Trip(CompoundTag dog, UUID owner, Optional<UUID> player, Optional<GlobalPos> bed,
                         GlobalPos from, long due) {
@@ -70,7 +66,7 @@ public final class CourierTrips extends SavedData {
                     Trip.CODEC.listOf().fieldOf("trips").forGetter(data -> List.copyOf(data.trips)),
                     Codec.unboundedMap(UUIDUtil.STRING_CODEC, Stop.CODEC).optionalFieldOf("stops", Map.of())
                             .forGetter(data -> Map.copyOf(data.stops))
-            ).apply(i, CourierTrips::new)));
+            ).apply(i, CourierTrips::new)), null);
     private final List<Trip> trips;
     private final Map<UUID, Stop> stops;
 
@@ -132,9 +128,7 @@ public final class CourierTrips extends SavedData {
         dog.discard();
     }
 
-    @SubscribeEvent
-    public static void tick(ServerTickEvent.Post event) {
-        var server = event.getServer();
+    public static void tick(MinecraftServer server) {
         long now = server.overworld().getGameTime();
         if (now % 10 != 0) return;
         var data = server.getDataStorage().get(TYPE);

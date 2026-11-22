@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "id": "florafauna_frenchies_gametest",
+  "version": "1",
+  "name": "Frenchies GameTests",
+  "entrypoints": {
+    "fabric-gametest": ["net.j40climb.frenchies.test.FabricFrenchieTests"]
+  },
+  "depends": { "florafauna_frenchies": "*" }
+}

@@ -1,19 +1,16 @@
 package net.j40climb.frenchies.common.entity.frenchie;
 
 import com.mojang.logging.LogUtils;
-import net.j40climb.frenchies.Frenchies;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.storage.SimpleRegionStorage;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.LevelResource;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.server.ServerStartedEvent;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -26,7 +23,6 @@ import java.util.WeakHashMap;
 import java.util.regex.Pattern;
 
 /** Discover old pets once per dimension. Reads entity saves without spawning entities or loading terrain. */
-@EventBusSubscriber(modid = Frenchies.MOD_ID)
 public final class LegacyCompanionIndex {
     private static final Map<ServerLevel, SimpleRegionStorage> STORAGE = Collections.synchronizedMap(new WeakHashMap<>());
     private static final Pattern REGION = Pattern.compile("r\\.(-?\\d+)\\.(-?\\d+)\\.mca");
@@ -37,9 +33,7 @@ public final class LegacyCompanionIndex {
         STORAGE.put(level, storage);
     }
 
-    @SubscribeEvent
-    public static void start(ServerStartedEvent event) {
-        var server = event.getServer();
+    public static void start(MinecraftServer server) {
         var roster = CompanionRoster.get(server.overworld());
         for (var level : server.getAllLevels()) {
             var storage = STORAGE.remove(level);

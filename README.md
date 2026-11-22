@@ -2,7 +2,7 @@
 
 Take a French bulldog on your next expedition. It can ride on the bow while you row, carry a bundle to a friend in another dimension, and lead you back to the spot where you dropped your gear. Bring glow berries. Your courier has been known to linger after a delivery.
 
-**Standalone NeoForge mod for Minecraft 26.1 and 26.3.** Both versions build from this checkout. Choose a matching target when launching Minecraft or running a test.
+**Standalone Fabric and NeoForge mod for Minecraft 26.1 and 26.3.** Install the jar for your Minecraft version and loader on both the client and server. Fabric installations also require Fabric Loader 0.19.5 or later and Fabric API for your Minecraft version.
 
 ![A Frenchie wearing an orange life jacket sits at the bow in front of its owner.](docs/images/frenchie-boat-captain.png)
 
@@ -44,12 +44,12 @@ Craft a Frenchie Front Pack with string in the left and right squares of one row
 
 **Give it wings.** Combine a front pack and an elytra anywhere in the crafting grid. Wear the winged pack on your chest to glide with your dog's head peeking out in front. The recipe keeps the dye, remaining wing durability, and enchantments from both items, taking the higher level for matching enchantments. You can still dye the pouch and repair the wings with a phantom membrane at an anvil.
 
-**Wear it with armor.** A regular pack also fits the **Body** slot in Curios or the **Cape** slot in Trinkets Updated. Baubles 2 provides a **Body** slot on 26.1. If you wear two, the chest-slot pack supplies the visible color. Removing the last pack releases your dog when there's safe ground and room nearby. For NeoForge 26.1.0.19-beta, use Trinkets Updated 4.0.0-alpha.9+26.1.
+**Wear it with armor.** A regular pack also fits the **Cape** slot in Trinkets Updated. On NeoForge it also fits the **Body** slot in Curios, or in Baubles 2 on Minecraft 26.1. If you wear two, the chest-slot pack supplies the visible color. Removing the last pack releases your dog when there's safe ground and room nearby. For NeoForge 26.1.0.19-beta, use Trinkets Updated 4.0.0-alpha.9+26.1.
 
 ## Development
 
-Use Java 25 and this checkout's Gradle wrapper. The projects are `:26.1-neoforge` and `:26.3-neoforge`. For example, run `./gradlew :26.1-neoforge:build :26.1-neoforge:runGameTestServer` or replace `26.1` with `26.3`. Run both targets before a release. The spawn egg models and other runtime resources are checked in. Jars are under `versions/<target>-neoforge/build/libs/`.
+Use Java 25 and this checkout's Gradle wrapper. The four Gradle projects use the form `:<minecraft-version>-<loader>`. For example, run `./gradlew :26.1-fabric:build :26.1-fabric:runGameTestServer` to build and test Fabric, or `./gradlew :26.3-neoforge:runClient` for a NeoForge development client. Run all four targets before a release. The spawn egg models and other runtime resources are checked in. Jars are under `versions/<minecraft-version>-<loader>/build/libs/`.
 
-On Windows with PowerShell 7, run `./scripts/test_dev_world.ps1 -Target 26.1 -All -SourceWorld <closed-save-directory>` to check sleep, front-pack persistence, status icons and delivery with a real client. Use `-Target 26.3` for that version. Run `./scripts/test_delivery_multiplayer.ps1 -Target 26.1` to verify courier handoff between two real clients and a dedicated server, or `./scripts/test_playful_interactions.ps1 -Target 26.1` to inspect playful poses. These scripts accept either target and keep disposable worlds, logs and captures under `versions/<target>-neoforge/.tmp/`. Their default target is 26.1.
+For the NeoForge scripted clients on Windows with PowerShell 7, run `./scripts/test_dev_world.ps1 -Target 26.1 -All -SourceWorld <closed-save-directory>` to check sleep, front-pack persistence, status icons and delivery with a real client. Use `-Target 26.3` for that version. Run `./scripts/test_delivery_multiplayer.ps1 -Target 26.1` to verify courier handoff between two real clients and a dedicated server, or `./scripts/test_playful_interactions.ps1 -Target 26.1` to inspect playful poses. These scripts accept either target and keep disposable worlds, logs and captures under `versions/<target>-neoforge/.tmp/`. Their default target is 26.1.
 
 To play with FloraFauna, Hammer and Frenchies together, run `./gradlew -PdevMods=all :26.1-neoforge:runClient` or `:26.3-neoforge:runClient` from a matching FloraFauna checkout. [FloraFauna development setup](https://github.com/jeremyepling/florafauna#play-with-the-hammer-and-frenchies)

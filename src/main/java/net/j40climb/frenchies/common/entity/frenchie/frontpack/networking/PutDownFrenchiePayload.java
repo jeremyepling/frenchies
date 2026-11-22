@@ -7,7 +7,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * Network payload for putting down a carried Frenchie.
@@ -23,8 +22,8 @@ public enum PutDownFrenchiePayload implements CustomPacketPayload {
     public static final StreamCodec<ByteBuf, PutDownFrenchiePayload> STREAM_CODEC =
         StreamCodec.unit(INSTANCE);
 
-    public static void onServerReceived(final PutDownFrenchiePayload data, final IPayloadContext context) {
-        if (context.player() instanceof ServerPlayer player && player.isAlive() && !player.isSpectator() && player.isShiftKeyDown()) {
+    public static void handle(ServerPlayer player) {
+        if (player.isAlive() && !player.isSpectator() && player.isShiftKeyDown()) {
             FrontpackEvents.putDown(player);
         }
     }

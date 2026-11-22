@@ -79,8 +79,8 @@ public final class FrontpackElytraRecipe extends NormalCraftingRecipe {
         if (!ingredients.lore().isEmpty()) result.set(DataComponents.LORE, new ItemLore(ingredients.lore()));
         mergeAttributes(result, pack, wings);
 
-        var enchantments = new ItemEnchantments.Mutable(pack.getTagEnchantments());
-        wings.getTagEnchantments().entrySet().forEach(entry -> enchantments.upgrade(entry.getKey(), entry.getIntValue()));
+        var enchantments = new ItemEnchantments.Mutable(pack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY));
+        wings.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY).entrySet().forEach(entry -> enchantments.upgrade(entry.getKey(), entry.getIntValue()));
         result.set(DataComponents.ENCHANTMENTS, enchantments.toImmutable());
         result.set(DataComponents.REPAIR_COST, Math.max(pack.getOrDefault(DataComponents.REPAIR_COST, 0),
                 wings.getOrDefault(DataComponents.REPAIR_COST, 0)));

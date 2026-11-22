@@ -123,10 +123,12 @@ public class FrontpackModel extends EntityModel<AvatarRenderState> {
     @Override
     public void setupAnim(AvatarRenderState renderState) {
         super.setupAnim(renderState);
-        boolean carrying = renderState.getRenderData(FrontpackLayer.CARRIED_COAT) != null;
+        var pack = FrontpackRenderData.get(renderState);
+        if (pack == null) return;
+        boolean carrying = pack.coat() != null;
         var carrier = root.getChild("carrier");
         var dog = root.getChild("carried_dog");
-        carrier.visible = fabricOnly || renderState.getRenderData(FrontpackLayer.FABRIC_TINT) == null;
+        carrier.visible = fabricOnly || pack.tint() == null;
         dog.visible = carrying && !fabricOnly;
         if (!carrying) return;
 
@@ -154,7 +156,7 @@ public class FrontpackModel extends EntityModel<AvatarRenderState> {
             tongue.z += 0.8F * (1F - tilt);
             tongue.xRot += 0.28F * tilt;
         }
-        Float yaw = renderState.getRenderData(FrontpackClientEvents.ALERT_YAW);
+        Float yaw = pack.alertYaw();
         if (yaw != null) {
             head.yRot = (float) Math.toRadians(yaw);
             head.getChild("earR").zRot -= 0.2F;

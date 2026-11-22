@@ -1,9 +1,8 @@
 package net.j40climb.frenchies.common.entity.frenchie.frontpack;
 
-import net.j40climb.frenchies.Frenchies;
-import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
-import net.j40climb.frenchies.common.entity.frenchie.CourierTrips;
 import net.j40climb.frenchies.common.entity.frenchie.CompanionRoster;
+import net.j40climb.frenchies.common.entity.frenchie.CourierTrips;
+import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -12,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.ProblemReporter;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -20,10 +20,6 @@ import net.minecraft.world.entity.vehicle.DismountHelper;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
  * Event handler for Frenchie frontpack pickup/putdown interactions.
@@ -31,51 +27,43 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  * Pickup: Shift-right-click on tamed Frenchie (owned by you)
  * Put down: Shift-right-click air, or remove the last equipped front pack.
  */
-@EventBusSubscriber(modid = Frenchies.MOD_ID)
 public class FrontpackEvents {
 
     /**
      * Handle shift-right-click on Frenchie to pick it up.
      */
-    @SubscribeEvent
-    public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        Player player = event.getEntity();
-        Entity target = event.getTarget();
-
-        if (player.getItemInHand(event.getHand()).is(FrenchieRegistry.FRENCHIE_WHISTLE.get())
-                || player.getMainHandItem().isEmpty() && player.getOffhandItem().is(FrenchieRegistry.FRENCHIE_WHISTLE.get())) return;
+    public static InteractionResult interact(Player player, Entity target, InteractionHand hand) {
+        if (player.getItemInHand(hand).is(FrenchieRegistry.FRENCHIE_WHISTLE.get())
+                || player.getMainHandItem().isEmpty() && player.getOffhandItem().is(FrenchieRegistry.FRENCHIE_WHISTLE.get())) return InteractionResult.PASS;
         // Pickup conditions
-        if (!player.isShiftKeyDown()) return;
-        if (!(target instanceof FrenchieEntity frenchie)) return;
-        if (!frenchie.isTame()) return;
-        if (!frenchie.isOwnedBy(player)) return;
-        var heldItem = player.getItemInHand(event.getHand());
+        if (!player.isShiftKeyDown()) return InteractionResult.PASS;
+        if (!(target instanceof FrenchieEntity frenchie)) return InteractionResult.PASS;
+        if (!frenchie.isTame()) return InteractionResult.PASS;
+        if (!frenchie.isOwnedBy(player)) return InteractionResult.PASS;
+        var heldItem = player.getItemInHand(hand);
         if (frenchie.isBaby() || frenchie.isPassenger() || frenchie.isBellyRubPose()
                 || heldItem.is(net.minecraft.world.item.Items.BONE)
                 || heldItem.is(FrenchieRegistry.SQUEAKY_TOY.get())
-                || heldItem.is(FrenchieRegistry.BUBBLE_TOY.get())) return;
+                || heldItem.is(FrenchieRegistry.BUBBLE_TOY.get())) return InteractionResult.PASS;
         if (FrontpackEquipment.wornBy(player).isEmpty()) {
-            var held = player.getItemInHand(event.getHand());
+            var held = player.getItemInHand(hand);
             if (held.isEmpty() || held.is(FrontpackEquipment.PACKS)) {
                 // Keep a failed pickup from toggling Sit or canceling the dog's current job.
-                event.setCanceled(true);
-                event.setCancellationResult(InteractionResult.SUCCESS);
                 if (!player.level().isClientSide()) {
                     player.sendOverlayMessage(Component.translatable("frenchie.florafauna.frontpack.equip_first"));
                 }
+                return InteractionResult.SUCCESS;
             }
-            return;
+            return InteractionResult.PASS;
         }
 
         // Check if already carrying a Frenchie
-        FrontpackData currentData = player.getData(FrenchieRegistry.FRENCH_FRONTPACK_DATA);
-        if (currentData.hasCarriedFrenchie()) return;
+        FrontpackData currentData = FrontpackAttachments.pack(player);
+        if (currentData.hasCarriedFrenchie()) return InteractionResult.PASS;
 
         // Client: just cancel event and return success
         if (player.level().isClientSide()) {
-            event.setCanceled(true);
-            event.setCancellationResult(InteractionResult.SUCCESS);
-            return;
+            return InteractionResult.SUCCESS;
         }
 
         // Server: serialize Frenchie to NBT and store in attachment
@@ -93,7 +81,7 @@ public class FrontpackEvents {
             player.level().getGameTime()
         );
 
-        player.setData(FrenchieRegistry.FRENCH_FRONTPACK_DATA, newData);
+        FrontpackAttachments.setPack(player, newData);
         if (frenchie.hasCompanionJob()) player.sendOverlayMessage(Component.translatable("frenchie.florafauna.order.packed"));
 
         // Despawn the entity
@@ -103,22 +91,20 @@ public class FrontpackEvents {
         // Play pickup sound
         player.playSound(SoundEvents.ITEM_PICKUP, 1.0f, 1.0f);
 
-        event.setCanceled(true);
-        event.setCancellationResult(InteractionResult.SUCCESS);
+        return InteractionResult.SUCCESS;
     }
 
-    @SubscribeEvent
-    public static void releaseWhenUnequipped(PlayerTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer player) || !player.isAlive()) return;
-        var data = player.getExistingDataOrNull(FrenchieRegistry.FRENCH_FRONTPACK_DATA);
+    public static void releaseWhenUnequipped(ServerPlayer player) {
+        if (!player.isAlive()) return;
+        var data = FrontpackAttachments.packOrNull(player);
         if (data == null || !data.hasCarriedFrenchie()) return;
         if (!FrontpackEquipment.wornBy(player).isEmpty()) {
-            if (data.releasePending()) player.setData(FrenchieRegistry.FRENCH_FRONTPACK_DATA, data.withReleasePending(false));
+            if (data.releasePending()) FrontpackAttachments.setPack(player, data.withReleasePending(false));
             return;
         }
         if (data.releasePending() && player.tickCount % 10 != 0) return;
         if (!releaseNearby(player, data) && !data.releasePending()) {
-            player.setData(FrenchieRegistry.FRENCH_FRONTPACK_DATA, data.withReleasePending(true));
+            FrontpackAttachments.setPack(player, data.withReleasePending(true));
             player.sendOverlayMessage(Component.translatable("frenchie.florafauna.frontpack.wait_for_ground"));
         }
     }
@@ -130,7 +116,7 @@ public class FrontpackEvents {
 
     public static void putDown(Player player) {
         if (!(player.level() instanceof ServerLevel level)) return;
-        FrontpackData data = player.getData(FrenchieRegistry.FRENCH_FRONTPACK_DATA);
+        FrontpackData data = FrontpackAttachments.pack(player);
         if (!data.hasCarriedFrenchie()) return;
 
         var type = FrenchieRegistry.FRENCHIE.get();
@@ -149,7 +135,7 @@ public class FrontpackEvents {
         dog.snapTo(position, player.getYRot(), 0);
         if (!level.noCollision(dog, dog.getBoundingBox()) || !level.addFreshEntity(dog)) return false;
 
-        player.setData(FrenchieRegistry.FRENCH_FRONTPACK_DATA, FrontpackData.DEFAULT);
+        FrontpackAttachments.setPack(player, FrontpackData.DEFAULT);
         if (dog.hasCompanionJob()) player.sendOverlayMessage(Component.translatable("frenchie.florafauna.order.resumed"));
         player.playSound(SoundEvents.ARMOR_EQUIP_LEATHER.value(), 1.0f, 1.0f);
         return true;

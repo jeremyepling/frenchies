@@ -2,12 +2,9 @@ package net.j40climb.frenchies.common.item;
 
 import java.util.Comparator;
 import java.util.List;
-import net.j40climb.frenchies.Frenchies;
+import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -18,13 +15,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class SqueakyToyItem extends Item {
-    public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT, Frenchies.LEGACY_NAMESPACE);
-    private static final DeferredHolder<SoundEvent, SoundEvent> SQUEAK = SOUNDS.register("toy_squeak", () ->
-            SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "toy_squeak")));
     private static final int HEARING_RANGE = 12;
     private static final int MAX_LISTENERS = 6;
     private static final int MAX_AUDIENCE = 3;
@@ -61,7 +53,7 @@ public class SqueakyToyItem extends Item {
     }
 
     public static void squeak(ServerLevel level, Entity source) {
-        level.playSound(null, source.blockPosition(), SQUEAK.get(),
+        level.playSound(null, source.blockPosition(), FrenchieRegistry.TOY_SQUEAK.get(),
                 source instanceof Player ? SoundSource.PLAYERS : SoundSource.NEUTRAL, 0.5F,
                 0.93F + source.getRandom().nextFloat() * 0.14F);
         List<FrenchieEntity> listeners = listeners(level, source);

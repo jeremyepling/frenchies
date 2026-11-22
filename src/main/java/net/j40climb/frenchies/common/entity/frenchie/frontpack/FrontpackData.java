@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Data structure for storing a carried Frenchie on a player.
- * Uses NeoForge's Attachment system for automatic sync and persistence.
+ * The player attachment persists the dog and synchronizes its appearance.
  *
  * When hasCarriedFrenchie=true, the frenchieNBT contains the full entity state
  * (variant, health, age, pose, etc.) and the Frenchie entity is despawned.

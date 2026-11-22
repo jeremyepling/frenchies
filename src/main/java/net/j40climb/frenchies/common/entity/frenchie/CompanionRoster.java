@@ -3,6 +3,7 @@ package net.j40climb.frenchies.common.entity.frenchie;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.j40climb.frenchies.Frenchies;
+import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackAttachments;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackData;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.ChatFormatting;
@@ -35,24 +36,18 @@ import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 /** Live dogs have only a locator here. Only a dismissed dog or one awaiting safe arrival has an entity save here. */
-@EventBusSubscriber(modid = Frenchies.MOD_ID)
 public final class CompanionRoster extends SavedData {
     private enum State { ACTIVE, CALLING, APPROACHING, DISMISSING, DISMISSED, RETURNING }
 
@@ -93,7 +88,7 @@ public final class CompanionRoster extends SavedData {
                     Codec.unboundedMap(UUIDUtil.STRING_CODEC, Entry.CODEC).fieldOf("dogs").forGetter(r -> r.dogs),
                     Codec.unboundedMap(UUIDUtil.STRING_CODEC, UUIDUtil.CODEC).fieldOf("selected").forGetter(r -> r.selected),
                     Codec.STRING.listOf().optionalFieldOf("indexed", List.of()).forGetter(r -> List.copyOf(r.indexed))
-            ).apply(i, CompanionRoster::new)));
+            ).apply(i, CompanionRoster::new)), null);
 
     private final Map<UUID, Entry> dogs;
     private final Map<UUID, UUID> selected;
@@ -173,9 +168,8 @@ public final class CompanionRoster extends SavedData {
         }
     }
 
-    @SubscribeEvent
-    public static void leave(EntityLeaveLevelEvent event) {
-        if (!(event.getEntity() instanceof FrenchieEntity dog) || !(event.getLevel() instanceof ServerLevel level)) return;
+    public static void leave(Entity entity, ServerLevel level) {
+        if (!(entity instanceof FrenchieEntity dog)) return;
         if (dog.getRemovalReason() == Entity.RemovalReason.UNLOADED_TO_CHUNK && dog.isTame()) track(dog);
         if (dog.getRemovalReason() == Entity.RemovalReason.KILLED && dog.getOwnerReference() != null) {
             var roster = get(level);
@@ -204,7 +198,7 @@ public final class CompanionRoster extends SavedData {
     /** Import older frontpacks, courier trips and waiting stops without creating a second dog. */
     private static CompanionRoster discover(ServerPlayer owner) {
         var roster = get(owner.level());
-        var pack = owner.getExistingDataOrNull(FrenchieRegistry.FRENCH_FRONTPACK_DATA);
+        var pack = FrontpackAttachments.packOrNull(owner);
         if (pack != null && pack.hasCarriedFrenchie()) roster.indexStored(owner, pack.frenchieNBT(),
                 GlobalPos.of(owner.level().dimension(), owner.blockPosition()));
         CourierTrips.index(owner, roster);
@@ -309,11 +303,9 @@ public final class CompanionRoster extends SavedData {
         roster.process(owner.level().getServer(), owner, id, e, now);
     }
 
-    @SubscribeEvent
-    public static void respawn(PlayerEvent.PlayerRespawnEvent event) {
-        if (event.isEndConquered() || !(event.getEntity() instanceof ServerPlayer owner)) return;
+    public static void respawn(ServerPlayer owner) {
         var roster = discover(owner);
-        var pack = owner.getExistingDataOrNull(FrenchieRegistry.FRENCH_FRONTPACK_DATA);
+        var pack = FrontpackAttachments.packOrNull(owner);
         UUID packedId = pack != null && pack.hasCarriedFrenchie()
                 ? pack.frenchieNBT().read("UUID", UUIDUtil.CODEC).orElse(null) : null;
         for (var row : roster.dogs.entrySet()) {
@@ -329,9 +321,7 @@ public final class CompanionRoster extends SavedData {
         }
     }
 
-    @SubscribeEvent
-    public static void tick(ServerTickEvent.Post event) {
-        var server = event.getServer();
+    public static void tick(MinecraftServer server) {
         long now = server.overworld().getGameTime();
         if (now % 5 != 0) return;
         var roster = server.getDataStorage().get(TYPE);
@@ -386,10 +376,10 @@ public final class CompanionRoster extends SavedData {
             }
             storeLive(dog, e);
         } else if (e.saved == null) {
-            var pack = owner == null ? null : owner.getExistingDataOrNull(FrenchieRegistry.FRENCH_FRONTPACK_DATA);
+            var pack = owner == null ? null : FrontpackAttachments.packOrNull(owner);
             if (pack != null && pack.hasCarriedFrenchie() && matches(pack.frenchieNBT(), id, e.owner)) {
                 e.saved = pack.frenchieNBT();
-                owner.setData(FrenchieRegistry.FRENCH_FRONTPACK_DATA, FrontpackData.DEFAULT);
+                FrontpackAttachments.setPack(owner, FrontpackData.DEFAULT);
             } else {
                 e.saved = CourierTrips.take(server, e.owner, id);
             }
