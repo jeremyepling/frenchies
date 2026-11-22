@@ -1,6 +1,7 @@
 package net.j40climb.frenchies;
 
 import net.j40climb.frenchies.common.entity.frenchie.DeliveryDialog;
+import net.j40climb.frenchies.common.entity.frenchie.CompanionSettings;
 import net.j40climb.frenchies.common.entity.frenchie.DeliveryPopupPayload;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieCommands;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
@@ -22,6 +23,7 @@ import java.util.Arrays;
 @Mod(Frenchies.MOD_ID)
 public final class NeoForgeFrenchies {
     public NeoForgeFrenchies(IEventBus bus) {
+        CompanionSettings.load(net.neoforged.fml.loading.FMLPaths.CONFIGDIR.get());
         FrenchieRegistry.bootstrap();
         FrenchieRegistry.bind(bus);
         bus.addListener(NeoForgeFrenchies::networking);
