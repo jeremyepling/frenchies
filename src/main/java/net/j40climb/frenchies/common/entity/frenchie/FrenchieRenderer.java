@@ -38,6 +38,7 @@ public class FrenchieRenderer extends MobRenderer<FrenchieEntity, FrenchieRender
 
     public FrenchieRenderer(EntityRendererProvider.Context context) {
         super(context, new FrenchieModel(context.bakeLayer(FrenchieModel.FRENCHIE)), 0.4f);
+        addLayer(new SnowCoatLayer(this));
         addLayer(new FlotationVestLayer(this));
         itemResolver = context.getItemModelResolver();
         addLayer(new FrenchieMouthLayer(this));
@@ -110,6 +111,7 @@ public class FrenchieRenderer extends MobRenderer<FrenchieEntity, FrenchieRender
         reusedState.dangerReaction = entity.dangerReaction();
         reusedState.dangerAge = entity.dangerReactionAge(partialTick);
         reusedState.weatherStage = entity.weatherStage();
+        reusedState.snowLayer = entity.snowLayer();
         reusedState.weatherAge = entity.weatherAge(partialTick);
 
         reusedState.isSleeping = entity.isFrenchieSleeping();

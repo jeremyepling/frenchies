@@ -5,9 +5,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.level.biome.Biome.Precipitation;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.SnowLayerBlock;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -20,6 +24,10 @@ final class WeatherPlayGoal extends Goal {
             GRASS_ROLL = 4, GRASS_DRAG = 5, SNOW_APPROACH = 6, SNOW_DIVE = 7,
             SNOW_PLOW = 8, SNOW_POP = 9;
     private final FrenchieEntity dog;
+    private final WeatherExposure exposure = new WeatherExposure();
+    private Precipitation shakeMaterial = Precipitation.RAIN;
+    private long nextHeatSample;
+    private boolean warm;
     private int swimTicks;
     private int dryTicks;
     private int ticks;
@@ -40,7 +48,19 @@ final class WeatherPlayGoal extends Goal {
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
     }
 
-    void observeWater() {
+    void observeWeather() {
+        if ((dog.tickCount + dog.getId()) % WeatherExposure.SAMPLE_TICKS == 0) {
+            long now = dog.level().getGameTime();
+            boolean enabled = CompanionSettings.weatherReactions();
+            Precipitation precipitation = enabled && !dog.isInWater()
+                    ? dog.level().precipitationAt(BlockPos.containing(dog.getEyePosition())) : Precipitation.NONE;
+            if (now >= nextHeatSample && (exposure.snowy() || precipitation == Precipitation.SNOW)) {
+                warm = nearHeat();
+                nextHeatSample = now + 20;
+            }
+            exposure.sample(precipitation, warm, now, dog.getRandom());
+            syncSnowLayer();
+        }
         if (dryingRequested && dog.level().getGameTime() > dryingRequestUntil) dryingRequested = false;
         if (dog.isPassenger()) { swimTicks = dryTicks = 0; return; }
         if (dog.isInWater()) {
@@ -53,6 +73,23 @@ final class WeatherPlayGoal extends Goal {
             }
             swimTicks = dryTicks = 0;
         }
+    }
+
+    private void syncSnowLayer() {
+        dog.setSnowLayer(CompanionSettings.weatherReactions() && CompanionSettings.visibleSnow()
+                ? exposure.snowLayer() : 0);
+    }
+
+    private boolean nearHeat() {
+        if (dog.isOnFire() || dog.isInLava()) return true;
+        BlockPos feet = dog.blockPosition();
+        for (BlockPos pos : BlockPos.betweenClosed(feet.offset(-1, -1, -1), feet.offset(1, 1, 1))) {
+            if (!dog.level().hasChunkAt(pos)) continue;
+            var state = dog.level().getBlockState(pos);
+            if (state.getFluidState().is(FluidTags.LAVA) || state.is(BlockTags.FIRE)
+                    || CampfireBlock.isLitCampfire(state) || state.is(Blocks.MAGMA_BLOCK)) return true;
+        }
+        return false;
     }
 
     void inviteSnowball(Vec3 impact) {
@@ -93,9 +130,19 @@ final class WeatherPlayGoal extends Goal {
         if (dryingRequested) {
             dryingRequested = false;
             startDrying = true;
+            shakeMaterial = Precipitation.RAIN;
             nextDrying = now + 1800;
             target = dog.getRandom().nextInt(3) == 0 ? grassSpot() : null;
             return true;
+        }
+        if (CompanionSettings.weatherReactions()) {
+            Precipitation material = exposure.readyToShake(now);
+            if (material != Precipitation.NONE) {
+                startDrying = true;
+                shakeMaterial = material;
+                target = null;
+                return true;
+            }
         }
         if (now < nextSnow || !dog.getNavigation().isDone()) return false;
         startDrying = false;
@@ -134,7 +181,16 @@ final class WeatherPlayGoal extends Goal {
     public void tick() {
         ++ticks;
         switch (dog.weatherStage()) {
-            case SHAKE -> { if (ticks >= 18) stage(target != null ? GRASS_APPROACH : NONE); }
+            case SHAKE -> {
+                if (ticks == 6 && dog.level() instanceof ServerLevel level) {
+                    exposure.shake(level.getGameTime(), dog.getRandom());
+                    syncSnowLayer();
+                    level.sendParticles(shakeMaterial == Precipitation.SNOW ? ParticleTypes.SNOWFLAKE : ParticleTypes.SPLASH,
+                            dog.getX(), dog.getY() + dog.getBbHeight() * 0.7, dog.getZ(),
+                            14, 0.25, 0.12, 0.25, 0.05);
+                }
+                if (ticks >= 18) stage(target != null ? GRASS_APPROACH : NONE);
+            }
             case GRASS_APPROACH -> {
                 if (target == null || ticks >= 35 || !PlaySafety.clearGroundSegment(dog, dog.position(), target))
                     stage(NONE);
@@ -254,11 +310,14 @@ final class WeatherPlayGoal extends Goal {
     }
 
     void save(ValueOutput output) {
+        exposure.save(output);
         output.putLong("NextWeatherDrying", nextDrying);
         output.putLong("NextWeatherSnow", nextSnow);
     }
 
     void load(ValueInput input) {
+        exposure.load(input);
+        syncSnowLayer();
         nextDrying = input.getLongOr("NextWeatherDrying", 0);
         nextSnow = input.getLongOr("NextWeatherSnow", 0);
         dryingRequested = false;
