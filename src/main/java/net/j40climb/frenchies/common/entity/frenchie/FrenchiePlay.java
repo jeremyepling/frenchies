@@ -55,7 +55,7 @@ final class FrenchiePlay {
 
     private boolean stopsOnSleep(Goal goal) {
         return goal == bubbles || goal == digging || goal == weather || goal == trick || goal == bellyRub
-                || goal instanceof SlimeTeaseGoal || goal instanceof QuietCompanyGoal;
+                || goal instanceof SlimeTeaseGoal || goal instanceof QuietCompanyGoal || goal instanceof HerdLivestockGoal;
     }
 
     void fallAsleep(GoalSelector selector) {

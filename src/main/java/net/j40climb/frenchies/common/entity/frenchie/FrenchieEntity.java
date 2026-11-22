@@ -280,6 +280,7 @@ public class FrenchieEntity extends TamableAnimal {
         this.goalSelector.addGoal(4, play.bellyRub);
         this.goalSelector.addGoal(5, play.celebration);
         this.goalSelector.addGoal(5, play.digging);
+        this.goalSelector.addGoal(5, new HerdLivestockGoal(this));
         this.goalSelector.addGoal(6, play.weather);
         this.goalSelector.addGoal(6, play.bubbles);
         this.goalSelector.addGoal(7, new SlimeTeaseGoal(this));
@@ -650,12 +651,12 @@ public class FrenchieEntity extends TamableAnimal {
             if (!level().isClientSide()) play.bellyRub.command();
         }
         if (!pPlayer.isShiftKeyDown() && itemstack.isEmpty()
-                && isOwnedBy(pPlayer) && getOffhandItem().is(FrenchieRegistry.SQUEAKY_TOY.get())) {
+                && isOwnedBy(pPlayer) && (getOffhandItem().is(FrenchieRegistry.SQUEAKY_TOY.get()) || getOffhandItem().is(Items.STICK))) {
             if (!level().isClientSide()) {
-                ItemStack toy = getOffhandItem();
+                ItemStack fetched = getOffhandItem();
                 setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
-                pPlayer.setItemInHand(pHand, toy);
-                tryCelebrate();
+                pPlayer.setItemInHand(pHand, fetched);
+                if (fetched.is(FrenchieRegistry.SQUEAKY_TOY.get())) tryCelebrate();
             }
             return InteractionResult.SUCCESS;
         }
