@@ -81,6 +81,8 @@ public final class FrenchieRegistry extends FrenchieRegistries {
 
     public static final Supplier<SoundEvent> TOY_SQUEAK = SOUNDS.register("toy_squeak",
             () -> SoundEvent.createVariableRangeEvent(id("toy_squeak")));
+    public static final Supplier<SoundEvent> FRENCHIE_SNORE = SOUNDS.register("frenchie_snore",
+            () -> SoundEvent.createVariableRangeEvent(id("frenchie_snore")));
 
     private static <T extends Item> Supplier<T> item(String name, Function<Item.Properties, T> factory) {
         var key = ResourceKey.create(Registries.ITEM, id(name));

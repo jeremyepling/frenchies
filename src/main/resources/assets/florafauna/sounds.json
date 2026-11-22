@@ -1,4 +1,10 @@
 {
+  "frenchie_snore": {
+    "subtitle": "subtitles.florafauna.frenchie_snore",
+    "sounds": [
+      { "name": "minecraft:entity.fox.sleep", "type": "event" }
+    ]
+  },
   "toy_squeak": {
     "subtitle": "subtitles.florafauna.toy_squeak",
     "sounds": [

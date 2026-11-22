@@ -4,7 +4,7 @@ import net.j40climb.frenchies.common.entity.frenchie.CompanionSettings;
 import net.j40climb.frenchies.common.entity.frenchie.reaction.FrenchieAwareness;
 import net.j40climb.frenchies.common.entity.frenchie.rest.CompanionRest;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
+import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -41,7 +41,7 @@ public final class FrontpackDoze {
         int snoreInterval = 600 + Math.floorMod(seed, 301);
         if (now - pack.dozeAt() >= SETTLE_TICKS && Math.floorMod(now + (long) seed, snoreInterval) == 0) {
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
-                    SoundEvents.FOX_SLEEP, SoundSource.NEUTRAL, 0.18F, 0.78F + player.getRandom().nextFloat() * 0.12F);
+                    FrenchieRegistry.FRENCHIE_SNORE.get(), SoundSource.NEUTRAL, 0.18F, 0.78F + player.getRandom().nextFloat() * 0.12F);
         }
     }
 

@@ -16,7 +16,6 @@ import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.clock.ClockTimeMarkers;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -248,7 +247,7 @@ public final class RestPosePlaytest {
         if (!"rest".equals(System.getProperty("florafauna_frenchies.playtest.scenario"))) return;
         var mc = Minecraft.getInstance();
         var sound = event.getSound();
-        if (mc.player != null && sound.getIdentifier().equals(SoundEvents.FOX_SLEEP.location())
+        if (mc.player != null && sound.getIdentifier().equals(FrenchieRegistry.FRENCHIE_SNORE.get().location())
                 && mc.player.distanceToSqr(sound.getX(), sound.getY(), sound.getZ()) < 1
                 && sound.getVolume() < 0.5F) heardSnore = true;
     }
