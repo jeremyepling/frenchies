@@ -22,15 +22,23 @@ Taming your first dog gives you a **Frenchie Whistle**. Right-click to call your
 - **Offer belly rubs.** Crouch beside an idle Frenchie with empty hands for a moment, then use an empty hand to rub its belly. Walk away or give a command when playtime is over.
 - **Watch the drying routine.** After a real swim, a Frenchie shakes off and may roll on nearby grass or moss before dragging its belly forward.
 - **Play in snow.** On safe, shallow snow, a Frenchie may briefly dive and plow. A nearby snowball landing can also catch its attention.
-- **Watch the weather.** Snow dusts the head and back over about 20 seconds. It melts under cover and faster beside a fire. Snowy and rain-soaked Frenchies occasionally shake themselves off. A nearby lightning strike can send a following dog to your side for a quiet whimper.
-- **Lead a herd.** Walk with wheat in either hand while sheep or cows follow. A Frenchie can work its way to the outside of the herd and give a lagging animal a gentle nudge on clear, level ground.
-- **Take a breather.** An idle companion may sit beside you and eventually stretch out. It gets up when you move. A serious fall can bring it over to check on you, and it backs away from exposed lava edges when it finds safe footing.
-- **Bring home a stick.** After you chop a log, your Frenchie may fetch a freshly dropped stick once nearby players have had time to collect it. It leaves saplings for replanting. If your inventory is full, the stick stays in its mouth and you can take it with an empty hand.
 - **Bring a digging assistant.** Dig nearby dirt or sand with a shovel and an available Frenchie may dig beside you, then proudly carry its reusable toy stick. Its digging leaves the ground untouched.
 - **Take the boat.** Board with your dog following and it rides at the bow, leaving the passenger seat free. Its life jacket appears automatically on the water. When you step out, it looks for a safe landing.
 - **Follow its nose.** Use an ordinary compass on your dog and follow it toward your last death in this dimension. It waits if you fall behind and signals when you reach the spot.
 - **Listen for two barks.** An awake Frenchie turns toward a visible creeper within 12 blocks. A green creeper face flashes with each bark, even above the hotbar when you're carrying the dog. Warnings have an eight-second cooldown.
 - **Share a bedtime.** Use a bed within ten blocks of your dog and it can curl up by your pillow, even after a sit order. Sleep through the night together for two minutes of **Well Rested** and 10% faster block breaking.
+
+## Out with your Frenchie
+
+In falling snow, a dusting spreads across your Frenchie's head and back over about 20 seconds. Step under a roof and the coat melts over roughly half a minute, faster beside a lit campfire. An occasional shake scatters the snowflakes, and the coat starts building again if it's still snowing. Rain-soaked Frenchies shake off droplets and gradually dry in shelter.
+
+![Four views of a Frenchie showing a bare coat, patches of snow, a full white back, and snowflakes flying off during a shake.](docs/images/frenchie-snow-coat.png)
+
+- **Weather a storm together.** A nearby lightning strike can send a following dog to your side with a quiet whimper. It settles down about 15–30 seconds after the last nearby strike. A dog you asked to sit holds its place.
+- **Lead a herd.** Walk with wheat in either hand while sheep or cows follow. Your Frenchie works along the outside and can gently nudge a straggler on clear, level ground. Put the wheat away to end the help.
+- **Bring home a stick.** After you chop a log, your dog may pick up one freshly dropped stick once nearby players step away. It brings the stick to your inventory and leaves saplings for replanting. If your inventory is full, take the stick from its mouth with an empty hand.
+- **Take a breather.** Stay still for a while and your dog may sit beside you, then stretch out. It favors a sheltered spot or a place near a lit campfire. Start walking and it gets up on its own.
+- **Explore a ravine.** If a fall costs you at least two hearts, a Frenchie within 24 blocks may come check on you. If it can't find safe footing down, it looks toward you from where it stands. At an exposed lava edge, it looks for room to back away and can wait back while you mine.
 
 ## Send a special delivery
 
@@ -50,22 +58,22 @@ Craft a Frenchie Front Pack with string in the left and right squares of one row
 
 **Wear it with armor.** A regular pack also fits the **Cape** slot in Trinkets Updated. On NeoForge it also fits the **Body** slot in Curios, or in Baubles 2 on Minecraft 26.1. If you wear two, the chest-slot pack supplies the visible color. Removing the last pack releases your dog when there's safe ground and room nearby. For NeoForge 26.1.0.19-beta, use Trinkets Updated 4.0.0-alpha.9+26.1.
 
-## Development
+## Companion settings
 
-### Companion settings
-
-Fabric and NeoForge generate `config/florafauna_frenchies.properties` on startup. Edit the server's file, or the local game's file for singleplayer, and restart. All eight options default to `true`.
+Fabric and NeoForge generate `config/florafauna_frenchies.properties` on startup. The settings apply to every Frenchie on the server, or in your local game for singleplayer. All eight default to `true`. To lead livestock yourself, for example, set `automaticHerding=false` and restart. Each dog's sit and follow orders still come from its owner.
 
 | Option | Controls |
 | --- | --- |
 | `weatherReactions` | Rain and snow exposure, precipitation shakes, and thunder reactions |
-| `visibleSnow` | Snow drawn on the coat |
-| `thunderFear` | Seeking company or cover after a lightning strike |
+| `visibleSnow` | Draw snow on the coat when `weatherReactions` is enabled |
+| `thunderFear` | Seek company or cover after a lightning strike when `weatherReactions` is enabled |
 | `automaticHerding` | Assisting sheep and cows that follow wheat |
 | `fallReactions` | Checking on an owner who loses at least two hearts to a fall |
 | `ambientCompanionship` | Voluntarily sitting and resting beside an idle owner |
 | `lavaReactions` | Retreating before reaching an exposed lava edge |
 | `stickRetrieval` | Fetching a dropped stick after tree chopping |
+
+## Development
 
 ### Building and testing
 
