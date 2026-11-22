@@ -70,7 +70,7 @@ final class PlaySafety {
                 var type = WalkNodeEvaluator.getPathTypeStatic(path, feet.mutable());
                 if (!level.getBlockState(floor).isFaceSturdy(level, floor, Direction.UP)
                         || mob.getType().isBlockDangerous(level.getBlockState(floor))
-                        || type != PathType.WALKABLE && !(retreating && type == PathType.DANGER_FIRE)) return false;
+                        || type != PathType.WALKABLE && !(retreating && type == PathType.FIRE_IN_NEIGHBOR)) return false;
             }
             start = end;
         }
