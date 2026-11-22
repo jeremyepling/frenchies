@@ -9,7 +9,7 @@ import java.util.Properties;
 
 /** Loaded once at startup. All eight decisions are made on the logical server. */
 public final class CompanionSettings {
-    private static final Properties options = new Properties();
+    private static Properties options = new Properties();
 
     private CompanionSettings() {}
 
@@ -30,11 +30,13 @@ public final class CompanionSettings {
                         stickRetrieval=true
                         """, StandardOpenOption.CREATE_NEW);
             }
+            var loaded = new Properties();
             try (var reader = Files.newBufferedReader(file)) {
-                options.load(reader);
+                loaded.load(reader);
             }
+            options = loaded;
         } catch (IOException | IllegalArgumentException ex) {
-            options.clear();
+            options = new Properties();
             LogUtils.getLogger().warn("Could not load Frenchie settings from {}. Using defaults.", file, ex);
         }
     }
