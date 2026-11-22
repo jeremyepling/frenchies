@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 /** A chopped log opens one short search around its canopy. No inventory exists here. */
@@ -48,7 +49,7 @@ public final class TreeStickSearch {
         long now = dog.level().getGameTime();
         if (now - choppedAt > 600 || !CompanionSettings.stickRetrieval()
                 || !(dog.getOwner() instanceof Player owner) || !owner.isAlive()
-                || owner.distanceToSqr(trunk.getCenter()) > 16 * 16 || !dog.getOffhandItem().isEmpty()) {
+                || owner.distanceToSqr(Vec3.atCenterOf(trunk)) > 16 * 16 || !dog.getOffhandItem().isEmpty()) {
             clear();
             return null;
         }
