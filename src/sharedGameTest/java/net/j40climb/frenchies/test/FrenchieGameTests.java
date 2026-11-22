@@ -29,6 +29,23 @@ import net.minecraft.world.level.storage.TagValueInput;
 import java.util.UUID;
 
 final class FrenchieGameTests {
+    static void sleepPoseSave(GameTestHelper helper) {
+        var dog = helper.spawnWithNoFreeWill(FrenchieRegistry.FRENCHIE.get(), 1, 1, 1);
+        // Seed the world with an existing side sleeper so this persistence check is deterministic.
+        var sleeping = new CompoundTag();
+        sleeping.putBoolean("IsSleeping", true);
+        sleeping.putBoolean("SideSleeping", true);
+        var registry = helper.getLevel().registryAccess();
+        dog.readAdditionalSaveData(TagValueInput.create(ProblemReporter.DISCARDING, registry, sleeping));
+        helper.assertTrue(dog.isFrenchieSleeping() && dog.usesSideSleepPose(), "Saved side sleeper lost its pose");
+        var restored = CompanionTravelTests.reload(helper, dog);
+        helper.assertTrue(restored.isFrenchieSleeping() && restored.usesSideSleepPose(), "Reload changed the sleeping pose");
+        sleeping.remove("SideSleeping");
+        restored.readAdditionalSaveData(TagValueInput.create(ProblemReporter.DISCARDING, registry, sleeping));
+        helper.assertTrue(restored.isFrenchieSleeping() && !restored.usesSideSleepPose(), "Older saves should use the original sleep pose");
+        helper.succeed();
+    }
+
     static void ownerOrders(GameTestHelper helper) {
         var level = helper.getLevel();
         var owner = helper.makeMockPlayer(GameType.SURVIVAL);

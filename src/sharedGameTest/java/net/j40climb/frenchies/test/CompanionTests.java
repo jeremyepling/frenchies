@@ -93,6 +93,7 @@ public record CompanionTests(
         registerPlayTest(yard, "companion_zoomies_crops", 550, h -> CompanionPlayTests.zoomies(h, false));
         registerPlayTest(yard, "frenchie_warning_sight", 160, FrenchieAwarenessGameTests::warningSight);
         registerStructureTest(defaultEnv, "frenchie_bedtime", yard, 100, FrenchieAwarenessGameTests::bedtime);
+        registerTest(defaultEnv, "frenchie_sleep_pose_save", FrenchieGameTests::sleepPoseSave);
         registerTest(defaultEnv, "frenchie_owner_orders", FrenchieGameTests::ownerOrders);
         registerTest(defaultEnv, "frenchie_death_trail", FrenchieTrackingGameTests::trackDeath);
         registerTest(defaultEnv, "frenchie_delivery_creative_parcel", FrenchieDeliveryGameTests::creativeParcel);

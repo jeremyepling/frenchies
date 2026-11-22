@@ -61,6 +61,7 @@ public final class Playtest {
             case "frontpack" -> FrontpackPlaytest.steps(this, phase);
             case "companions" -> CompanionIconsPlaytest.steps(this);
             case "delivery" -> DeliveryPlaytest.steps(this, phase);
+            case "rest" -> RestPosePlaytest.steps(this);
             case "weather" -> WeatherCoatPlaytest.steps(this);
             case "frenchie" -> FrenchiePlaytest.steps(this, phase);
             default -> throw new IllegalArgumentException("Unknown playtest " + scenario);
@@ -137,7 +138,7 @@ public final class Playtest {
             if (pending.join()) {
                 LOG.info("PLAYTEST {} phase {} OK: {}", scenario, phase, step.name());
                 steps.remove();
-                deadline = System.nanoTime() + (scenario.equals("weather") ? Duration.ofSeconds(120).toNanos() : TIMEOUT);
+                deadline = System.nanoTime() + ((scenario.equals("weather") || scenario.equals("rest")) ? Duration.ofSeconds(120).toNanos() : TIMEOUT);
             }
             pending = null;
         } catch (AssertionError | RuntimeException e) {
