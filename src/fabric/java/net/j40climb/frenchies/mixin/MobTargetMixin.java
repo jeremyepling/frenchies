@@ -11,6 +11,6 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 abstract class MobTargetMixin {
     @ModifyVariable(method = "setTarget", at = @At("HEAD"), argsOnly = true)
     private LivingEntity frenchies$skipCompanion(LivingEntity target) {
-        return target instanceof FrenchieEntity dog && dog.isTame() ? null : target;
+        return FrenchieEntity.isProtectedMobTarget(target) ? null : target;
     }
 }

@@ -71,10 +71,10 @@ public final class CompanionTests {
         registerPlayTest(event, yard, "play_whistle_interruptions", 400, PlayInterruptionGameTests::whistleDuringPlay);
         registerPlayTest(event, yard, "companion_fetch", 550, CompanionTravelTests::fetch);
         registerStructureTest(event, defaultEnv, "companion_captain", yard, 550, CompanionTravelTests::captain);
-        registerPlayTest(event, yard, "companion_zoomies_interrupt", 550, CompanionTravelTests::interruptCelebration);
-        registerPlayTest(event, yard, "companion_audience", 550, CompanionTravelTests::audience);
-        registerPlayTest(event, yard, "companion_zoomies_laps", 550, h -> CompanionTravelTests.zoomies(h, true));
-        registerPlayTest(event, yard, "companion_zoomies_crops", 550, h -> CompanionTravelTests.zoomies(h, false));
+        registerPlayTest(event, yard, "companion_zoomies_interrupt", 550, CompanionPlayTests::interruptCelebration);
+        registerPlayTest(event, yard, "companion_audience", 550, CompanionPlayTests::audience);
+        registerPlayTest(event, yard, "companion_zoomies_laps", 550, h -> CompanionPlayTests.zoomies(h, true));
+        registerPlayTest(event, yard, "companion_zoomies_crops", 550, h -> CompanionPlayTests.zoomies(h, false));
         registerPlayTest(event, yard, "frenchie_warning_sight", 160, FrenchieAwarenessGameTests::warningSight);
         registerStructureTest(event, defaultEnv, "frenchie_bedtime", yard, 100, FrenchieAwarenessGameTests::bedtime);
         registerTest(event, defaultEnv, "frenchie_owner_orders", FrenchieGameTests::ownerOrders);

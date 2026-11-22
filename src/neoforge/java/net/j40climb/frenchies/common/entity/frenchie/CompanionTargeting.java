@@ -12,7 +12,7 @@ public final class CompanionTargeting {
     @SubscribeEvent
     public static void changeTarget(LivingChangeTargetEvent event) {
         // Includes brain attack memories and direct setTarget calls that bypass target predicates.
-        if (event.getNewAboutToBeSetTarget() instanceof FrenchieEntity dog && dog.isTame()) {
+        if (FrenchieEntity.isProtectedMobTarget(event.getNewAboutToBeSetTarget())) {
             event.setNewAboutToBeSetTarget(null);
         }
     }

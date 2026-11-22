@@ -610,6 +610,10 @@ public class FrenchieEntity extends TamableAnimal {
         return !isTame() && super.doHurtTarget(level, target);
     }
 
+    public static boolean isProtectedMobTarget(@Nullable Object target) {
+        return target instanceof FrenchieEntity dog && dog.isTame();
+    }
+
     @Override
     public boolean canAttack(LivingEntity target) {
         return !isTame() && super.canAttack(target);

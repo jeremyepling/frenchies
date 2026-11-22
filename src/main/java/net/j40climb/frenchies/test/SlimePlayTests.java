@@ -97,7 +97,7 @@ final class SlimePlayTests {
         dog.tame(owner);
         dog.standUp();
         stationarySlime(h, 1);
-        h.startSequence().thenWaitUntil(() -> h.assertTrue(dog.playPose() == SLIME_BOW, "No bow before the warning; " + CompanionTravelTests.playState(h, dog)))
+        h.startSequence().thenWaitUntil(() -> h.assertTrue(dog.playPose() == SLIME_BOW, "No bow before the warning; " + CompanionPlayTests.playState(h, dog)))
                 .thenExecute(() -> {
                     var threat = h.spawn(EntityType.CREEPER, 3, 1, 2);
                     threat.setNoAi(true);

@@ -14,6 +14,6 @@ abstract class BrainTargetMixin {
             "setMemoryInternal(Lnet/minecraft/world/entity/ai/memory/MemoryModuleType;Ljava/lang/Object;J)V"
     }, at = @At("HEAD"), argsOnly = true, index = 2)
     private Object frenchies$skipCompanion(Object value, MemoryModuleType<?> memory) {
-        return memory == MemoryModuleType.ATTACK_TARGET && value instanceof FrenchieEntity dog && dog.isTame() ? null : value;
+        return memory == MemoryModuleType.ATTACK_TARGET && FrenchieEntity.isProtectedMobTarget(value) ? null : value;
     }
 }
