@@ -2,7 +2,7 @@ package net.j40climb.frenchies.playtest;
 
 import net.j40climb.frenchies.Frenchies;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
-import net.j40climb.frenchies.common.entity.frenchie.FrenchieRenderer;
+import net.j40climb.frenchies.common.entity.frenchie.client.FrenchieRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.commands.arguments.EntityAnchorArgument.Anchor;

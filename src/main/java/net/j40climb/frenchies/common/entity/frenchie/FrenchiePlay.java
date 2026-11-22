@@ -1,5 +1,7 @@
 package net.j40climb.frenchies.common.entity.frenchie;
 
+import net.j40climb.frenchies.common.entity.frenchie.weather.WeatherPlayGoal;
+
 import java.util.function.Predicate;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
@@ -41,7 +43,7 @@ final class FrenchiePlay {
     boolean canWatch(boolean allowWeatherPlay) {
         if (!dog.isAlive() || dog.isNoAi() || interruptedByOtherActivity() || dog.hasCompanionJob() || dog.hasToyJob()
                 || !allowWeatherPlay && weather.active() || celebration.requestedOrRunning()
-                || dog.trickStage() != TrickGoal.NONE || dog.bellyStage() != BellyRubGoal.NONE
+                || dog.trickStage() != PlayStages.Trick.NONE || dog.bellyStage() != PlayStages.BellyRub.NONE
                 || dog.isPassenger() || dog.isLeashed() || dog.isInLove()
                 || dog.isInWater() || dog.isInLava() || dog.isOnFire() || dog.isFullyFrozen() || dog.hurtTime > 0 || dog.getTarget() != null
                 || dog.deliveryDialog != null && dog.deliveryDialog.isOpen()) return false;

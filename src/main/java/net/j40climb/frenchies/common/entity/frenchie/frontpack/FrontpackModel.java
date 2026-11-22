@@ -1,7 +1,7 @@
 package net.j40climb.frenchies.common.entity.frenchie.frontpack;
 
 import net.j40climb.frenchies.Frenchies;
-import net.j40climb.frenchies.common.entity.frenchie.FrenchieTravelGesture;
+import net.j40climb.frenchies.common.entity.frenchie.client.FrenchieTravelGesture;
 import net.minecraft.client.animation.KeyframeAnimation;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;

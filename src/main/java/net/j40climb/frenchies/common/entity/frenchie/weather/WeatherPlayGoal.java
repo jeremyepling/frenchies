@@ -1,4 +1,11 @@
-package net.j40climb.frenchies.common.entity.frenchie;
+package net.j40climb.frenchies.common.entity.frenchie.weather;
+
+import net.j40climb.frenchies.common.entity.frenchie.CompanionSettings;
+import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
+import net.j40climb.frenchies.common.entity.frenchie.PlayPose;
+import net.j40climb.frenchies.common.entity.frenchie.PlaySafety;
+
+import static net.j40climb.frenchies.common.entity.frenchie.PlayStages.Weather.*;
 
 import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
@@ -19,10 +26,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 /** Cosmetic weather play. Every movement is bounded and checked before it starts. */
-final class WeatherPlayGoal extends Goal {
-    static final int NONE = 0, SHAKE = 1, GRASS_APPROACH = 2, GRASS_SHOULDER = 3,
-            GRASS_ROLL = 4, GRASS_DRAG = 5, SNOW_APPROACH = 6, SNOW_DIVE = 7,
-            SNOW_PLOW = 8, SNOW_POP = 9;
+public final class WeatherPlayGoal extends Goal {
     private final FrenchieEntity dog;
     private final WeatherExposure exposure = new WeatherExposure();
     private Precipitation shakeMaterial = Precipitation.RAIN;
@@ -43,12 +47,12 @@ final class WeatherPlayGoal extends Goal {
     private @Nullable Vec3 plowEnd;
     private @Nullable Vec3 dragEnd;
 
-    WeatherPlayGoal(FrenchieEntity dog) {
+    public WeatherPlayGoal(FrenchieEntity dog) {
         this.dog = dog;
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
     }
 
-    void observeWeather() {
+    public void observeWeather() {
         if ((dog.tickCount + dog.getId()) % WeatherExposure.SAMPLE_TICKS == 0) {
             long now = dog.level().getGameTime();
             boolean enabled = CompanionSettings.weatherReactions();
@@ -92,7 +96,7 @@ final class WeatherPlayGoal extends Goal {
         return false;
     }
 
-    void inviteSnowball(Vec3 impact) {
+    public void inviteSnowball(Vec3 impact) {
         if (dog.level().getGameTime() < nextSnow || active() || !available()
                 || dog.distanceToSqr(impact) > 36 || ownerTooFar(impact)) return;
         Vec3 candidate = snowSpotNear(impact);
@@ -102,20 +106,19 @@ final class WeatherPlayGoal extends Goal {
         }
     }
 
-    boolean active() { return dog.weatherStage() != NONE; }
+    public boolean active() { return dog.weatherStage() != NONE; }
 
-    void interrupt() {
+    public void interrupt() {
         dryingRequested = false;
         snowInterest = null;
         stop();
     }
 
     private boolean available() {
-        return dog.canWatchPlay(true) && dog.playPose() == PlayPose.NONE
+        return dog.canParticipateInWeatherPlay() && dog.playPose() == PlayPose.NONE
                 && !dog.isOrderedToSit() && !dog.isSitting()
                 && !dog.isFrenchieSleeping() && !dog.isPassenger() && !dog.isInWater()
-                && dog.onGround()
-                && !dog.celebrationRequestedOrRunning();
+                && dog.onGround();
     }
 
     private boolean ownerTooFar(Vec3 at) {
@@ -161,7 +164,7 @@ final class WeatherPlayGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return active() && dog.canWatchPlay(true) && !dog.isOrderedToSit() && !dog.isSitting()
+        return active() && dog.canParticipateInWeatherPlay() && !dog.isOrderedToSit() && !dog.isSitting()
                 && !dog.isFrenchieSleeping() && !dog.isPassenger() && !dog.isInWater()
                 && dog.onGround() && ticks < 130;
     }
@@ -309,13 +312,13 @@ final class WeatherPlayGoal extends Goal {
         target = plowEnd = dragEnd = null;
     }
 
-    void save(ValueOutput output) {
+    public void save(ValueOutput output) {
         exposure.save(output);
         output.putLong("NextWeatherDrying", nextDrying);
         output.putLong("NextWeatherSnow", nextSnow);
     }
 
-    void load(ValueInput input) {
+    public void load(ValueInput input) {
         exposure.load(input);
         syncSnowLayer();
         nextDrying = input.getLongOr("NextWeatherDrying", 0);

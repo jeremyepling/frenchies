@@ -1,5 +1,7 @@
 package net.j40climb.frenchies.common.entity.frenchie;
 
+import static net.j40climb.frenchies.common.entity.frenchie.PlayStages.Digging.*;
+
 import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 /** A cosmetic, bounded session beside the owner's excavation. No block or item is changed. */
 final class DiggingAssistantGoal extends Goal {
-    static final int NONE = 0, APPROACH = 1, DIG = 2, REVEAL = 3;
     private static final int MAX_TICKS = 115;
     private final FrenchieEntity dog;
     private @Nullable Vec3 patch;

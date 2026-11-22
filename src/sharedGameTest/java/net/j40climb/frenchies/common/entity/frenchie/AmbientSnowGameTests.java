@@ -1,5 +1,7 @@
 package net.j40climb.frenchies.common.entity.frenchie;
 
+import net.j40climb.frenchies.common.entity.frenchie.weather.WeatherPlayGoal;
+
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -41,21 +43,21 @@ public final class AmbientSnowGameTests {
                     }
                     h.assertTrue(selected, "Ambient scan did not select reachable shallow snow");
                     goal.start();
-                    h.assertTrue(dog.weatherStage() == WeatherPlayGoal.SNOW_APPROACH,
+                    h.assertTrue(dog.weatherStage() == PlayStages.Weather.SNOW_APPROACH,
                             "Ambient selection did not begin snow approach");
                 })
                 .thenExecuteFor(130, () -> {
-                    if (dog.weatherStage() != WeatherPlayGoal.NONE) {
+                    if (dog.weatherStage() != PlayStages.Weather.NONE) {
                         h.assertTrue(goal.canContinueToUse(), "Ambient snow play became unsafe or stuck");
                         goal.tick();
                     }
-                    if (dog.weatherStage() == WeatherPlayGoal.SNOW_DIVE) reached[0] = true;
-                    if (dog.weatherStage() == WeatherPlayGoal.SNOW_PLOW) reached[1] = true;
-                    if (dog.weatherStage() == WeatherPlayGoal.SNOW_POP) reached[2] = true;
+                    if (dog.weatherStage() == PlayStages.Weather.SNOW_DIVE) reached[0] = true;
+                    if (dog.weatherStage() == PlayStages.Weather.SNOW_PLOW) reached[1] = true;
+                    if (dog.weatherStage() == PlayStages.Weather.SNOW_POP) reached[2] = true;
                 })
                 .thenExecute(() -> {
                     h.assertTrue(reached[0] && reached[1] && reached[2]
-                                    && dog.weatherStage() == WeatherPlayGoal.NONE,
+                                    && dog.weatherStage() == PlayStages.Weather.NONE,
                             "Ambient snow did not dive, plow, pop, and finish upright");
                     h.assertTrue(dog.getHealth() == health && !dog.isInWater(),
                             "Ambient snow play harmed or immersed the dog");

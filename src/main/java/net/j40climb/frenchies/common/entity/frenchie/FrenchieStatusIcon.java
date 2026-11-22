@@ -16,7 +16,7 @@ public enum FrenchieStatusIcon {
         sprite = new AtlasSprite(AtlasIds.GUI, Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "frenchie/" + path));
     }
 
-    static @Nullable FrenchieStatusIcon of(FrenchieEntity dog) {
+    public static @Nullable FrenchieStatusIcon of(FrenchieEntity dog) {
         if (dog.isWarningFlash()) return CREEPER;
         if (dog.isDeathTracking()) return COMPASS;
         if (dog.isDelivering()) return PARCEL;

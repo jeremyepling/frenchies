@@ -47,7 +47,7 @@ public final class PlayInterruptionGameTests {
                     dog.mobInteract(owner, HAND);
                     owner.setShiftKeyDown(false);
                 })
-                .thenWaitUntil(() -> h.assertTrue(dog.trickStage() == TrickGoal.FLOP,
+                .thenWaitUntil(() -> h.assertTrue(dog.trickStage() == PlayStages.Trick.FLOP,
                         "Owner trick did not reach the back landing"))
                 .thenExecute(() -> {
                     dog.setHasToyStick(true);
@@ -71,12 +71,12 @@ public final class PlayInterruptionGameTests {
                     active.setDeltaMovement(0, active.getDeltaMovement().y, 0);
                     owner.snapTo(active.position().add(1.5, 0, 0), 0, 0);
                 })
-                .thenWaitUntil(() -> h.assertTrue(current[0].bellyStage() == BellyRubGoal.WAITING,
+                .thenWaitUntil(() -> h.assertTrue(current[0].bellyStage() == PlayStages.BellyRub.WAITING,
                         "Owner invitation did not reach the upside-down pose"))
                 .thenExecute(() -> {
                     owner.setShiftKeyDown(false);
                     current[0].mobInteract(owner, HAND);
-                    h.assertTrue(current[0].bellyStage() == BellyRubGoal.RUBBING,
+                    h.assertTrue(current[0].bellyStage() == PlayStages.BellyRub.RUBBING,
                             "Owner interaction did not start the leg kick");
                     whistle(owner, true);
                 })
@@ -132,8 +132,8 @@ public final class PlayInterruptionGameTests {
     }
 
     private static void assertClear(GameTestHelper h, FrenchieEntity dog, String step) {
-        h.assertTrue(dog.trickStage() == TrickGoal.NONE && dog.bellyStage() == BellyRubGoal.NONE
-                        && dog.weatherStage() == WeatherPlayGoal.NONE && dog.digStage() == DiggingAssistantGoal.NONE
+        h.assertTrue(dog.trickStage() == PlayStages.Trick.NONE && dog.bellyStage() == PlayStages.BellyRub.NONE
+                        && dog.weatherStage() == PlayStages.Weather.NONE && dog.digStage() == PlayStages.Digging.NONE
                         && !dog.isBellyRubPose() && !dog.isOrderedToSit(),
                 step + " left a synced play pose or sit order active");
     }
@@ -147,25 +147,25 @@ public final class PlayInterruptionGameTests {
     }
 
     private static void checkEveryStage(GameTestHelper h, FrenchieEntity dog, ItemStack mouthItem) {
-        for (int stage = TrickGoal.CROUCH; stage <= TrickGoal.LAP; ++stage) {
+        for (int stage = PlayStages.Trick.CROUCH; stage <= PlayStages.Trick.LAP; ++stage) {
             dog.setTrickStage(stage);
             dog.cancelForWhistle();
             assertClear(h, dog, "trick stage " + stage);
             assertCustody(h, dog, mouthItem, "trick stage " + stage);
         }
-        for (int stage = BellyRubGoal.ROLL_OVER; stage <= BellyRubGoal.ROLL_UP; ++stage) {
+        for (int stage = PlayStages.BellyRub.ROLL_OVER; stage <= PlayStages.BellyRub.ROLL_UP; ++stage) {
             dog.setBellyStage(stage);
             dog.cancelForWhistle();
             assertClear(h, dog, "belly stage " + stage);
             assertCustody(h, dog, mouthItem, "belly stage " + stage);
         }
-        for (int stage = WeatherPlayGoal.SHAKE; stage <= WeatherPlayGoal.SNOW_POP; ++stage) {
+        for (int stage = PlayStages.Weather.SHAKE; stage <= PlayStages.Weather.SNOW_POP; ++stage) {
             dog.setWeatherStage(stage);
             dog.cancelForWhistle();
             assertClear(h, dog, "weather stage " + stage);
             assertCustody(h, dog, mouthItem, "weather stage " + stage);
         }
-        for (int stage = DiggingAssistantGoal.APPROACH; stage <= DiggingAssistantGoal.REVEAL; ++stage) {
+        for (int stage = PlayStages.Digging.APPROACH; stage <= PlayStages.Digging.REVEAL; ++stage) {
             dog.setDigStage(stage);
             dog.cancelForWhistle();
             assertClear(h, dog, "dig stage " + stage);

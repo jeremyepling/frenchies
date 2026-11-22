@@ -1,4 +1,6 @@
-package net.j40climb.frenchies.common.entity.frenchie;
+package net.j40climb.frenchies.common.entity.frenchie.weather;
+
+import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
 
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.entity.projectile.Projectile;
