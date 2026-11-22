@@ -318,11 +318,17 @@ public final class PlayfulInteractionServer {
         if (!condition) throw new AssertionError(message);
     }
 
+    private static Object weatherGoal(FrenchieEntity dog) throws ClassNotFoundException {
+        var type = Class.forName("net.j40climb.frenchies.common.entity.frenchie.WeatherPlayGoal");
+        for (var entry : dog.goalSelector.getAvailableGoals()) {
+            if (type.isInstance(entry.getGoal())) return entry.getGoal();
+        }
+        throw new AssertionError("Frenchie has no registered weather goal");
+    }
+
     private static void forceSafeGrassBranch(FrenchieEntity dog) {
         try {
-            Field goalField = FrenchieEntity.class.getDeclaredField("weatherPlay");
-            goalField.setAccessible(true);
-            Object goal = goalField.get(dog);
+            Object goal = weatherGoal(dog);
             Method safeSpot = goal.getClass().getDeclaredMethod("grassSpot");
             safeSpot.setAccessible(true);
             Vec3 candidate = (Vec3) safeSpot.invoke(goal);
@@ -338,9 +344,7 @@ public final class PlayfulInteractionServer {
 
     private static Object snowCandidate(FrenchieEntity dog) {
         try {
-            Field goalField = FrenchieEntity.class.getDeclaredField("weatherPlay");
-            goalField.setAccessible(true);
-            Object goal = goalField.get(dog);
+            Object goal = weatherGoal(dog);
             Method spot = goal.getClass().getDeclaredMethod("snowSpotNear", Vec3.class);
             spot.setAccessible(true);
             return spot.invoke(goal, new Vec3(1.5, 200.125, 0.5));

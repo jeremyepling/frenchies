@@ -66,13 +66,10 @@ public final class AmbientSnowGameTests {
     }
 
     private static WeatherPlayGoal weatherGoal(FrenchieEntity dog) {
-        try {
-            Field field = FrenchieEntity.class.getDeclaredField("weatherPlay");
-            field.setAccessible(true);
-            return (WeatherPlayGoal) field.get(dog);
-        } catch (ReflectiveOperationException e) {
-            throw new AssertionError("Could not inspect weather goal for ambient fixture", e);
+        for (var entry : dog.goalSelector.getAvailableGoals()) {
+            if (entry.getGoal() instanceof WeatherPlayGoal weather) return weather;
         }
+        throw new AssertionError("Frenchie has no registered weather goal");
     }
 
     private static void resetScan(WeatherPlayGoal goal) {

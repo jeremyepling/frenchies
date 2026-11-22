@@ -67,7 +67,6 @@ public class FrenchieEntity extends TamableAnimal {
             SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Long> WEATHER_START =
             SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.LONG);
-    private WeatherPlayGoal weatherPlay;
     private static final EntityDataAccessor<Integer> TRICK_STAGE =
             SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Long> TRICK_STAGE_START =
@@ -76,21 +75,19 @@ public class FrenchieEntity extends TamableAnimal {
             SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Long> BELLY_STAGE_START =
             SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.LONG);
-    private TrickGoal trick;
-    private BellyRubGoal bellyRub;
     private EscapeDangerGoal escapeDanger;
+    private FrenchiePlay play;
     private long nextDangerReaction;
     private long respondingUntil;
-    private CelebrationGoal celebration;
     long nextCelebration;
     private long ownerAwaySince = -1;
 
     public void tryCelebrate() {
-        if (!level().isClientSide()) celebration.request(false);
+        if (!level().isClientSide()) play.celebration.request(false);
     }
 
     boolean requestGuestCelebration() {
-        return celebration.request(true);
+        return play.celebration.request(true);
     }
 
     public int celebrationStage() {
@@ -149,17 +146,12 @@ public class FrenchieEntity extends TamableAnimal {
     private static final EntityDataAccessor<ItemStack> PARCEL = SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.ITEM_STACK);
     private static final EntityDataAccessor<Integer> HANDOFF = SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Long> TOY_EARS_UNTIL = SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.LONG);
-    private ToyPlayGoal toyPlay;
-    private BubblePlayGoal bubblePlay;
     private static final EntityDataAccessor<Byte> PLAY_POSE = SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Integer> DIG_STAGE = SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Long> DIG_STAGE_START = SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.LONG);
     private static final EntityDataAccessor<Boolean> HAS_TOY_STICK = SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.BOOLEAN);
-    private DiggingAssistantGoal diggingAssistant;
     long nextDigAt;
     long nextSlimePlayAt;
-    private long nextPlayDangerCheck;
-    private boolean playDanger;
 
     public PlayPose playPose() {
         return PlayPose.byId(entityData.get(PLAY_POSE));
@@ -170,14 +162,14 @@ public class FrenchieEntity extends TamableAnimal {
     }
 
     public BubblePlayGoal bubblePlay() {
-        return bubblePlay;
+        return play == null ? null : play.bubbles;
     }
 
     boolean canPlay() {
-        return !weatherPlay.active() && !isOrderedToSit() && !isSitting() && !isFrenchieSleeping() && canWatchPlay();
+        return play.canPlay();
     }
 
-    boolean celebrationRequestedOrRunning() { return celebration.requestedOrRunning(); }
+    boolean celebrationRequestedOrRunning() { return play.celebration.requestedOrRunning(); }
 
     public int weatherStage() { return entityData.get(WEATHER_STAGE); }
 
@@ -191,7 +183,7 @@ public class FrenchieEntity extends TamableAnimal {
     }
 
     public void inviteSnowball(Vec3 at) {
-        if (weatherPlay != null) weatherPlay.inviteSnowball(at);
+        if (play != null) play.weather.inviteSnowball(at);
     }
 
     boolean canWatchPlay() {
@@ -199,18 +191,7 @@ public class FrenchieEntity extends TamableAnimal {
     }
 
     boolean canWatchPlay(boolean includeWeather) {
-        if (!isAlive() || isNoAi() || personalityInterrupted() || hasCompanionJob() || hasToyJob()
-                || !includeWeather && weatherPlay != null && weatherPlay.active()
-                || celebration.requestedOrRunning() || trickStage() != TrickGoal.NONE || bellyStage() != BellyRubGoal.NONE
-                || isPassenger() || isLeashed() || isInLove()
-                || isInWater() || isInLava() || isOnFire() || isFullyFrozen() || hurtTime > 0 || getTarget() != null
-                || deliveryDialog != null && deliveryDialog.isOpen()) return false;
-        long now = level().getGameTime();
-        if (now >= nextPlayDangerCheck) {
-            playDanger = PlaySafety.dangerNearby(this);
-            nextPlayDangerCheck = now + 4;
-        }
-        return !playDanger;
+        return play.canWatch(includeWeather);
     }
 
     public int handoffPhase() { return entityData.get(HANDOFF); }
@@ -241,12 +222,19 @@ public class FrenchieEntity extends TamableAnimal {
     void setHasToyStick(boolean hasStick) { entityData.set(HAS_TOY_STICK, hasStick); }
 
     boolean requestDigging(BlockPos broken) {
-        return diggingAssistant != null && diggingAssistant.request(broken);
+        return play != null && play.digging.request(broken);
     }
 
     boolean personalityInterrupted() {
-        return respondingToWhistle() || dangerReaction() != DangerReaction.NONE || escapeDanger != null && escapeDanger.canUse() || entityData.get(BEDTIME) != 0
-                || level().getGameTime() - warningStart() < FrenchieAwareness.WARNING_TICKS;
+        return play.interruptedByOtherActivity();
+    }
+
+    boolean isEscapingDanger() {
+        return escapeDanger != null && escapeDanger.canUse();
+    }
+
+    boolean hasBedtimePlan() {
+        return entityData.get(BEDTIME) != 0;
     }
 
     private final DeathTrackingGoal trail = new DeathTrackingGoal(this);
@@ -274,32 +262,26 @@ public class FrenchieEntity extends TamableAnimal {
             @Override
             public boolean canUse() {
                 // A treat still in the thrower's other hand should not strand the toy on the ground.
-                return !hasToyJob() && !celebration.requestedOrRunning() && super.canUse();
+                return !hasToyJob() && !play.celebration.requestedOrRunning() && super.canUse();
             }
         });
         this.goalSelector.addGoal(4, new FollowOwnerGoal(this, 1.25d, 18f, 7f));
         this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.25));
-        this.toyPlay = new ToyPlayGoal(this);
-        this.goalSelector.addGoal(4, toyPlay);
-        this.trick = new TrickGoal(this);
-        this.bellyRub = new BellyRubGoal(this);
-        this.goalSelector.addGoal(4, trick);
-        this.goalSelector.addGoal(4, bellyRub);
-        this.celebration = new CelebrationGoal(this);
-        this.goalSelector.addGoal(5, celebration);
-        this.diggingAssistant = new DiggingAssistantGoal(this);
-        this.goalSelector.addGoal(5, diggingAssistant);
-        this.weatherPlay = new WeatherPlayGoal(this);
-        this.goalSelector.addGoal(6, weatherPlay);
-        this.bubblePlay = new BubblePlayGoal(this);
-        this.goalSelector.addGoal(6, bubblePlay);
+        this.play = new FrenchiePlay(this);
+        this.goalSelector.addGoal(4, play.toy);
+        this.goalSelector.addGoal(4, play.trick);
+        this.goalSelector.addGoal(4, play.bellyRub);
+        this.goalSelector.addGoal(5, play.celebration);
+        this.goalSelector.addGoal(5, play.digging);
+        this.goalSelector.addGoal(6, play.weather);
+        this.goalSelector.addGoal(6, play.bubbles);
         this.goalSelector.addGoal(7, new SlimeTeaseGoal(this));
         this.goalSelector.addGoal(8, new RandomStrollGoal(this, 1.0) {
             @Override public boolean canUse() {
-                return !bellyRub.invitationPending() && super.canUse();
+                return !play.bellyRub.invitationPending() && super.canUse();
             }
             @Override public boolean canContinueToUse() {
-                return !bellyRub.invitationPending() && super.canContinueToUse();
+                return !play.bellyRub.invitationPending() && super.canContinueToUse();
             }
         });
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -442,17 +424,9 @@ public class FrenchieEntity extends TamableAnimal {
         if (this.entityData.get(IS_SLEEPING) != sleeping) {
             if (!level().isClientSide()) {
                 if (sleeping) {
-                    // Once asleep, vanilla stops ticking the selector, including its normal cleanup.
-                    for (WrappedGoal goal : goalSelector.getAvailableGoals()) {
-                        if (goal.isRunning() && (goal.getGoal() == bubblePlay || goal.getGoal() == diggingAssistant
-                                || goal.getGoal() == weatherPlay
-                                || goal.getGoal() == trick || goal.getGoal() == bellyRub
-                                || goal.getGoal() instanceof SlimeTeaseGoal)) {
-                            goal.stop();
-                        }
-                    }
+                    play.fallAsleep(goalSelector);
                 } else {
-                    bubblePlay.wakeUp();
+                    play.bubbles.wakeUp();
                 }
             }
             this.entityData.set(IS_SLEEPING, sleeping);
@@ -473,11 +447,11 @@ public class FrenchieEntity extends TamableAnimal {
     }
 
     public ToyPlayGoal toyPlay() {
-        return toyPlay;
+        return play == null ? null : play.toy;
     }
 
     public boolean hasToyJob() {
-        return getOffhandItem().is(FrenchieRegistry.SQUEAKY_TOY.get()) || (toyPlay != null && toyPlay.hasJob());
+        return getOffhandItem().is(FrenchieRegistry.SQUEAKY_TOY.get()) || (play != null && play.toy.hasJob());
     }
 
     void perkToyEars() {
@@ -524,21 +498,7 @@ public class FrenchieEntity extends TamableAnimal {
     }
 
     public void interruptPlay() {
-        for (WrappedGoal goal : goalSelector.getAvailableGoals()) {
-            var behavior = goal.getGoal();
-            if (goal.isRunning() && (behavior == toyPlay || behavior == bubblePlay || behavior == celebration
-                    || behavior == diggingAssistant || behavior == weatherPlay
-                    || behavior == trick || behavior == bellyRub
-                    || behavior instanceof SlimeTeaseGoal)) goal.stop();
-        }
-        // An invitation, thrown toy or sleeping spectator can be pending outside the goal selector.
-        toyPlay.stop();
-        bubblePlay.stop();
-        celebration.stop();
-        if (diggingAssistant != null) diggingAssistant.stop();
-        weatherPlay.interrupt();
-        if (trick != null) trick.stop();
-        if (bellyRub != null) bellyRub.stop();
+        play.interrupt(goalSelector);
     }
 
     @Override
@@ -669,16 +629,16 @@ public class FrenchieEntity extends TamableAnimal {
         ItemStack itemstack = pPlayer.getItemInHand(pHand);
         if (isTame() && isOwnedBy(pPlayer) && pHand == InteractionHand.MAIN_HAND
                 && pPlayer.isShiftKeyDown() && itemstack.is(Items.BONE)) {
-            if (!level().isClientSide()) trick.request();
+            if (!level().isClientSide()) play.trick.request();
             return InteractionResult.SUCCESS;
         }
         if (isTame() && isOwnedBy(pPlayer) && pHand == InteractionHand.MAIN_HAND
                 && isBellyRubPose() && itemstack.isEmpty() && !pPlayer.isShiftKeyDown()) {
-            if (!level().isClientSide() && pPlayer instanceof ServerPlayer owner) bellyRub.rub(owner);
+            if (!level().isClientSide() && pPlayer instanceof ServerPlayer owner) play.bellyRub.rub(owner);
             return InteractionResult.SUCCESS;
         }
         if (isBellyRubPose() && isOwnedBy(pPlayer) && (pPlayer.isShiftKeyDown() || !itemstack.isEmpty())) {
-            if (!level().isClientSide()) bellyRub.command();
+            if (!level().isClientSide()) play.bellyRub.command();
         }
         if (!pPlayer.isShiftKeyDown() && itemstack.isEmpty()
                 && isOwnedBy(pPlayer) && getOffhandItem().is(FrenchieRegistry.SQUEAKY_TOY.get())) {
@@ -820,9 +780,9 @@ public class FrenchieEntity extends TamableAnimal {
         output.putLong("NextSlimePlay", nextSlimePlayAt);
         output.putLong("NextDigAt", nextDigAt);
         output.putBoolean("HasToyStick", entityData.get(HAS_TOY_STICK));
-        weatherPlay.save(output);
-        output.putLong("NextTrick", trick.cooldown());
-        output.putLong("NextBellyInvitation", bellyRub.cooldown());
+        play.weather.save(output);
+        output.putLong("NextTrick", play.trick.cooldown());
+        output.putLong("NextBellyInvitation", play.bellyRub.cooldown());
         if (nextDangerReaction > level().getGameTime()) output.putLong("NextDangerReaction", nextDangerReaction);
         output.putLong("OwnerAwaySince", ownerAwaySince);
         output.putInt("Variant", this.getTypeVariant());
@@ -842,9 +802,9 @@ public class FrenchieEntity extends TamableAnimal {
         nextDigAt = input.getLongOr("NextDigAt", 0L);
         entityData.set(HAS_TOY_STICK, input.getBooleanOr("HasToyStick", false));
         setDigStage(DiggingAssistantGoal.NONE);
-        weatherPlay.load(input);
-        trick.loadCooldown(input.getLongOr("NextTrick", 0L));
-        bellyRub.loadCooldown(input.getLongOr("NextBellyInvitation", 0L));
+        play.weather.load(input);
+        play.trick.loadCooldown(input.getLongOr("NextTrick", 0L));
+        play.bellyRub.loadCooldown(input.getLongOr("NextBellyInvitation", 0L));
         nextDangerReaction = input.getLongOr("NextDangerReaction", 0L);
         ownerAwaySince = input.getLongOr("OwnerAwaySince", -1L);
         trail.load(input);
@@ -901,8 +861,8 @@ public class FrenchieEntity extends TamableAnimal {
             handleSleepingAnimations();
         }
         if (!this.level().isClientSide()) {
-            weatherPlay.observeWater();
-            bellyRub.observeInvitation();
+            play.weather.observeWater();
+            play.bellyRub.observeInvitation();
             CaptainControls.followOwner(this);
             if (getVehicle() instanceof AbstractBoat boat) {
                 if (tripOrigin == null) tripOrigin = boat.position();
@@ -914,12 +874,12 @@ public class FrenchieEntity extends TamableAnimal {
             updateSleepState();
             syncCompanionJob();
             awareness.tick();
-            bubblePlay.tickSleepySpectator();
+            play.bubbles.tickSleepySpectator();
         }
     }
 
     private void handleSittingAnimations() {
-        if (entityData.get(BEDTIME) != 0) {
+        if (hasBedtimePlan()) {
             standToSitAnimationState.stop();
             sitPoseAnimationState.stop();
             sitToStandAnimationState.stop();
@@ -1006,7 +966,7 @@ public class FrenchieEntity extends TamableAnimal {
     /* Sleeping */
 
     private void updateSleepState() {
-        if (respondingToWhistle() || escapeDanger.canUse() || dangerReaction() != DangerReaction.NONE) {
+        if (respondingToWhistle() || isEscapingDanger() || dangerReaction() != DangerReaction.NONE) {
             entityData.set(BEDTIME, (byte) 0);
             setFrenchieSleeping(false);
             return;
@@ -1018,7 +978,7 @@ public class FrenchieEntity extends TamableAnimal {
         }
         entityData.set(BEDTIME, (byte)(settled ? 2 : bed == null ? 0 : 1));
         if (settled) getNavigation().stop();
-        setFrenchieSleeping(settled || (bed == null && !isPassenger() && !hasToyJob() && !celebration.requestedOrRunning()
+        setFrenchieSleeping(settled || (bed == null && !isPassenger() && !hasToyJob() && !play.celebration.requestedOrRunning()
                 && trickStage() == TrickGoal.NONE && bellyStage() == BellyRubGoal.NONE
                 && !hasCompanionJob() && !isOrderedToSit() && !isInWater() && isPlayerSleepTime()));
     }
