@@ -3,6 +3,7 @@ package net.j40climb.frenchies.common.entity.frenchie.frontpack.client;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackAttachments;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackData;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackEquipment;
+import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackDoze;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieStatusIcon;
@@ -20,7 +21,7 @@ import org.jspecify.annotations.Nullable;
 
 /** Snapshot used by the pack layer, its model, and the carried dog's status label. */
 public record FrontpackAppearance(@Nullable FrenchieVariant coat, @Nullable Integer tint,
-                                 @Nullable Float alertYaw, @Nullable Component label) {
+                                 @Nullable Float alertYaw, @Nullable Component label, float doze) {
     public static void extract(LivingEntity avatar, AvatarRenderState state) {
         var worn = FrontpackEquipment.wornBy(avatar);
         if (worn.isEmpty()) {
@@ -32,7 +33,8 @@ public record FrontpackAppearance(@Nullable FrenchieVariant coat, @Nullable Inte
         boolean alert = warning != null && warning.visible(avatar.level().getGameTime());
         Float yaw = alert ? Mth.clamp(Mth.wrapDegrees(warning.bearing() - state.bodyRot), -60F, 60F) : null;
         FrontpackRenderData.set(state, new FrontpackAppearance(data == null ? null : data.carriedCoat(),
-                FrontpackTint.dyedFabric(worn), yaw, statusLabel(data, state, alert)));
+                FrontpackTint.dyedFabric(worn), yaw, statusLabel(data, state, alert),
+                FrontpackDoze.amount(avatar, state.ageInTicks - avatar.tickCount)));
     }
 
     private static @Nullable Component statusLabel(@Nullable FrontpackData pack, AvatarRenderState state, boolean alert) {

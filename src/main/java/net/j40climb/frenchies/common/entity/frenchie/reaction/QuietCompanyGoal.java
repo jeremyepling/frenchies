@@ -7,7 +7,7 @@ import net.j40climb.frenchies.common.entity.frenchie.CompanionSettings;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
 import net.j40climb.frenchies.common.entity.frenchie.play.PlayPose;
 import net.j40climb.frenchies.common.entity.frenchie.recall.CompanionRoster;
-import net.j40climb.frenchies.mixin.MiningState;
+import net.j40climb.frenchies.common.entity.frenchie.rest.CompanionRest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,17 +32,8 @@ final class QuietCompanyGoal extends Goal {
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
-    private boolean busy(ServerPlayer owner) {
-        //? if <26.3 {
-        boolean swinging = owner.swinging;
-        //?} else {
-        /*boolean swinging = owner.isSwinging();
-        *///?}
-        return !owner.isAlive() || owner.isSpectator() || owner.isSleeping() || owner.isPassenger()
-                || owner.isUsingItem() || swinging || owner.isSprinting() || owner.isInWater()
-                || ((MiningState) owner.gameMode).frenchies$isMining()
-                || owner.getLastHurtMob() != null && owner.tickCount - owner.getLastHurtMobTimestamp() < 100
-                || owner.getLastHurtByMob() != null && owner.tickCount - owner.getLastHurtByMobTimestamp() < 100;
+    private static boolean busy(ServerPlayer owner) {
+        return owner.isPassenger() || CompanionRest.ownerIsBusy(owner);
     }
 
     // Observe at a low rate even while higher-priority goals own MOVE.

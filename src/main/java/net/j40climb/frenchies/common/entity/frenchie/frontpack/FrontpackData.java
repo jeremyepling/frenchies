@@ -20,14 +20,24 @@ public record FrontpackData(
     boolean hasCarriedFrenchie,
     CompoundTag frenchieNBT,
     long pickupTimestamp,
-    boolean releasePending
+    boolean releasePending,
+    long dozeAt
 ) {
     public FrontpackData(boolean hasCarriedFrenchie, CompoundTag frenchieNBT, long pickupTimestamp) {
         this(hasCarriedFrenchie, frenchieNBT, pickupTimestamp, false);
     }
 
+    // A carried dog settles again after loading. Only tracking clients need the current nap time.
+    public FrontpackData(boolean carried, CompoundTag dog, long pickup, boolean pending) {
+        this(carried, dog, pickup, pending, -1L);
+    }
+
+    public FrontpackData withDozeAt(long time) {
+        return new FrontpackData(hasCarriedFrenchie, frenchieNBT, pickupTimestamp, releasePending, time);
+    }
+
     public FrontpackData withReleasePending(boolean pending) {
-        return new FrontpackData(hasCarriedFrenchie, frenchieNBT, pickupTimestamp, pending);
+        return new FrontpackData(hasCarriedFrenchie, frenchieNBT, pickupTimestamp, pending, dozeAt);
     }
 
     /**
@@ -49,7 +59,8 @@ public record FrontpackData(
         ByteBufCodecs.BOOL, FrontpackData::hasCarriedFrenchie,
         ByteBufCodecs.COMPOUND_TAG, FrontpackData::appearanceTag,
         ByteBufCodecs.VAR_LONG, FrontpackData::pickupTimestamp,
-        FrontpackData::new
+        ByteBufCodecs.VAR_LONG, FrontpackData::dozeAt,
+        (carried, dog, pickup, dozeAt) -> new FrontpackData(carried, dog, pickup, false, dozeAt)
     );
 
     public @Nullable FrenchieVariant carriedCoat() {
