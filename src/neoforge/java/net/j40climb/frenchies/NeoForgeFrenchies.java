@@ -13,6 +13,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.RegisterGameTestsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
@@ -28,7 +29,8 @@ public final class NeoForgeFrenchies {
         bus.addListener(NeoForgeFrenchies::creativeTabs);
         NeoForge.EVENT_BUS.addListener(NeoForgeFrenchies::commands);
         if (Arrays.asList(System.getProperty("neoforge.enabledGameTestNamespaces", "").split(",")).contains(Frenchies.MOD_ID)) {
-            bus.addListener(CompanionTests::register);
+            bus.addListener((RegisterGameTestsEvent event) ->
+                    new CompanionTests(event::registerEnvironment, event::registerTest).register());
         }
     }
 

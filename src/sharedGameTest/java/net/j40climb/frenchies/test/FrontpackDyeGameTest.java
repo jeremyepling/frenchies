@@ -18,14 +18,12 @@ import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
-import net.neoforged.neoforge.network.registration.NetworkRegistry;
 
 import java.util.List;
 
 final class FrontpackDyeGameTest {
     static void craftAndWash(GameTestHelper h) {
-        var player = h.makeMockServerPlayerInLevel();
-        NetworkRegistry.configureMockConnection(player.connection.getConnection());
+        var player = GameTestPlayers.connect(h);
         try {
             player.setGameMode(GameType.SURVIVAL);
             var pos = new BlockPos(1, 1, 1);

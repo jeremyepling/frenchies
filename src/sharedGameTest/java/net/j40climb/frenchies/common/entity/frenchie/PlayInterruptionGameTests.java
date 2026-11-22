@@ -15,7 +15,7 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.registration.NetworkRegistry;
+import net.j40climb.frenchies.test.GameTestPlayers;
 
 import java.util.UUID;
 
@@ -26,8 +26,7 @@ public final class PlayInterruptionGameTests {
     private PlayInterruptionGameTests() {}
 
     public static void whistleDuringPlay(GameTestHelper h) {
-        var owner = h.makeMockServerPlayerInLevel();
-        NetworkRegistry.configureMockConnection(owner.connection.getConnection());
+        var owner = GameTestPlayers.connect(h);
         owner.setGameMode(GameType.SURVIVAL);
         owner.getInventory().clearContent();
         var dog = h.spawn(FrenchieRegistry.FRENCHIE.get(), 5, 1, 5);

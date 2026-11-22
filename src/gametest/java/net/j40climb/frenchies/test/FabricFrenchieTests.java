@@ -35,31 +35,6 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
 public final class FabricFrenchieTests {
-    @GameTest(structure = "florafauna_frenchies:companion_yard", maxTicks = 100)
-    public void frenchieDeathTrail(GameTestHelper helper) {
-        FrenchieTrackingGameTests.trackDeath(helper);
-    }
-
-    @GameTest(structure = "florafauna_frenchies:companion_yard", setupTicks = 20, maxTicks = 550)
-    public void companionFetch(GameTestHelper helper) {
-        CompanionTravelTests.fetch(helper);
-    }
-
-    @GameTest(structure = "florafauna_frenchies:companion_yard", setupTicks = 20, maxTicks = 550)
-    public void companionCaptain(GameTestHelper helper) {
-        CompanionTravelTests.captain(helper);
-    }
-
-    @GameTest(structure = "florafauna_frenchies:companion_yard", maxTicks = 200)
-    public void playTrickBackflop(GameTestHelper helper) {
-        TrickBellyTests.trick(helper);
-    }
-
-    @GameTest(structure = "florafauna_frenchies:companion_yard", maxTicks = 200)
-    public void playBellyRub(GameTestHelper helper) {
-        TrickBellyTests.belly(helper);
-    }
-
     @GameTest(structure = "florafauna_frenchies:companion_yard")
     public void hostileTargets(GameTestHelper helper) {
         var owner = helper.makeMockPlayer(GameType.SURVIVAL);

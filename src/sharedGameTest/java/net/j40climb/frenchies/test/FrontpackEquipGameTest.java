@@ -10,12 +10,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.GameType;
-import net.neoforged.neoforge.network.registration.NetworkRegistry;
 
 final class FrontpackEquipGameTest {
     static void equipFromHand(GameTestHelper h) {
-        var p = h.makeMockServerPlayerInLevel();
-        NetworkRegistry.configureMockConnection(p.connection.getConnection());
+        var p = GameTestPlayers.connect(h);
         try {
             p.setGameMode(GameType.SURVIVAL);
             var pack = new ItemStack(FrenchieRegistry.FRONT_PACK.get());

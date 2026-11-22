@@ -16,12 +16,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.level.storage.LevelData;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.registration.NetworkRegistry;
 
 final class FrenchieBedPreviewGameTest {
     static void respawnPreview(GameTestHelper h) {
-        var owner = h.makeMockServerPlayerInLevel();
-        NetworkRegistry.configureMockConnection(owner.connection.getConnection());
+        var owner = GameTestPlayers.connect(h);
         try {
             var dog = h.spawnWithNoFreeWill(FrenchieRegistry.FRENCHIE.get(), 2, 1, 2);
             dog.tame(owner);

@@ -178,7 +178,7 @@ final class CompanionSafetyTests {
         var connection = new Connection(PacketFlow.SERVERBOUND);
         new EmbeddedChannel(connection);
         level.getServer().getPlayerList().placeNewPlayer(connection, player, cookie);
-        net.neoforged.neoforge.network.registration.NetworkRegistry.configureMockConnection(connection);
+        GameTestPlayers.configure(player);
         player.snapTo(h.absoluteVec(new Vec3(2.5, 1, 2.5)), 0, 0);
         return player;
     }

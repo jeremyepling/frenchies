@@ -22,24 +22,13 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.phys.Vec3;
-//? if neoforge {
-import net.neoforged.neoforge.network.registration.NetworkRegistry;
-//?} else {
-/*import net.minecraft.network.protocol.game.ServerboundPlayerLoadedPacket;
-*///?}
-
 import java.util.UUID;
 
 final class CompanionTravelTests {
     private static final InteractionHand HAND = InteractionHand.MAIN_HAND;
 
     static ServerPlayer player(GameTestHelper h, double x, double z) {
-        var player = h.makeMockServerPlayerInLevel();
-        //? if neoforge {
-        NetworkRegistry.configureMockConnection(player.connection.getConnection());
-        //?} else {
-        /*player.connection.handleAcceptPlayerLoad(new ServerboundPlayerLoadedPacket());
-        *///?}
+        var player = GameTestPlayers.connect(h);
         player.setGameMode(GameType.SURVIVAL);
         player.getInventory().clearContent();
         player.snapTo(h.absoluteVec(new Vec3(x, 1, z)), 0, 0);

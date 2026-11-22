@@ -12,9 +12,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.PlayLevelSoundEvent;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -23,8 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
 import static net.j40climb.frenchies.common.entity.frenchie.PlayPose.*;
 
@@ -49,23 +44,14 @@ final class BubblePlayTests {
     static void toy(GameTestHelper h) {
         var player = blower(h, 5.5, 3.5);
         var toy = player.getMainHandItem().copy();
-        var sounds = new AtomicInteger();
-        Consumer<PlayLevelSoundEvent.AtPosition> listen = event -> {
-            if (event.getLevel() == player.level() && event.getSound() != null
-                    && event.getSound().value() == SoundEvents.BUBBLE_COLUMN_BUBBLE_POP
-                    && event.getPosition().distanceToSqr(player.position()) < 4) sounds.incrementAndGet();
-        };
         List<PlayBubbleEntity> first;
-        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, PlayLevelSoundEvent.AtPosition.class, listen);
-        try {
+        try (var sounds = GameTestSounds.observe(player, SoundEvents.BUBBLE_COLUMN_BUBBLE_POP, player.position(), 4)) {
             blow(player);
             first = bubbles(player);
             h.assertTrue(first.size() == 3, "A first use created " + first.size() + " bubbles");
             for (int i = 0; i < 10; i++) blow(player);
-        } finally {
-            NeoForge.EVENT_BUS.unregister(listen);
+            h.assertTrue(sounds.count() == 1, "One puff and ten cooldown clicks produced " + sounds.count() + " sounds");
         }
-        h.assertTrue(sounds.get() == 1, "One puff and ten cooldown clicks produced " + sounds.get() + " sounds");
         h.assertTrue(bubbles(player).size() == first.size(), "Repeated use bypassed the toy cooldown");
         var start = first.getFirst().position();
         h.startSequence().thenExecuteFor(45, player.getCooldowns()::tick)

@@ -3,6 +3,7 @@ package net.j40climb.frenchies.test;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackEvents;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
+import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackAttachments;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
@@ -37,23 +38,17 @@ import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.level.storage.LevelData;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.network.registration.NetworkRegistry;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.PlayLevelSoundEvent;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
 final class FrenchieDeliveryGameTests {
     private static final InteractionHand HAND = InteractionHand.MAIN_HAND;
 
     static void unequipPackedCourier(GameTestHelper h) {
-        var owner = networkedPlayer(h);
-        var recipient = networkedPlayer(h);
+        var owner = GameTestPlayers.connect(h);
+        var recipient = GameTestPlayers.connect(h);
         var level = h.getLevel();
         var dog = h.spawnWithNoFreeWill(FrenchieRegistry.FRENCHIE.get(), 2, 1, 2);
         var parcel = prepareDelivery(owner, recipient, dog).copy();
@@ -69,7 +64,7 @@ final class FrenchieDeliveryGameTests {
         var offhand = namedPack("Spare carrier", 0x497487);
         owner.setItemSlot(EquipmentSlot.CHEST, chest.copy());
         owner.setItemInHand(InteractionHand.OFF_HAND, offhand.copy());
-        var carried = FrenchieRegistry.FRENCH_FRONTPACK_DATA;
+
         // The embedded GameTest connection has no network tick loop to drive ServerPlayer.doTick().
         h.onEachTick(owner::doTick);
         h.startSequence().thenExecuteAfter(4, () -> {
@@ -77,10 +72,10 @@ final class FrenchieDeliveryGameTests {
             h.assertTrue(dog.isDelivering() && owner.getMainHandItem().isEmpty(), "Courier did not accept the marked parcel");
             owner.setShiftKeyDown(true);
             click(owner, dog);
-            h.assertTrue(owner.getData(carried).hasCarriedFrenchie() && dog.isRemoved(), "Courier was not packed");
+            h.assertTrue(FrontpackAttachments.pack(owner).hasCarriedFrenchie() && dog.isRemoved(), "Courier was not packed");
             owner.inventoryMenu.clicked(InventoryMenu.SHIELD_SLOT, 2, ContainerInput.SWAP, owner);
         }).thenExecuteAfter(8, () -> {
-            h.assertTrue(owner.getData(carried).hasCarriedFrenchie() && level.getEntity(id) == null
+            h.assertTrue(FrontpackAttachments.pack(owner).hasCarriedFrenchie() && level.getEntity(id) == null
                             && ItemStack.matches(chest, owner.getItemBySlot(EquipmentSlot.CHEST))
                             && ItemStack.matches(offhand, owner.getInventory().getItem(2)) && owner.getOffhandItem().isEmpty(),
                     "Removing the spare pack changed custody while the chest pack was still equipped");
@@ -90,7 +85,7 @@ final class FrenchieDeliveryGameTests {
             owner.inventoryMenu.clicked(InventoryMenu.SHIELD_SLOT, 2, ContainerInput.SWAP, owner);
             owner.inventoryMenu.clicked(InventoryMenu.ARMOR_SLOT_START + 1, 1, ContainerInput.SWAP, owner);
         }).thenExecuteAfter(15, () -> {
-            h.assertTrue(owner.getData(carried).hasCarriedFrenchie() && owner.getData(carried).releasePending()
+            h.assertTrue(FrontpackAttachments.pack(owner).hasCarriedFrenchie() && FrontpackAttachments.pack(owner).releasePending()
                             && level.getEntity(id) == null,
                     "A blocked release lost the carried dog or spawned it in midair");
             h.assertTrue(owner.getItemBySlot(EquipmentSlot.CHEST).isEmpty()
@@ -98,7 +93,7 @@ final class FrenchieDeliveryGameTests {
                             && ItemStack.matches(offhand, owner.getOffhandItem()),
                     "Blocked release changed the removed chest pack");
             platform(h, release);
-        }).thenWaitUntil(() -> h.assertTrue(!owner.getData(carried).hasCarriedFrenchie() && level.getEntity(id) instanceof FrenchieEntity,
+        }).thenWaitUntil(() -> h.assertTrue(!FrontpackAttachments.pack(owner).hasCarriedFrenchie() && level.getEntity(id) instanceof FrenchieEntity,
                 "Clearing the obstruction did not release the original dog")).thenExecute(() -> {
             var restored = (FrenchieEntity) level.getEntity(id);
             h.assertTrue(restored.isOwnedBy(owner) && restored.getName().getString().equals("Pip") && restored.isDelivering(),
@@ -107,7 +102,7 @@ final class FrenchieDeliveryGameTests {
             click(owner, restored);
         }).thenExecuteAfter(12, () -> {
             h.assertTrue(level.getEntitiesOfClass(FrenchieEntity.class, new AABB(release).inflate(5), d -> d.isOwnedBy(owner)).size() == 1
-                            && !owner.getData(carried).hasCarriedFrenchie() && ItemStack.matches(parcel, owner.getMainHandItem())
+                            && !FrontpackAttachments.pack(owner).hasCarriedFrenchie() && ItemStack.matches(parcel, owner.getMainHandItem())
                             && owner.getInventory().countItem(Items.BUNDLE) == 1 && recipient.getInventory().countItem(Items.BUNDLE) == 0,
                     "Repeated release lost or duplicated the courier or its named bundle and contents");
             h.assertTrue(owner.getInventory().countItem(FrenchieRegistry.FRONT_PACK.get()) == 2
@@ -127,7 +122,7 @@ final class FrenchieDeliveryGameTests {
     }
 
     static void compassOrders(GameTestHelper h) {
-        var owner = networkedPlayer(h);
+        var owner = GameTestPlayers.connect(h);
         try {
             var dog = h.spawnWithNoFreeWill(FrenchieRegistry.FRENCHIE.get(), 1, 1, 1);
             owner.snapTo(dog.position(), 0, 0);
@@ -165,8 +160,8 @@ final class FrenchieDeliveryGameTests {
     }
 
     static void creativeParcel(GameTestHelper h) {
-        var sender = networkedPlayer(h);
-        var recipient = networkedPlayer(h);
+        var sender = GameTestPlayers.connect(h);
+        var recipient = GameTestPlayers.connect(h);
         try {
             var dog = h.spawn(FrenchieRegistry.FRENCHIE.get(), 1, 1, 1);
             var expected = prepareDelivery(sender, recipient, dog).copy();
@@ -186,8 +181,8 @@ final class FrenchieDeliveryGameTests {
     }
 
     static void packAndCancel(GameTestHelper h) {
-        var owner = networkedPlayer(h);
-        var recipient = networkedPlayer(h);
+        var owner = GameTestPlayers.connect(h);
+        var recipient = GameTestPlayers.connect(h);
         try {
             var dog = h.spawn(FrenchieRegistry.FRENCHIE.get(), 5, 1, 5);
             var expected = prepareDelivery(owner, recipient, dog);
@@ -214,15 +209,15 @@ final class FrenchieDeliveryGameTests {
             owner.setItemSlot(EquipmentSlot.CHEST, new ItemStack(FrenchieRegistry.FRONT_PACK.get()));
             owner.setShiftKeyDown(true);
             click(owner, dog);
-            var pack = FrenchieRegistry.FRENCH_FRONTPACK_DATA;
-            h.assertTrue(owner.getData(pack).hasCarriedFrenchie() && dog.isRemoved(), "Pickup left a second courier in the world");
+
+            h.assertTrue(FrontpackAttachments.pack(owner).hasCarriedFrenchie() && dog.isRemoved(), "Pickup left a second courier in the world");
             var release = BlockPos.containing(owner.position().add(0, 0, 2));
             h.getLevel().setBlockAndUpdate(release.below(), Blocks.STONE.defaultBlockState());
             h.getLevel().setBlockAndUpdate(release, Blocks.AIR.defaultBlockState());
             FrontpackEvents.putDown(owner);
             owner.setShiftKeyDown(false);
             var restored = (FrenchieEntity) h.getLevel().getEntity(dog.getUUID());
-            h.assertTrue(restored != null && restored.isDelivering() && !owner.getData(pack).hasCarriedFrenchie(),
+            h.assertTrue(restored != null && restored.isDelivering() && !FrontpackAttachments.pack(owner).hasCarriedFrenchie(),
                     "Release lost the delivery or left a second copy in the pack");
             click(owner, restored);
             h.assertTrue(!restored.isDelivering() && restored.isOrderedToSit()
@@ -239,9 +234,9 @@ final class FrenchieDeliveryGameTests {
     }
 
     static void fullRecipient(GameTestHelper h) {
-        var owner = networkedPlayer(h);
-        var recipient = networkedPlayer(h);
-        var stranger = networkedPlayer(h);
+        var owner = GameTestPlayers.connect(h);
+        var recipient = GameTestPlayers.connect(h);
+        var stranger = GameTestPlayers.connect(h);
         var dog = h.spawn(FrenchieRegistry.FRENCHIE.get(), 3, 16, 2);
         var id = dog.getUUID();
         var level = h.getLevel();
@@ -261,16 +256,12 @@ final class FrenchieDeliveryGameTests {
         platform(h, moved);
         var bark = level.registryAccess().lookupOrThrow(Registries.WOLF_SOUND_VARIANT)
                 .getOrThrow(WolfSoundVariants.PUGLIN).value().adultSounds().ambientSound();
-        var barks = new AtomicInteger();
-        Consumer<PlayLevelSoundEvent.AtPosition> onBark = sound -> {
-            if (sound.getLevel() == level && bark.equals(sound.getSound())
-                    //? if <26.3 {
-                    && sound.getPosition().distanceToSqr(moved.getBottomCenter()) < 36) barks.incrementAndGet();
-                    //?} else {
-                    /*&& sound.getPosition().distanceToSqr(Vec3.atBottomCenterOf(moved)) < 36) barks.incrementAndGet();
-                    *///?}
-        };
-        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, PlayLevelSoundEvent.AtPosition.class, onBark);
+        //? if <26.3 {
+        var barkPosition = moved.getBottomCenter();
+        //?} else {
+        /*var barkPosition = Vec3.atBottomCenterOf(moved);
+        *///?}
+        var barks = GameTestSounds.observe(recipient, bark.value(), barkPosition, 36);
         recipient.snapTo(address, 0, 0);
         for (int slot = 0; slot < Inventory.INVENTORY_SIZE; slot++) {
             recipient.getInventory().setItem(slot, new ItemStack(Items.STONE, 64));
@@ -292,8 +283,8 @@ final class FrenchieDeliveryGameTests {
                         "Original Frenchie did not arrive at the recipient's new position"))
                 .thenExecuteAfter(25, () -> {
                     var arrived = (FrenchieEntity) level.getEntity(id);
-                    NeoForge.EVENT_BUS.unregister(onBark);
-                    h.assertTrue(barks.get() == 1, "The arriving courier should greet the recipient with a single bark");
+                    barks.close();
+                    h.assertTrue(barks.count() == 1, "The arriving courier should greet the recipient with a single bark");
                     arrived = CompanionTravelTests.reload(h, arrived);
                     h.assertTrue(arrived.handoffPhase() == 1 && ItemStack.matches(arrived.getParcel(), expected),
                             "Reload did not preserve the waiting signature and its exact parcel");
@@ -336,8 +327,8 @@ final class FrenchieDeliveryGameTests {
     }
 
     static void disconnectedRecipient(GameTestHelper h) {
-        var owner = networkedPlayer(h);
-        var recipient = networkedPlayer(h);
+        var owner = GameTestPlayers.connect(h);
+        var recipient = GameTestPlayers.connect(h);
         var dog = h.spawn(FrenchieRegistry.FRENCHIE.get(), 2, 1, 2);
         var expected = prepareDelivery(owner, recipient, dog).copy();
         var id = dog.getUUID();
@@ -360,8 +351,8 @@ final class FrenchieDeliveryGameTests {
     }
 
     static void crossDimension(GameTestHelper h) {
-        var owner = networkedPlayer(h);
-        var recipient = networkedPlayer(h);
+        var owner = GameTestPlayers.connect(h);
+        var recipient = GameTestPlayers.connect(h);
         var dog = h.spawn(FrenchieRegistry.FRENCHIE.get(), 2, 1, 2);
         var expected = prepareDelivery(owner, recipient, dog).copy();
         var id = dog.getUUID();
@@ -422,8 +413,8 @@ final class FrenchieDeliveryGameTests {
             boolean wall = pos.getX() == 1 || pos.getX() == 5 || pos.getZ() == 1 || pos.getZ() == 5;
             h.setBlock(pos, wall || pos.getY() == 0 || pos.getY() == 3 ? Blocks.GLASS : Blocks.AIR);
         }
-        var owner = networkedPlayer(h);
-        var recipient = networkedPlayer(h);
+        var owner = GameTestPlayers.connect(h);
+        var recipient = GameTestPlayers.connect(h);
         var dog = h.spawn(FrenchieRegistry.FRENCHIE.get(), 3, 1, 3);
         var expected = prepareDelivery(owner, recipient, dog).copy();
         var landing = dog.blockPosition().above(40);
@@ -455,7 +446,7 @@ final class FrenchieDeliveryGameTests {
 
     static void unloadedHomeBed(GameTestHelper h) {
         var level = h.getLevel();
-        var owner = networkedPlayer(h);
+        var owner = GameTestPlayers.connect(h);
         var dog = h.spawn(FrenchieRegistry.FRENCHIE.get(), 2, 1, 2);
         var id = dog.getUUID();
         BlockPos start = dog.blockPosition();
@@ -519,7 +510,7 @@ final class FrenchieDeliveryGameTests {
     }
 
     static void legacyBedPickup(GameTestHelper h) {
-        var owner = networkedPlayer(h);
+        var owner = GameTestPlayers.connect(h);
         try {
             var level = h.getLevel();
             var dog = h.spawn(FrenchieRegistry.FRENCHIE.get(), 3, 1, 2);
@@ -604,18 +595,12 @@ final class FrenchieDeliveryGameTests {
     }
 
     private static void click(ServerPlayer player, FrenchieEntity dog) {
-        player.interactOn(dog, HAND, Vec3.ZERO);
+        GameTestPlayers.interact(player, dog, HAND);
     }
 
     private static void order(ServerPlayer owner, FrenchieEntity dog, String choice) {
         owner.level().getServer().getCommands().performPrefixedCommand(owner.createCommandSourceStack(),
                 "frenchiedelivery " + dog.getStringUUID() + " " + choice);
-    }
-
-    private static ServerPlayer networkedPlayer(GameTestHelper h) {
-        var player = h.makeMockServerPlayerInLevel();
-        NetworkRegistry.configureMockConnection(player.connection.getConnection());
-        return player;
     }
 
     private static void disconnect(ServerPlayer player) {

@@ -14,8 +14,6 @@ dependencies {
     implementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
 }
 
-// The NeoForge suite uses its own event-based test registration.
-sourceSets.main.java.exclude('**/frenchies/test/**', '**/*GameTests.java')
 def gameTests = sourceSets.create('gametest') {
     java.source(sourceSets.sharedGameTest.java)
     compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
@@ -24,6 +22,7 @@ def gameTests = sourceSets.create('gametest') {
 tasks.named('check') { dependsOn tasks.named('gametestClasses') }
 
 loom {
+    accessWidenerPath = rootProject.file('src/gametest/resources/frenchies-gametest.accesswidener')
     mods {
         florafauna_frenchies { sourceSet sourceSets.main }
         florafauna_frenchies_gametest { sourceSet gameTests }

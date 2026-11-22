@@ -1,13 +1,12 @@
 package net.j40climb.frenchies.test;
 
-import net.j40climb.frenchies.setup.NeoForgeGameplayEvents;
-import net.minecraft.world.entity.player.Player;
 import io.netty.buffer.Unpooled;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieVariant;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackData;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackEvents;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
+import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackAttachments;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -15,6 +14,9 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.storage.LevelData;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Pose;
@@ -23,19 +25,10 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.TagValueInput;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.UUID;
 
 final class FrenchieGameTests {
-    private static PlayerInteractEvent.EntityInteract clickDog(Player owner, InteractionHand hand, FrenchieEntity dog) {
-        //? if <26.3 {
-        return new PlayerInteractEvent.EntityInteract(owner, hand, dog);
-        //?} else {
-        /*return new PlayerInteractEvent.EntityInteract(owner, hand, dog, net.minecraft.world.phys.Vec3.ZERO);
-        *///?}
-    }
-
     static void ownerOrders(GameTestHelper helper) {
         var level = helper.getLevel();
         var owner = helper.makeMockPlayer(GameType.SURVIVAL);
@@ -59,36 +52,38 @@ final class FrenchieGameTests {
 
     static void frontpackRespawnRelease(GameTestHelper helper) {
         var level = helper.getLevel();
-        var owner = helper.makeMockPlayer(GameType.SURVIVAL);
+        var owner = GameTestPlayers.connect(helper);
+        owner.setGameMode(GameType.SURVIVAL);
         var dog = helper.spawnWithNoFreeWill(FrenchieRegistry.FRENCHIE.get(), 1, 1, 1);
         dog.tame(owner);
         dog.setCustomName(Component.literal("Pip"));
         UUID id = dog.getUUID();
         owner.setShiftKeyDown(true);
-        var pack = FrenchieRegistry.FRENCH_FRONTPACK_DATA;
+
         var item = new ItemStack(FrenchieRegistry.FRONT_PACK.get());
-        var mainClick = clickDog(owner, InteractionHand.MAIN_HAND, dog);
-        NeoForgeGameplayEvents.interact(mainClick);
-        helper.assertTrue(!dog.isRemoved() && !owner.getData(pack).hasCarriedFrenchie(), "Empty-handed pickup without a worn pack succeeded");
+        GameTestPlayers.interact(owner, dog, InteractionHand.MAIN_HAND);
+        helper.assertTrue(!dog.isRemoved() && !FrontpackAttachments.pack(owner).hasCarriedFrenchie(), "Empty-handed pickup without a worn pack succeeded");
         for (InteractionHand hand : InteractionHand.values()) {
             owner.setItemInHand(hand, item);
-            NeoForgeGameplayEvents.interact(clickDog(owner, hand, dog));
-            helper.assertTrue(!dog.isRemoved() && !owner.getData(pack).hasCarriedFrenchie()
+            GameTestPlayers.interact(owner, dog, hand);
+            helper.assertTrue(!dog.isRemoved() && !FrontpackAttachments.pack(owner).hasCarriedFrenchie()
                             && owner.getItemInHand(hand) == item, "A pack held in " + hand + " counted as worn");
             owner.setItemInHand(hand, ItemStack.EMPTY);
         }
         owner.getInventory().setItem(9, item);
-        NeoForgeGameplayEvents.interact(mainClick);
-        helper.assertTrue(!dog.isRemoved() && !owner.getData(pack).hasCarriedFrenchie(), "A pack stowed in inventory counted as worn");
+        GameTestPlayers.interact(owner, dog, InteractionHand.MAIN_HAND);
+        helper.assertTrue(!dog.isRemoved() && !FrontpackAttachments.pack(owner).hasCarriedFrenchie(), "A pack stowed in inventory counted as worn");
         owner.setItemSlot(EquipmentSlot.CHEST, owner.getInventory().removeItemNoUpdate(9));
-        NeoForgeGameplayEvents.interact(clickDog(owner, InteractionHand.MAIN_HAND, dog));
+        GameTestPlayers.interact(owner, dog, InteractionHand.MAIN_HAND);
         helper.assertTrue(dog.isRemoved(), "Pickup left the original dog in the level");
 
-        var respawned = helper.makeMockPlayer(GameType.SURVIVAL);
-        respawned.setUUID(owner.getUUID());
-        respawned.copyAttachmentsFrom(owner, true);
+        // Drive the same death respawn branch used by the server's respawn packet handler.
+        owner.setRespawnPosition(new ServerPlayer.RespawnConfig(
+                LevelData.RespawnData.of(level.dimension(), dog.blockPosition(), 0, 0), true), false);
+        var respawned = level.getServer().getPlayerList().respawn(owner, false, Entity.RemovalReason.KILLED);
+        GameTestPlayers.configure(respawned);
         respawned.setItemSlot(EquipmentSlot.CHEST, item);
-        helper.assertTrue(respawned.getData(pack).hasCarriedFrenchie(), "Death dropped the packed dog");
+        helper.assertTrue(FrontpackAttachments.pack(respawned).hasCarriedFrenchie(), "Death dropped the packed dog");
 
         BlockPos feet = helper.absolutePos(new BlockPos(0, 1, 0));
         respawned.snapTo(feet, 0, 80);
@@ -96,7 +91,7 @@ final class FrenchieGameTests {
         level.setBlockAndUpdate(target.below(), Blocks.STONE.defaultBlockState());
         level.setBlockAndUpdate(target, Blocks.STONE.defaultBlockState());
         FrontpackEvents.putDown(respawned);
-        helper.assertTrue(respawned.getData(pack).hasCarriedFrenchie(), "An obstructed release consumed the dog");
+        helper.assertTrue(FrontpackAttachments.pack(respawned).hasCarriedFrenchie(), "An obstructed release consumed the dog");
         level.setBlockAndUpdate(target, Blocks.AIR.defaultBlockState());
 
         // A UUID collision also makes ServerLevel.addFreshEntity return false.
@@ -106,17 +101,18 @@ final class FrenchieGameTests {
         conflicting.snapTo(feet, 0, 0);
         helper.assertTrue(level.addFreshEntity(conflicting), "Could not set up duplicate UUID fixture");
         FrontpackEvents.putDown(respawned);
-        helper.assertTrue(respawned.getData(pack).hasCarriedFrenchie(), "A rejected entity spawn consumed the dog");
+        helper.assertTrue(FrontpackAttachments.pack(respawned).hasCarriedFrenchie(), "A rejected entity spawn consumed the dog");
         conflicting.discard();
 
         FrontpackEvents.putDown(respawned);
-        helper.assertTrue(!respawned.getData(pack).hasCarriedFrenchie(), "Successful release left a second copy in the pack");
+        helper.assertTrue(!FrontpackAttachments.pack(respawned).hasCarriedFrenchie(), "Successful release left a second copy in the pack");
         var restored = level.getEntity(id);
         helper.assertTrue(restored instanceof FrenchieEntity pet && pet.getOwnerReference() != null
                 && pet.getOwnerReference().getUUID().equals(owner.getUUID()) && pet.getName().getString().equals("Pip")
                 && pet.blockPosition().equals(target), "Released dog lost its identity or landed inside the floor");
         FrontpackEvents.putDown(respawned);
         helper.assertTrue(level.getEntity(id) == restored, "Repeat release replaced the dog");
+        level.getServer().getPlayerList().remove(respawned);
         helper.succeed();
     }
 

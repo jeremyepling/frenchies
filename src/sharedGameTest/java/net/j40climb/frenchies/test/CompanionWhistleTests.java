@@ -2,6 +2,7 @@ package net.j40climb.frenchies.test;
 
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
+import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackAttachments;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -26,14 +27,10 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
 import static net.j40climb.frenchies.test.CompanionTravelTests.disconnect;
 import static net.j40climb.frenchies.test.CompanionTravelTests.player;
@@ -143,9 +140,9 @@ final class CompanionWhistleTests {
             if (pack) {
                 owner.setItemSlot(EquipmentSlot.CHEST, new ItemStack(FrenchieRegistry.FRONT_PACK.get()));
                 owner.setShiftKeyDown(true);
-                owner.interactOn(dog, HAND, Vec3.ZERO);
+                GameTestPlayers.interact(owner, dog, HAND);
                 owner.setShiftKeyDown(false);
-                h.assertTrue(owner.getData(FrenchieRegistry.FRENCH_FRONTPACK_DATA).hasCarriedFrenchie(), "Courier never entered pack");
+                h.assertTrue(FrontpackAttachments.pack(owner).hasCarriedFrenchie(), "Courier never entered pack");
             }
         }).thenWaitUntil(() -> h.assertTrue(h.getLevel().getEntity(id) == null, "Courier did not leave the world for travel or packing"))
         .thenExecute(() -> {
@@ -154,7 +151,7 @@ final class CompanionWhistleTests {
             whistle(owner, dismiss);
         }).thenExecuteAfter(45, () -> {
             if (dismiss) {
-                h.assertTrue(h.getLevel().getEntity(id) == null && !owner.getData(FrenchieRegistry.FRENCH_FRONTPACK_DATA).hasCarriedFrenchie(),
+                h.assertTrue(h.getLevel().getEntity(id) == null && !FrontpackAttachments.pack(owner).hasCarriedFrenchie(),
                         "Dismissed courier still had a physical or packed copy");
                 whistle(owner, false);
             }
@@ -162,7 +159,7 @@ final class CompanionWhistleTests {
             // Arrival was observed above. A following dog can wander while the player keeps still.
             var restored = (FrenchieEntity) h.getLevel().getEntity(id);
             h.assertTrue(restored != null && restored.isAlive() && restored.isOwnedBy(owner), "Restored courier disappeared");
-            h.assertTrue(!owner.getData(FrenchieRegistry.FRENCH_FRONTPACK_DATA).hasCarriedFrenchie()
+            h.assertTrue(!FrontpackAttachments.pack(owner).hasCarriedFrenchie()
                             && !restored.isDelivering() && !restored.isGoingHome()
                             && restored.getVariant() == variant && restored.getName().getString().equals("Violet")
                             && ItemStack.matches(equipment, restored.getItemBySlot(EquipmentSlot.FEET))
@@ -242,15 +239,6 @@ final class CompanionWhistleTests {
         equip(owner);
         ServerPlayer[] returning = new ServerPlayer[1];
         AtomicBoolean reopened = new AtomicBoolean();
-        Consumer<EntityJoinLevelEvent> readKennel = event -> {
-            if (event.getLevel() == level && event.getEntity().getUUID().equals(id) && event.loadedFromDisk()) reopened.set(true);
-        };
-        h.testInfo.addListener(new GameTestListener() {
-            @Override public void testStructureLoaded(GameTestInfo info) {}
-            @Override public void testAddedForRerun(GameTestInfo original, GameTestInfo copy, GameTestRunner runner) {}
-            @Override public void testPassed(GameTestInfo info, GameTestRunner runner) { NeoForge.EVENT_BUS.unregister(readKennel); }
-            @Override public void testFailed(GameTestInfo info, GameTestRunner runner) { NeoForge.EVENT_BUS.unregister(readKennel); }
-        });
         h.startSequence().thenWaitUntil(() -> h.assertTrue(level.areEntitiesActuallyLoadedAndTicking(remote), "Kennel did not load"))
         .thenExecute(() -> dog.snapTo(kennel, 0, 0))
         .thenExecuteAfter(30, () -> {
@@ -259,7 +247,13 @@ final class CompanionWhistleTests {
         }).thenWaitUntil(() -> h.assertTrue(!level.hasChunkAt(kennel) && level.getEntity(id) == null,
                 "The remote dog's chunk never unloaded"))
         .thenExecute(() -> {
-            NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, EntityJoinLevelEvent.class, readKennel);
+            var stopWatching = KennelReload.watch(level, remote, id, () -> reopened.set(true));
+            h.testInfo.addListener(new GameTestListener() {
+                @Override public void testStructureLoaded(GameTestInfo info) {}
+                @Override public void testAddedForRerun(GameTestInfo original, GameTestInfo copy, GameTestRunner runner) {}
+                @Override public void testPassed(GameTestInfo info, GameTestRunner runner) { stopWatching.run(); }
+                @Override public void testFailed(GameTestInfo info, GameTestRunner runner) { stopWatching.run(); }
+            });
             whistle(owner, true);
             h.assertTrue(!reopened.get(), "The owner must leave before the remote entity is loaded");
             disconnect(owner);

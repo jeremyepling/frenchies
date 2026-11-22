@@ -25,14 +25,12 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
-import net.neoforged.neoforge.network.registration.NetworkRegistry;
 
 import java.util.List;
 
 final class FrontpackElytraGameTest {
     static void craftAndRepair(GameTestHelper h) {
-        var player = h.makeMockServerPlayerInLevel();
-        NetworkRegistry.configureMockConnection(player.connection.getConnection());
+        var player = GameTestPlayers.connect(h);
         try {
             player.setGameMode(GameType.SURVIVAL);
             player.giveExperienceLevels(30);
@@ -83,7 +81,7 @@ final class FrontpackElytraGameTest {
             h.assertTrue(new ItemLore(List.of(packLore, elytraLore)).equals(wings.get(DataComponents.LORE))
                             && expectedAttributes.equals(wings.get(DataComponents.ATTRIBUTE_MODIFIERS)),
                     "Distinct lore and modifiers from both items must survive; a shared modifier keeps the pack's slot and value");
-            h.assertTrue(wings.supportsEnchantment(mending) && wings.supportsEnchantment(unbreaking),
+            h.assertTrue(mending.value().canEnchant(wings) && unbreaking.value().canEnchant(wings),
                     "The upgraded pack must accept the same Mending and Unbreaking books as an elytra");
             grid.get(0).set(wings);
             grid.get(1).set(new ItemStack(Items.ELYTRA));
