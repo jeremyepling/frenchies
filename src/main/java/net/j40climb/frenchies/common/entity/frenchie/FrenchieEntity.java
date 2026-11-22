@@ -870,9 +870,9 @@ public class FrenchieEntity extends TamableAnimal {
         if (isRemoved()) return;
 
         if(this.level().isClientSide()) {
-            idleAnimationState.animateWhen(onGround() && getPose() == Pose.STANDING && !isInWater()
+            idleAnimationState.animateWhen(getPose() == Pose.STANDING && !isInWater()
                     && !isPassenger() && !isFrenchieSleeping() && getSleepTime() >= 20 && getPoseTime() >= 10
-                    && walkAnimation.speed() < 0.05F && playPose() == PlayPose.NONE, tickCount);
+                    && walkAnimation.speed() < 0.05F && playPose() == PlayPose.NONE && hasIdleFooting(), tickCount);
 
             // Swim animation (simple boolean state)
             this.swimAnimationState.animateWhen(this.isInWater(), this.tickCount);
@@ -894,6 +894,11 @@ public class FrenchieEntity extends TamableAnimal {
             awareness.tick();
             play.bubbles().tickSleepySpectator();
         }
+    }
+
+    private boolean hasIdleFooting() {
+        // A client that starts tracking an already stationary dog can miss its last landing packet.
+        return onGround() || (getY() == yo && !level().noCollision(this, getBoundingBox().move(0, -0.01, 0)));
     }
 
     private void handleSittingAnimations() {
