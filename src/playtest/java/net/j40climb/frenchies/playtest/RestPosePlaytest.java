@@ -1,5 +1,6 @@
 package net.j40climb.frenchies.playtest;
 
+import com.mojang.logging.LogUtils;
 import net.j40climb.frenchies.Frenchies;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
 import net.j40climb.frenchies.common.entity.frenchie.client.FrenchieModel;
@@ -74,9 +75,17 @@ public final class RestPosePlaytest {
             dog.yBodyRot = dog.yHeadRot = 180;
             dogId[0] = dog.getId();
         });
-        t.awaitClient("Wait for a quiet, grounded Frenchie at the camera mark", mc ->
-                mc.level.getEntity(dogId[0]) instanceof FrenchieEntity dog && dog.onGround()
-                        && dog.idleAnimationState.isStarted() && !dog.isFrenchieSleeping());
+        t.awaitServer("Inspect the stationary Frenchie after initial tracking", player -> {
+            var dog = (FrenchieEntity) player.level().getEntity(dogId[0]);
+            if (dog == null || dog.tickCount < 35) return false;
+            logPose("server", dog);
+            return true;
+        });
+        t.awaitClient("Wait for a quiet, grounded Frenchie at the camera mark", mc -> {
+            if (!(mc.level.getEntity(dogId[0]) instanceof FrenchieEntity dog)) return false;
+            if (dog.tickCount % 30 == 0) logPose("client", dog);
+            return dog.onGround() && dog.idleAnimationState.isStarted() && !dog.isFrenchieSleeping();
+        });
         Vec3 center = Vec3.atBottomCenterOf(CENTER);
         camera(t, center.add(0.95, 0.65, -1.45), center.add(0, 0.25, 0));
         t.awaitClient("Sample the standing Frenchie's relaxed chest", mc ->
@@ -97,6 +106,13 @@ public final class RestPosePlaytest {
         });
         t.screenshot("observer-awake-after-side-sleep");
         packed(t, dogId);
+    }
+
+    private static void logPose(String observer, FrenchieEntity dog) {
+        LogUtils.getLogger().info("Rest fixture {} dog={} ground={} pose={} sleep={} idle={} play={} walkSpeed={} sit={} pos={} below={}",
+                observer, dog.getId(), dog.onGround(), dog.getPose(), dog.isFrenchieSleeping(), dog.idleAnimationState.isStarted(),
+                dog.playPose(), dog.walkAnimation.speed(), dog.isOrderedToSit(), dog.position(),
+                dog.level().getBlockState(dog.blockPosition().below()));
     }
 
     private static void sleeping(Playtest t, int[] dogId, boolean side) {
