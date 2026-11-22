@@ -22,6 +22,10 @@ Taming your first dog gives you a **Frenchie Whistle**. Right-click to call your
 - **Offer belly rubs.** Crouch beside an idle Frenchie with empty hands for a moment, then use an empty hand to rub its belly. Walk away or give a command when playtime is over.
 - **Watch the drying routine.** After a real swim, a Frenchie shakes off and may roll on nearby grass or moss before dragging its belly forward.
 - **Play in snow.** On safe, shallow snow, a Frenchie may briefly dive and plow. A nearby snowball landing can also catch its attention.
+- **Watch the weather.** Snow dusts the head and back over about 20 seconds. It melts under cover and faster beside a fire. Snowy and rain-soaked Frenchies occasionally shake themselves off. A nearby lightning strike can send a following dog to your side for a quiet whimper.
+- **Lead a herd.** Walk with wheat in either hand while sheep or cows follow. A Frenchie can work its way to the outside of the herd and give a lagging animal a gentle nudge on clear, level ground.
+- **Take a breather.** An idle companion may sit beside you and eventually stretch out. It gets up when you move. A serious fall can bring it over to check on you, and it backs away from exposed lava edges when it finds safe footing.
+- **Bring home a stick.** After you chop a log, your Frenchie may fetch a freshly dropped stick once nearby players have had time to collect it. It leaves saplings for replanting. If your inventory is full, the stick stays in its mouth and you can take it with an empty hand.
 - **Bring a digging assistant.** Dig nearby dirt or sand with a shovel and an available Frenchie may dig beside you, then proudly carry its reusable toy stick. Its digging leaves the ground untouched.
 - **Take the boat.** Board with your dog following and it rides at the bow, leaving the passenger seat free. Its life jacket appears automatically on the water. When you step out, it looks for a safe landing.
 - **Follow its nose.** Use an ordinary compass on your dog and follow it toward your last death in this dimension. It waits if you fall behind and signals when you reach the spot.
@@ -48,8 +52,29 @@ Craft a Frenchie Front Pack with string in the left and right squares of one row
 
 ## Development
 
+### Companion settings
+
+Fabric and NeoForge generate `config/florafauna_frenchies.properties` on startup. Edit the server's file, or the local game's file for singleplayer, and restart. All eight options default to `true`.
+
+| Option | Controls |
+| --- | --- |
+| `weatherReactions` | Rain and snow exposure, precipitation shakes, and thunder reactions |
+| `visibleSnow` | Snow drawn on the coat |
+| `thunderFear` | Seeking company or cover after a lightning strike |
+| `automaticHerding` | Assisting sheep and cows that follow wheat |
+| `fallReactions` | Checking on an owner who loses at least two hearts to a fall |
+| `ambientCompanionship` | Voluntarily sitting and resting beside an idle owner |
+| `lavaReactions` | Retreating before reaching an exposed lava edge |
+| `stickRetrieval` | Fetching a dropped stick after tree chopping |
+
+### Building and testing
+
+The Frenchie entity package contains the goal selector and synchronized state. Its `weather` package owns exposure and shaking, `reaction` owns owner concern, lava retreat, and quiet company, and `client` contains the model and render layers. Front-pack equipment remains in `frontpack`.
+
 Use Java 25 and this checkout's Gradle wrapper. The four Gradle projects use the form `:<minecraft-version>-<loader>`. For example, run `./gradlew :26.1-fabric:build :26.1-fabric:runGameTestServer` to build and test Fabric, or `./gradlew :26.3-neoforge:runClient` for a NeoForge development client. Run all four targets before a release. The spawn egg models and other runtime resources are checked in. Jars are under `versions/<minecraft-version>-<loader>/build/libs/`.
 
 For the NeoForge scripted clients on Windows with PowerShell 7, run `./scripts/test_dev_world.ps1 -Target 26.1 -All -SourceWorld <closed-save-directory>` to check sleep, front-pack persistence, status icons and delivery with a real client. Use `-Target 26.3` for that version. Run `./scripts/test_delivery_multiplayer.ps1 -Target 26.1` to verify courier handoff between two real clients and a dedicated server, or `./scripts/test_playful_interactions.ps1 -Target 26.1` to inspect playful poses. These scripts accept either target and keep disposable worlds, logs and captures under `versions/<target>-neoforge/.tmp/`. Their default target is 26.1.
 
 To play with FloraFauna, Hammer and Frenchies together, run `./gradlew -PdevMods=all :26.1-neoforge:runClient` or `:26.3-neoforge:runClient` from a matching FloraFauna checkout. [FloraFauna development setup](https://github.com/jeremyepling/florafauna#play-with-the-hammer-and-frenchies)
+
+For companion reactions, run the NeoForge GameTests with `-PgameTestFilter=florafauna_frenchies:companion_reaction_*`. The scripted client accepts `-Scenario weather` to capture the same dog as its snow coat builds, shakes off, and begins to build again.
