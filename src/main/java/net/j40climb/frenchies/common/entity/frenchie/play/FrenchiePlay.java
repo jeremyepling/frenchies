@@ -8,11 +8,13 @@ import net.j40climb.frenchies.common.entity.frenchie.reaction.FrenchieAwareness;
 import net.j40climb.frenchies.common.entity.frenchie.weather.WeatherPlayGoal;
 
 import java.util.function.Predicate;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
 
 /** Coordinates play for one Frenchie. Each goal owns its activity and any pending invitation. */
 public final class FrenchiePlay {
@@ -54,8 +56,8 @@ public final class FrenchiePlay {
 
     public ToyPlayGoal toy() { return toy; }
     public BubblePlayGoal bubbles() { return bubbles; }
-    public DiggingAssistantGoal digging() { return digging; }
-    public WeatherPlayGoal weather() { return weather; }
+    public boolean requestDigging(BlockPos broken) { return digging.request(broken); }
+    public void inviteSnowball(Vec3 impact) { weather.inviteSnowball(impact); }
 
     public boolean requestCelebration(boolean guest) { return celebration.request(guest); }
     public boolean celebrationPending() { return celebration.requestedOrRunning(); }
@@ -64,7 +66,7 @@ public final class FrenchiePlay {
     public void cancelBellyRub() { bellyRub.command(); }
     public boolean bellyInvitationPending() { return bellyRub.invitationPending(); }
 
-    public void observeInvitations() {
+    public void tick() {
         weather.observeWeather();
         bellyRub.observeInvitation();
     }

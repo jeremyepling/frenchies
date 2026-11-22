@@ -202,7 +202,7 @@ public class FrenchieEntity extends TamableAnimal {
     }
 
     public void inviteSnowball(Vec3 at) {
-        if (play != null) play.weather().inviteSnowball(at);
+        if (play != null) play.inviteSnowball(at);
     }
 
     public boolean canParticipateInWeatherPlay() {
@@ -237,7 +237,7 @@ public class FrenchieEntity extends TamableAnimal {
     public void setHasToyStick(boolean hasStick) { entityData.set(HAS_TOY_STICK, hasStick); }
 
     public boolean requestDigging(BlockPos broken) {
-        return play != null && play.digging().request(broken);
+        return play != null && play.requestDigging(broken);
     }
 
     public CompanionReactions reactions() {
@@ -867,7 +867,7 @@ public class FrenchieEntity extends TamableAnimal {
             handleSleepingAnimations();
         }
         if (!this.level().isClientSide()) {
-            play.observeInvitations();
+            play.tick();
             reactions.observeOwner();
             captain.tick(this);
             if (isTame() && !isRemoved()) CompanionRoster.track(this);
