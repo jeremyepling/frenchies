@@ -44,7 +44,8 @@ public class ToyPlayGoal extends Goal {
     }
 
     boolean hasJob() {
-        return carrying() || liveThrow();
+        // Significant reactions and commands may preempt a spontaneous stick fetch.
+        return carrying() || (!fetchingStick && liveThrow());
     }
 
     private boolean liveThrow() {
@@ -86,7 +87,7 @@ public class ToyPlayGoal extends Goal {
     /** Returns true only when filling a new audience place. Dog squeaks can turn heads, never recruit. */
     public boolean hear(Entity source, boolean space) {
         long now = dog.level().getGameTime();
-        if (!available() || hasJob() || now < reactAgainAt) return false;
+        if (!available() || carrying() || liveThrow() || now < reactAgainAt) return false;
         boolean alreadyWatching = watching(source);
         if (audience && now < watchUntil && !alreadyWatching) return false;
         boolean recruit = source instanceof Player && space && source.getUUID().equals(lastPlayer)
