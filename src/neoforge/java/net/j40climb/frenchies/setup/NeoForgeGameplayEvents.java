@@ -4,6 +4,7 @@ import net.j40climb.frenchies.Frenchies;
 import net.j40climb.frenchies.common.entity.frenchie.CompanionRoster;
 import net.j40climb.frenchies.common.entity.frenchie.CourierTrips;
 import net.j40climb.frenchies.common.entity.frenchie.DiggingAssistantEvents;
+import net.j40climb.frenchies.common.entity.frenchie.TreeStickSearch;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieAwareness;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieCommands;
 import net.j40climb.frenchies.common.entity.frenchie.LegacyCompanionIndex;
@@ -92,6 +93,7 @@ public final class NeoForgeGameplayEvents {
     *///?}
         if (!event.isCanceled() && event.getLevel() instanceof ServerLevel level) {
             DiggingAssistantEvents.ownerDigs(level, event.getPlayer(), event.getPos(), event.getState());
+            TreeStickSearch.ownerChops(level, event.getPlayer(), event.getPos(), event.getState());
         }
     }
 

@@ -12,6 +12,7 @@ import net.j40climb.frenchies.Frenchies;
 import net.j40climb.frenchies.common.entity.frenchie.CompanionRoster;
 import net.j40climb.frenchies.common.entity.frenchie.CourierTrips;
 import net.j40climb.frenchies.common.entity.frenchie.DiggingAssistantEvents;
+import net.j40climb.frenchies.common.entity.frenchie.TreeStickSearch;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieCommands;
 import net.j40climb.frenchies.common.entity.frenchie.LegacyCompanionIndex;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackEvents;
@@ -40,7 +41,10 @@ public final class FabricGameplayEvents {
             CompanionRoster.tick(server);
         });
         PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
-            if (level instanceof ServerLevel serverLevel) DiggingAssistantEvents.ownerDigs(serverLevel, player, pos, state);
+            if (level instanceof ServerLevel serverLevel) {
+                DiggingAssistantEvents.ownerDigs(serverLevel, player, pos, state);
+                TreeStickSearch.ownerChops(serverLevel, player, pos, state);
+            }
         });
         UseBlockCallback.EVENT.register((player, level, hand, hit) ->
                 !player.isSpectator() && player instanceof ServerPlayer owner

@@ -36,22 +36,22 @@ final class PlaySafety {
     }
 
     /** Check a short run or hop on level ground, with room for the whole dog along the diagonal. */
-    static boolean clearGroundSegment(FrenchieEntity dog, Vec3 from, Vec3 to) {
+    static boolean clearGroundSegment(Mob mob, Vec3 from, Vec3 to) {
         if (Math.abs(from.y - to.y) > 0.125) return false;
-        var level = dog.level();
-        double radius = dog.getBbWidth() * 0.5 + 0.025;
-        AABB whole = new AABB(from, to).inflate(radius, 0, radius).expandTowards(0, dog.getBbHeight() + 0.65, 0);
+        var level = mob.level();
+        double radius = mob.getBbWidth() * 0.5 + 0.025;
+        AABB whole = new AABB(from, to).inflate(radius, 0, radius).expandTowards(0, mob.getBbHeight() + 0.65, 0);
         if (!level.getWorldBorder().isWithinBounds(whole)
                 || !level.hasChunksAt(BlockPos.containing(whole.minX, whole.minY, whole.minZ),
                         BlockPos.containing(whole.maxX, whole.maxY, whole.maxZ))) return false;
-        var others = level.getEntities(dog, whole, e -> !e.isSpectator() && (e instanceof LivingEntity || e.isPushable()));
-        var path = new PathfindingContext(level, dog);
+        var others = level.getEntities(mob, whole, e -> !e.isSpectator() && (e instanceof LivingEntity || e.isPushable()));
+        var path = new PathfindingContext(level, mob);
         int steps = Math.max(1, (int) Math.ceil(from.distanceTo(to) * 2));
         Vec3 start = from;
         for (int i = 1; i <= steps; i++) {
             Vec3 end = from.lerp(to, (double) i / steps);
-            AABB sweep = new AABB(start, end).inflate(radius, 0, radius).expandTowards(0, dog.getBbHeight() + 0.65, 0);
-            if (!level.noCollision(dog, sweep) || level.containsAnyLiquid(sweep)) return false;
+            AABB sweep = new AABB(start, end).inflate(radius, 0, radius).expandTowards(0, mob.getBbHeight() + 0.65, 0);
+            if (!level.noCollision(mob, sweep) || level.containsAnyLiquid(sweep)) return false;
             for (Entity other : others) {
                 if (other.getBoundingBox().intersects(sweep)) return false;
             }

@@ -13,6 +13,7 @@ import net.minecraft.util.Util;
 import net.minecraft.util.Mth;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.Nullable;
@@ -95,7 +96,7 @@ public class FrenchieRenderer extends MobRenderer<FrenchieEntity, FrenchieRender
         reusedState.hasVest = entity.hasFlotationVest();
         itemResolver.updateForLiving(reusedState.mouthItem, entity.getMouthItem(),
                 ItemDisplayContext.GROUND, entity);
-        reusedState.toyStick = entity.isShowingToyStick();
+        reusedState.toyStick = entity.getOffhandItem().is(Items.STICK) || entity.isShowingToyStick();
         reusedState.presenting = entity.handoffPhase() != 0;
         reusedState.toyEarLift = entity.toyEarLift(partialTick);
         reusedState.variant = entity.getVariant();
