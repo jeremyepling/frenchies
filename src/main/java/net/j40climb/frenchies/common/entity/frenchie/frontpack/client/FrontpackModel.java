@@ -9,8 +9,11 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.AnimationState;
+
+import java.util.Set;
 
 /**
  * Model for the Frenchie frontpack that renders on players.
@@ -94,9 +97,10 @@ public class FrontpackModel extends EntityModel<AvatarRenderState> {
                 .texOffs(1, 24).addBox(0.0F, -2.8377F, 2.9087F, 3.0F, 3.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.2618F));
 
         // The eyes occupy one texel each. Lower a strip of forehead fur over each pupil.
+        var frontFace = Set.of(Direction.NORTH);
         head.addOrReplaceChild("eyelids", CubeListBuilder.create()
-                        .texOffs(5, 34).addBox(-1.983F, 0, 0, 1, 1, 0)
-                        .texOffs(8, 34).addBox(1.017F, 0, 0, 1, 1, 0),
+                        .texOffs(5, 34).addBox(-1.983F, 0, 0, 1, 1, 0, frontFace)
+                        .texOffs(8, 34).addBox(1.017F, 0, 0, 1, 1, 0, frontFace),
                 PartPose.offset(0, -1.3875F, -3.90F));
         FrenchieTravelGesture.addTongue(head);
 
