@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.j40climb.frenchies.common.entity.frenchie.DeliveryDialog;
+import net.j40climb.frenchies.common.entity.frenchie.CompanionSettings;
 import net.j40climb.frenchies.common.entity.frenchie.DeliveryPopupPayload;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieCommands;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
@@ -18,6 +19,7 @@ import net.minecraft.world.item.CreativeModeTabs;
 public final class FabricFrenchies implements ModInitializer {
     @Override
     public void onInitialize() {
+        CompanionSettings.load(net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDir());
         FrenchieRegistry.bootstrap();
         FabricDefaultAttributeRegistry.register(FrenchieRegistry.FRENCHIE.get(), FrenchieEntity.createAttributes());
         CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.SPAWN_EGGS).register(
