@@ -77,6 +77,17 @@ public final class AdventureOutfitModels {
                 .box(TEAL, -1.17F, 2.29F, -1.94F, 2.34F, 0.82F, 1.28F)
                 .box(AQUA, -1.5F, 2.62F, -3.1F, 3.0F, 0.48F, 1.4F)
                 .box(TEAL, -1.22F, 2.69F, -3.65F, 2.44F, 0.34F, 0.68F);
+        Shape airTank = new Shape()
+                .box(TEAL, -1.62F, -4.60F, -1.02F, 3.24F, 0.44F, 5.33F)
+                .box(GOLD, -1.28F, -6.38F, -0.68F, 2.56F, 1.86F, 4.63F)
+                .box(GOLD, -0.92F, -6.71F, -0.68F, 1.84F, 2.48F, 4.63F)
+                .box(AMBER, -1.04F, -6.38F, 3.91F, 2.08F, 1.86F, 0.58F)
+                .box(METAL, -0.79F, -6.23F, -1.26F, 1.58F, 1.57F, 0.64F)
+                .box(SILVER, -0.42F, -5.93F, -1.67F, 0.84F, 0.87F, 0.45F)
+                .box(RED, -0.30F, -6.50F, -1.42F, 0.60F, 0.32F, 0.58F)
+                .box(INK, -1.32F, -6.42F, 1.88F, 2.64F, 1.92F, 0.54F)
+                .box(INK, -0.94F, -6.76F, 1.88F, 1.88F, 0.40F, 0.54F)
+                .box(SILVER, -0.27F, -6.87F, 1.81F, 0.54F, 0.20F, 0.68F);
         Shape winterScarf = new Shape()
                 .box(RED, -3.57F, -3.95F, -5.8F, 7.14F, 6.05F, 0.92F)
                 .box(IVORY, -3.64F, -3.45F, -5.92F, 7.28F, 0.42F, 1.11F)
@@ -116,6 +127,7 @@ public final class AdventureOutfitModels {
         fan.add(mesh, "fan");
         boot.add(mesh, "boot");
         flipper.add(mesh, "flipper");
+        airTank.add(mesh, "air_tank");
         winterScarf.add(mesh, "winter_scarf");
         scarfKnot.add(mesh, "scarf_knot");
         scarfTail.add(mesh, "scarf_tail");

@@ -75,6 +75,7 @@ final class AdventureOutfitLayer extends RenderLayer<FrenchieRenderState, French
         dog.translateToChest(poses);
         if (state.explorer != FrenchieEntity.ExplorerOutfit.NONE) clothes.submit("satchel", poses, solid, light, overlay);
         if (state.outfit == AdventureOutfit.WINTER) clothes.submit("winter_scarf", poses, solid, light, overlay);
+        if (state.outfit == AdventureOutfit.SCUBA) clothes.submit("air_tank", poses, solid, light, overlay);
         if (state.outfit == AdventureOutfit.NETHER) {
             clothes.submit("fan_pack", poses, solid, light, overlay);
             poses.translate(0, -6.21 / 16, 3.20 / 16);
@@ -84,11 +85,11 @@ final class AdventureOutfitLayer extends RenderLayer<FrenchieRenderState, French
         poses.popPose();
 
         if (state.outfit == AdventureOutfit.WINTER || state.outfit == AdventureOutfit.SCUBA) {
-            boolean winter = state.outfit == AdventureOutfit.WINTER;
-            for (int foot = winter ? 0 : 2; foot < 4; foot++) {
+            String footwear = state.outfit == AdventureOutfit.WINTER ? "boot" : "flipper";
+            for (int foot = 0; foot < 4; foot++) {
                 poses.pushPose();
                 dog.translateToFoot(poses, foot);
-                clothes.submit(winter ? "boot" : "flipper", poses, solid, light, overlay);
+                clothes.submit(footwear, poses, solid, light, overlay);
                 poses.popPose();
             }
         }
