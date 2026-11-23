@@ -35,10 +35,22 @@ public final class AdventureOutfitModels {
                 .box(SILVER, -0.96F, -5.22F, -5.05F, 1.92F, 1.24F, 0.3F)
                 .box(IVORY, -0.64F, -5.03F, -5.15F, 1.28F, 0.84F, 0.18F);
         Shape scuba = new Shape()
-                .box(TEAL, -3.85F, 2.75F, -4.8F, 7.7F, 1.1F, 5.8F)
-                .box(AQUA, -3.45F, 2.6F, -4.95F, 6.9F, 0.38F, 6.05F)
-                .box(TEAL, 3.45F, -0.3F, -1.5F, 1.85F, 1.65F, 1.55F)
-                .box(GOLD, 5.10F, 0.0F, -1.25F, 0.45F, 1.1F, 1.04F);
+                .box(TEAL, -5, -6.9F, -6.3F, 10, 0.9F, 5.9F)
+                .box(INK, -5, 2.6F, -6.3F, 10, 0.9F, 5.9F)
+                .box(INK, -5, -6.0F, -6.3F, 0.8F, 8.6F, 5.9F)
+                .box(INK, 4.2F, -6.0F, -6.3F, 0.8F, 8.6F, 5.9F)
+                .box(TEAL, -5, -6.9F, -0.4F, 10, 10.4F, 1.0F)
+                .box(TEAL, -3.7F, 3.5F, -4.3F, 7.4F, 0.6F, 5.3F)
+                .box(AQUA, -4.1F, 2.85F, -6.39F, 2.3F, 0.33F, 0.18F)
+                .box(GOLD, 3.13F, 2.83F, -6.41F, 0.84F, 0.38F, 0.21F);
+        for (int side : new int[]{-1, 1}) {
+            float moduleX = side < 0 ? -5.7F : 4.9F;
+            float ventX = side < 0 ? -5.82F : 5.68F;
+            scuba.box(TEAL, moduleX, -3.78F, -4.30F, 0.8F, 4.55F, 3.2F)
+                    .box(AQUA, ventX, -3.20F, -3.88F, 0.14F, 0.42F, 2.24F)
+                    .box(METAL, ventX, -2.08F, -3.88F, 0.14F, 0.36F, 2.24F)
+                    .box(METAL, ventX, -1.26F, -3.88F, 0.14F, 0.36F, 2.24F);
+        }
         Shape astronaut = new Shape()
                 .box(IVORY, -3.85F, 2.65F, -4.8F, 7.7F, 1.2F, 5.7F)
                 .box(BLUE, -3.7F, 3.15F, -4.94F, 7.4F, 0.34F, 5.96F)

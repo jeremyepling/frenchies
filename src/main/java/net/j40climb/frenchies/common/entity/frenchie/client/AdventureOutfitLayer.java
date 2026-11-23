@@ -38,11 +38,15 @@ final class AdventureOutfitLayer extends RenderLayer<FrenchieRenderState, French
             case CAPTAIN -> clothes.submit("captain", poses, solid, light, overlay);
             case MINING -> clothes.submit("mining", poses, solid, light, overlay);
             case NETHER -> clothes.submit("goggles", poses, solid, light, overlay);
-            case SCUBA, ASTRONAUT -> {
-                boolean scuba = state.outfit == AdventureOutfit.SCUBA;
-                clothes.submit(scuba ? "scuba" : "astronaut", poses, solid, light, overlay);
+            case SCUBA -> {
+                clothes.submit("scuba", poses, solid, light, overlay);
                 collector.order(3).submitCustomGeometry(poses, RenderTypes.entityTranslucent(ATLAS, false),
-                        (pose, vertices) -> drawDome(pose, vertices, scuba, light, overlay));
+                        (pose, vertices) -> drawScubaVisor(pose, vertices, light, overlay));
+            }
+            case ASTRONAUT -> {
+                clothes.submit("astronaut", poses, solid, light, overlay);
+                collector.order(3).submitCustomGeometry(poses, RenderTypes.entityTranslucent(ATLAS, false),
+                        (pose, vertices) -> drawDome(pose, vertices, light, overlay));
             }
             case AVIATOR -> clothes.submitAviator(poses, solid, light, overlay, state.ageInTicks, state.adventureFlying);
             default -> {
@@ -90,34 +94,52 @@ final class AdventureOutfitLayer extends RenderLayer<FrenchieRenderState, French
         return ring;
     }
 
-    private static void drawDome(PoseStack.Pose pose, VertexConsumer vertices, boolean scuba, int light, int overlay) {
+    private static void drawScubaVisor(PoseStack.Pose pose, VertexConsumer vertices, int light, int overlay) {
+        visorQuad(pose, vertices, light, overlay, -4.2F, -6.0F, 4.2F, 2.6F, -6.24F, 0x37AFEFFF);
+        // Stepped highlights give the flat pane a pixelated reflection.
+        visorQuad(pose, vertices, light, overlay, -3.57F, -5.35F, -1.38F, -4.66F, -6.26F, 0x90E6F9FF);
+        visorQuad(pose, vertices, light, overlay, -3.57F, -4.66F, -2.88F, -3.7F, -6.26F, 0x79E6F9FF);
+    }
+
+    private static void visorQuad(PoseStack.Pose pose, VertexConsumer vertices, int light, int overlay,
+                                  float left, float top, float right, float bottom, float z, int color) {
+        glassVertex(pose, vertices, light, overlay, left, top, z, 0, 0, -1, color);
+        glassVertex(pose, vertices, light, overlay, left, bottom, z, 0, 0, -1, color);
+        glassVertex(pose, vertices, light, overlay, right, bottom, z, 0, 0, -1, color);
+        glassVertex(pose, vertices, light, overlay, right, top, z, 0, 0, -1, color);
+    }
+
+    private static void drawDome(PoseStack.Pose pose, VertexConsumer vertices, int light, int overlay) {
         for (int y = 0; y < RINGS; y++) {
             for (int side = 0; side < SIDES; side++) {
                 int next = (side + 1) % SIDES;
-                int color = scuba ? 0x329EEFFB : 0x35C5E6FF;
+                int color = 0x35C5E6FF;
                 if ((y == 1 && (side == 0 || side == 5 || side == 8))
                         || (y == 2 && (side == 5 || side == 7 || side == 8))
                         || (y == 3 && side == 8)) {
                     color = 0x98E9FCFF;
                 } else if (y == 6) {
-                    color = scuba ? 0x568BE7F9 : 0x54B8ECFF;
+                    color = 0x54B8ECFF;
                 }
-                vertex(pose, vertices, scuba, light, overlay, DOME[y][side], color);
-                vertex(pose, vertices, scuba, light, overlay, DOME[y + 1][side], color);
-                vertex(pose, vertices, scuba, light, overlay, DOME[y + 1][next], color);
-                vertex(pose, vertices, scuba, light, overlay, DOME[y][next], color);
+                domeVertex(pose, vertices, light, overlay, DOME[y][side], color);
+                domeVertex(pose, vertices, light, overlay, DOME[y + 1][side], color);
+                domeVertex(pose, vertices, light, overlay, DOME[y + 1][next], color);
+                domeVertex(pose, vertices, light, overlay, DOME[y][next], color);
             }
         }
     }
 
-    private static void vertex(PoseStack.Pose pose, VertexConsumer vertices, boolean scuba, int light, int overlay,
-                               Point point, int color) {
-        float x = point.x * (scuba ? 6.35F : 5.75F) / 16;
-        float y = (point.y * (scuba ? 6.55F : 6.25F) - 2.2F) / 16;
-        float z = (point.z * (scuba ? 5.2F : 4.75F) - 2.1F) / 16;
+    private static void domeVertex(PoseStack.Pose pose, VertexConsumer vertices, int light, int overlay,
+                                   Point point, int color) {
+        glassVertex(pose, vertices, light, overlay, point.x * 5.75F, point.y * 6.25F - 2.2F, point.z * 4.75F - 2.1F,
+                point.x, point.y, point.z, color);
+    }
+
+    private static void glassVertex(PoseStack.Pose pose, VertexConsumer vertices, int light, int overlay,
+                                    float x, float y, float z, float nx, float ny, float nz, int color) {
         // Sample the white swatch. Vertex color carries the tint and transparency.
-        vertices.addVertex(pose, x, y, z).setColor(color).setUv(0.87F, 0.87F)
-                .setOverlay(overlay).setLight(light).setNormal(pose, point.x, point.y, point.z);
+        vertices.addVertex(pose, x / 16, y / 16, z / 16).setColor(color).setUv(0.87F, 0.87F)
+                .setOverlay(overlay).setLight(light).setNormal(pose, nx, ny, nz);
     }
 
     private record Point(float x, float y, float z) {}

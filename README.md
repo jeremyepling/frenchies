@@ -49,7 +49,7 @@ In falling snow, a dusting spreads across your Frenchie's head and back over abo
 
 ## Adventure outfits
 
-Frenchies automatically dress for the trip. The captain wears a cap and life jacket at the bow. When you dive with enough water overhead, a following Frenchie can enter from a nearby bank and swim to you in a bubble helmet and flippers. It returns to surface swimming when you come up.
+Frenchies automatically dress for the trip. The captain wears a cap and life jacket at the bow. When you dive with enough water overhead, a following Frenchie can enter from a nearby bank and swim to you in a rectangular diving helmet and flippers. It returns to surface swimming when you come up.
 
 In dark caves a Frenchie puts on a hard hat, keeps close, and sometimes looks at ore or watches you use a pickaxe. For the lamp to illuminate nearby terrain, install the matching [LambDynamicLights](https://modrinth.com/mod/lambdynamiclights) client mod on Fabric or NeoForge. The server needs only Frenchies. The lamp provides constant level-11 point light and makes no changes to world blocks.
 
