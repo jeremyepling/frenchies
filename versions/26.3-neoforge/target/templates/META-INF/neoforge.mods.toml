@@ -40,3 +40,5 @@ description='''${mod_description}'''
 
 [[mixins]]
 config="frenchies.mixins.json"
+[[mixins]]
+config="frenchies.neoforge-gameplay.mixins.json"

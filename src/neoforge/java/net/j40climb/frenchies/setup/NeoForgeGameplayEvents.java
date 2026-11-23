@@ -1,12 +1,10 @@
 package net.j40climb.frenchies.setup;
 
 import net.j40climb.frenchies.Frenchies;
-import net.j40climb.frenchies.common.entity.frenchie.assistance.DiggingAssistantEvents;
 import net.j40climb.frenchies.common.entity.frenchie.delivery.CourierTrips;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackEvents;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackDoze;
 import net.j40climb.frenchies.common.entity.frenchie.frontpack.FrontpackWarning;
-import net.j40climb.frenchies.common.entity.frenchie.play.TreeStickSearch;
 import net.j40climb.frenchies.common.entity.frenchie.recall.CompanionRoster;
 import net.j40climb.frenchies.common.entity.frenchie.recall.FrenchieCommands;
 import net.j40climb.frenchies.common.entity.frenchie.recall.LegacyCompanionIndex;
@@ -22,11 +20,6 @@ import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
-//? if <26.3 {
-import net.neoforged.neoforge.event.level.BlockEvent.BreakEvent;
-//?} else {
-/*import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
-*///?}
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
@@ -84,18 +77,6 @@ public final class NeoForgeGameplayEvents {
         if (result != InteractionResult.PASS) {
             event.setCancellationResult(result);
             event.setCanceled(true);
-        }
-    }
-
-    @SubscribeEvent
-    //? if <26.3 {
-    public static void blockBreak(BreakEvent event) {
-    //?} else {
-    /*public static void blockBreak(BreakBlockEvent event) {
-    *///?}
-        if (!event.isCanceled() && event.getLevel() instanceof ServerLevel level) {
-            DiggingAssistantEvents.ownerDigs(level, event.getPlayer(), event.getPos(), event.getState());
-            TreeStickSearch.ownerChops(level, event.getPlayer(), event.getPos(), event.getState());
         }
     }
 

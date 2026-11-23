@@ -44,7 +44,7 @@ public final class FabricGameplayEvents {
         });
         PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> {
             if (level instanceof ServerLevel serverLevel) {
-                DiggingAssistantEvents.ownerDigs(serverLevel, player, pos, state);
+                DiggingAssistantEvents.ownerDigs(serverLevel, player, pos, state, player.getMainHandItem());
                 TreeStickSearch.ownerChops(serverLevel, player, pos, state);
             }
         });
