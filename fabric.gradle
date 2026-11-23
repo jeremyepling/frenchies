@@ -43,7 +43,7 @@ loom {
 processResources {
     def metadata = [mod_id: mod_id, mod_name: mod_name, mod_version: mod_version,
                     mod_description: mod_description, mod_authors: mod_authors, mod_license: mod_license,
-                    minecraft_version: minecraft_version, fabric_loader_version: fabricLoaderVersion,
+                    minecraft_version_range: minecraft_version_range, fabric_loader_version: fabricLoaderVersion,
                     fabric_api_version: fabric_api_version]
     inputs.properties metadata
     filesMatching('fabric.mod.json') { expand metadata }

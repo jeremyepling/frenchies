@@ -2,7 +2,14 @@
 
 Take a French bulldog on your next expedition. It can ride on the bow while you row, carry a bundle to a friend in another dimension, and lead you back to the spot where you dropped your gear. Bring glow berries. Your courier has been known to linger after a delivery.
 
-**Standalone Fabric and NeoForge mod for Minecraft 26.1 and 26.3.** Install the jar for your Minecraft version and loader on both the client and server. Fabric installations also require Fabric Loader 0.19.5 or later and Fabric API for your Minecraft version.
+**Standalone Fabric and NeoForge mod for Minecraft Java 26.1, 26.1.1, 26.1.2, and 26.3.** Install the same Frenchies jar on the client and server. For either 26.1 hotfix, choose the 26.1 jar for your loader. Fabric requires Loader 0.19.5 or later and Fabric API for your Minecraft version.
+
+| Minecraft Java | Frenchies jar line | NeoForge tested | Fabric API tested with Loader 0.19.5 |
+| --- | --- | --- | --- |
+| 26.1 | 26.1 | 26.1.0.19-beta | 0.145.1+26.1 |
+| 26.1.1 | 26.1 | 26.1.1.15-beta | 0.145.4+26.1.1 |
+| 26.1.2 | 26.1 | 26.1.2.129 | 0.148.0+26.1.2 |
+| 26.3 | 26.3 | 26.3.0.101 | 0.165.2+26.3 |
 
 ![A Frenchie wearing an orange life jacket sits at the bow in front of its owner.](docs/images/frenchie-boat-captain.png)
 
