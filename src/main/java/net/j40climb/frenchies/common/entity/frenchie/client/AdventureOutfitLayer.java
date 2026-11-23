@@ -10,13 +10,26 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
+
+import static net.j40climb.frenchies.common.entity.frenchie.client.AdventureOutfitModels.*;
 
 final class AdventureOutfitLayer extends RenderLayer<FrenchieRenderState, FrenchieModel> {
     private static final Identifier ATLAS = Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE,
             "textures/entity/frenchie/adventure_outfits.png");
     private static final int RINGS = 8, SIDES = 12;
     private static final Point[][] DOME = makeDome();
+    private static final Point[] SCUBA_CORNERS = {
+            new Point(-SCUBA_HALF_WIDTH, SCUBA_TOP, SCUBA_FRONT),
+            new Point(SCUBA_HALF_WIDTH, SCUBA_TOP, SCUBA_FRONT),
+            new Point(SCUBA_HALF_WIDTH, SCUBA_BOTTOM, SCUBA_FRONT),
+            new Point(-SCUBA_HALF_WIDTH, SCUBA_BOTTOM, SCUBA_FRONT),
+            new Point(-SCUBA_HALF_WIDTH, SCUBA_TOP, SCUBA_BACK),
+            new Point(SCUBA_HALF_WIDTH, SCUBA_TOP, SCUBA_BACK),
+            new Point(SCUBA_HALF_WIDTH, SCUBA_BOTTOM, SCUBA_BACK),
+            new Point(-SCUBA_HALF_WIDTH, SCUBA_BOTTOM, SCUBA_BACK)
+    };
     private final AdventureOutfitModels clothes = new AdventureOutfitModels();
 
     AdventureOutfitLayer(RenderLayerParent<FrenchieRenderState, FrenchieModel> parent) {
@@ -41,7 +54,7 @@ final class AdventureOutfitLayer extends RenderLayer<FrenchieRenderState, French
             case SCUBA -> {
                 clothes.submit("scuba", poses, solid, light, overlay);
                 collector.order(3).submitCustomGeometry(poses, RenderTypes.entityTranslucent(ATLAS, false),
-                        (pose, vertices) -> drawScubaVisor(pose, vertices, light, overlay));
+                        (pose, vertices) -> drawScubaGlass(pose, vertices, light, overlay));
             }
             case ASTRONAUT -> {
                 clothes.submit("astronaut", poses, solid, light, overlay);
@@ -94,11 +107,30 @@ final class AdventureOutfitLayer extends RenderLayer<FrenchieRenderState, French
         return ring;
     }
 
-    private static void drawScubaVisor(PoseStack.Pose pose, VertexConsumer vertices, int light, int overlay) {
-        visorQuad(pose, vertices, light, overlay, -4.2F, -6.0F, 4.2F, 2.6F, -6.24F, 0x37AFEFFF);
+    private static void drawScubaGlass(PoseStack.Pose pose, VertexConsumer vertices, int light, int overlay) {
+        scubaPane(pose, vertices, light, overlay, Direction.NORTH, 0, 3, 2, 1);
+        scubaPane(pose, vertices, light, overlay, Direction.SOUTH, 4, 5, 6, 7);
+        scubaPane(pose, vertices, light, overlay, Direction.WEST, 0, 4, 7, 3);
+        scubaPane(pose, vertices, light, overlay, Direction.EAST, 1, 2, 6, 5);
+        scubaPane(pose, vertices, light, overlay, Direction.DOWN, 0, 1, 5, 4);
+        scubaPane(pose, vertices, light, overlay, Direction.UP, 3, 7, 6, 2);
         // Stepped highlights give the flat pane a pixelated reflection.
-        visorQuad(pose, vertices, light, overlay, -3.57F, -5.35F, -1.38F, -4.66F, -6.26F, 0x90E6F9FF);
-        visorQuad(pose, vertices, light, overlay, -3.57F, -4.66F, -2.88F, -3.7F, -6.26F, 0x79E6F9FF);
+        visorQuad(pose, vertices, light, overlay, -4.25F, -6.2F, -2.35F, -5.66F, SCUBA_FRONT - 0.02F, 0x76E6F9FF);
+        visorQuad(pose, vertices, light, overlay, -4.25F, -5.66F, -3.68F, -4.88F, SCUBA_FRONT - 0.02F, 0x64E6F9FF);
+    }
+
+    private static void scubaPane(PoseStack.Pose pose, VertexConsumer vertices, int light, int overlay,
+                                  Direction normal, int first, int second, int third, int fourth) {
+        scubaVertex(pose, vertices, light, overlay, normal, SCUBA_CORNERS[first]);
+        scubaVertex(pose, vertices, light, overlay, normal, SCUBA_CORNERS[second]);
+        scubaVertex(pose, vertices, light, overlay, normal, SCUBA_CORNERS[third]);
+        scubaVertex(pose, vertices, light, overlay, normal, SCUBA_CORNERS[fourth]);
+    }
+
+    private static void scubaVertex(PoseStack.Pose pose, VertexConsumer vertices, int light, int overlay,
+                                    Direction normal, Point corner) {
+        glassVertex(pose, vertices, light, overlay, corner.x, corner.y, corner.z,
+                normal.getStepX(), normal.getStepY(), normal.getStepZ(), 0x24B1ECFF);
     }
 
     private static void visorQuad(PoseStack.Pose pose, VertexConsumer vertices, int light, int overlay,

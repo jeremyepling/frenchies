@@ -20,6 +20,8 @@ public final class AdventureOutfitModels {
     private static final int INK = 0, IVORY = 1, GOLD = 2, ORANGE = 3, TEAL = 4, AQUA = 5,
             BLUE = 6, RED = 7, LEATHER = 8, SUEDE = 9, METAL = 10, SILVER = 11,
             LENS = 12, AMBER = 13, GREEN = 14, WHITE = 15;
+    static final float SCUBA_HALF_WIDTH = 4.9F, SCUBA_TOP = -6.85F, SCUBA_BOTTOM = 3.35F,
+            SCUBA_FRONT = -6.24F, SCUBA_BACK = 0.65F;
     private final ModelPart parts = bake();
 
     private static ModelPart bake() {
@@ -34,23 +36,7 @@ public final class AdventureOutfitModels {
                 .box(INK, -1.35F, -5.55F, -4.85F, 2.7F, 1.9F, 1.3F)
                 .box(SILVER, -0.96F, -5.22F, -5.05F, 1.92F, 1.24F, 0.3F)
                 .box(IVORY, -0.64F, -5.03F, -5.15F, 1.28F, 0.84F, 0.18F);
-        Shape scuba = new Shape()
-                .box(TEAL, -5, -6.9F, -6.3F, 10, 0.9F, 5.9F)
-                .box(INK, -5, 2.6F, -6.3F, 10, 0.9F, 5.9F)
-                .box(INK, -5, -6.0F, -6.3F, 0.8F, 8.6F, 5.9F)
-                .box(INK, 4.2F, -6.0F, -6.3F, 0.8F, 8.6F, 5.9F)
-                .box(TEAL, -5, -6.9F, -0.4F, 10, 10.4F, 1.0F)
-                .box(TEAL, -3.7F, 3.5F, -4.3F, 7.4F, 0.6F, 5.3F)
-                .box(AQUA, -4.1F, 2.85F, -6.39F, 2.3F, 0.33F, 0.18F)
-                .box(GOLD, 3.13F, 2.83F, -6.41F, 0.84F, 0.38F, 0.21F);
-        for (int side : new int[]{-1, 1}) {
-            float moduleX = side < 0 ? -5.7F : 4.9F;
-            float ventX = side < 0 ? -5.82F : 5.68F;
-            scuba.box(TEAL, moduleX, -3.78F, -4.30F, 0.8F, 4.55F, 3.2F)
-                    .box(AQUA, ventX, -3.20F, -3.88F, 0.14F, 0.42F, 2.24F)
-                    .box(METAL, ventX, -2.08F, -3.88F, 0.14F, 0.36F, 2.24F)
-                    .box(METAL, ventX, -1.26F, -3.88F, 0.14F, 0.36F, 2.24F);
-        }
+        Shape scuba = scubaFrame();
         Shape astronaut = new Shape()
                 .box(IVORY, -3.85F, 2.65F, -4.8F, 7.7F, 1.2F, 5.7F)
                 .box(BLUE, -3.7F, 3.15F, -4.94F, 7.4F, 0.34F, 5.96F)
@@ -137,6 +123,42 @@ public final class AdventureOutfitModels {
         pirate.add(mesh, "pirate");
         satchel.add(mesh, "satchel");
         return LayerDefinition.create(mesh, 128, 128).bakeRoot();
+    }
+
+    private static Shape scubaFrame() {
+        float rail = 0.16F;
+        float corner = 0.5F;
+        float width = SCUBA_HALF_WIDTH * 2;
+        float height = SCUBA_BOTTOM - SCUBA_TOP;
+        float depth = SCUBA_BACK - SCUBA_FRONT;
+        float[] sides = {-SCUBA_HALF_WIDTH, SCUBA_HALF_WIDTH};
+        float[] levels = {SCUBA_TOP, SCUBA_BOTTOM};
+        float[] ends = {SCUBA_FRONT, SCUBA_BACK};
+        Shape frame = new Shape();
+        for (float x : sides) {
+            for (float y : levels) {
+                frame.box(LENS, x - rail / 2, y - rail / 2, SCUBA_FRONT, rail, rail, depth);
+                for (float z : ends) {
+                    frame.box(AQUA, x - corner / 2, y - corner / 2, z - corner / 2, corner, corner, corner);
+                }
+            }
+            for (float z : ends) {
+                frame.box(LENS, x - rail / 2, SCUBA_TOP, z - rail / 2, rail, height, rail);
+            }
+        }
+        for (float y : levels) {
+            for (float z : ends) {
+                frame.box(LENS, -SCUBA_HALF_WIDTH, y - rail / 2, z - rail / 2, width, rail, rail);
+            }
+        }
+        for (int side : new int[]{-1, 1}) {
+            float moduleX = side < 0 ? -SCUBA_HALF_WIDTH - 0.52F : SCUBA_HALF_WIDTH - 0.12F;
+            float ventX = side < 0 ? moduleX - 0.08F : moduleX + 0.60F;
+            frame.box(TEAL, moduleX, 1.68F, -2.38F, 0.64F, 1.82F, 2.1F)
+                    .box(AQUA, ventX, 2.09F, -2.09F, 0.12F, 0.28F, 1.52F)
+                    .box(METAL, ventX, 2.61F, -2.09F, 0.12F, 0.24F, 1.52F);
+        }
+        return frame.box(GOLD, 3.45F, 3.08F, SCUBA_FRONT - 0.16F, 0.63F, 0.5F, 0.3F);
     }
 
     private static Shape goggles(Shape shape, int rim, int glass) {
