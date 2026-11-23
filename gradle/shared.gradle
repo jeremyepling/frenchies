@@ -5,6 +5,14 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 repositories {
     mavenLocal()
     mavenCentral()
+    maven {
+        name = 'LambDynamicLights'
+        url = 'https://maven.gegy.dev'
+        content {
+            includeGroup 'dev.lambdaurora.lambdynamiclights'
+            includeGroup 'dev.yumi.commons'
+        }
+    }
     exclusiveContent {
         forRepository { maven { url = 'https://api.modrinth.com/maven' } }
         filter { includeGroup 'maven.modrinth' }
@@ -28,6 +36,8 @@ sourceSets.test {
 dependencies {
     // Trinkets Updated ships a universal Fabric and NeoForge jar.
     compileOnly "maven.modrinth:XaT8sLP6:${minecraft_version == '26.1' ? 'CFk62USu' : 'lVR1OKgV'}"
+    def dynamicLightsVersion = minecraft_version == '26.1' ? '4.10.0+26.1' : '4.13.0+26.3'
+    compileOnly "dev.lambdaurora.lambdynamiclights:lambdynamiclights-api:${dynamicLightsVersion}"
     testImplementation 'org.junit.jupiter:junit-jupiter:6.1.3'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

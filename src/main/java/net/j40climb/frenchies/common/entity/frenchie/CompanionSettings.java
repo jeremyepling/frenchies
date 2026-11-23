@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Properties;
 
-/** Loaded once at startup. All eight decisions are made on the logical server. */
+/** Loaded once from the loader's configuration directory at startup. */
 public final class CompanionSettings {
     private static final Properties options = new Properties();
 
@@ -20,14 +20,11 @@ public final class CompanionSettings {
                 Files.createDirectories(directory);
                 Files.writeString(file, """
                         # Frenchie companion behaviors. Restart the server or game after editing.
+                        automaticAdventureOutfits=true
+                        miningHelmetDynamicLight=true
                         weatherReactions=true
-                        visibleSnow=true
                         thunderFear=true
-                        automaticHerding=true
-                        fallReactions=true
-                        ambientCompanionship=true
-                        lavaReactions=true
-                        stickRetrieval=true
+                        snowAccumulation=true
                         """, StandardOpenOption.CREATE_NEW);
             }
             try (var reader = Files.newBufferedReader(file)) {
@@ -43,12 +40,11 @@ public final class CompanionSettings {
         return !"false".equalsIgnoreCase(options.getProperty(key, "true").trim());
     }
 
+    public static boolean automaticAdventureOutfits() { return enabled("automaticAdventureOutfits"); }
+    public static boolean miningHelmetDynamicLight() { return enabled("miningHelmetDynamicLight"); }
     public static boolean weatherReactions() { return enabled("weatherReactions"); }
-    public static boolean visibleSnow() { return enabled("visibleSnow"); }
+    public static boolean snowAccumulation() {
+        return enabled("snowAccumulation") && (options.containsKey("snowAccumulation") || enabled("visibleSnow"));
+    }
     public static boolean thunderFear() { return enabled("thunderFear"); }
-    public static boolean automaticHerding() { return enabled("automaticHerding"); }
-    public static boolean fallReactions() { return enabled("fallReactions"); }
-    public static boolean ambientCompanionship() { return enabled("ambientCompanionship"); }
-    public static boolean lavaReactions() { return enabled("lavaReactions"); }
-    public static boolean stickRetrieval() { return enabled("stickRetrieval"); }
 }

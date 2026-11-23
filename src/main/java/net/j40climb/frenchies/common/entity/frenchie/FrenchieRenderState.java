@@ -9,6 +9,11 @@ public class FrenchieRenderState extends LivingEntityRenderState {
     public boolean captain;
     public int travelOwnerId;
     public boolean hasVest;
+    public AdventureOutfit outfit = AdventureOutfit.NONE;
+    public FrenchieEntity.ExplorerOutfit explorer = FrenchieEntity.ExplorerOutfit.NONE;
+    public boolean adventureFlying;
+    public float fanAngle;
+    public float dragonDuckTime;
     public float turnLean;
     public final ItemStackRenderState mouthItem = new ItemStackRenderState();
     public boolean toyStick;

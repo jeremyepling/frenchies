@@ -9,7 +9,8 @@
   "environment": "*",
   "entrypoints": {
     "main": ["net.j40climb.frenchies.FabricFrenchies"],
-    "client": ["net.j40climb.frenchies.setup.FabricFrenchieClient"]
+    "client": ["net.j40climb.frenchies.setup.FabricFrenchieClient"],
+    "lambdynlights:initializer": ["net.j40climb.frenchies.common.entity.frenchie.MiningDynamicLights"]
   },
   "mixins": [
     "frenchies.mixins.json",

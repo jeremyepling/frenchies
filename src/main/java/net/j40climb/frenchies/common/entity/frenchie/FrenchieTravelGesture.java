@@ -48,6 +48,14 @@ public final class FrenchieTravelGesture {
         head.yRot += glideAmount * (shoulder * 0.24F * glance + 0.26F * (left - right));
     }
 
+    public static void flattenEars(ModelPart head, float amount) {
+        // Tilt the tips toward the back of the head while leaving their attachment points fixed.
+        head.getChild("earL").xRot -= amount * 0.94F;
+        head.getChild("earR").xRot -= amount * 0.94F;
+        head.getChild("earL").zRot += amount * 0.10F;
+        head.getChild("earR").zRot -= amount * 0.10F;
+    }
+
     private static float cycleTime(float ageInTicks, int ownerId) {
         var level = Minecraft.getInstance().level;
         long time = level == null ? (long) ageInTicks : level.getGameTime();

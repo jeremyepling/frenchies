@@ -58,6 +58,8 @@ public final class Playtest {
             return true;
         });
         switch (scenario) {
+            case "adventure" -> AdventureOutfitPlaytest.steps(this, phase);
+            case "adventureflight" -> AdventureOutfitPlaytest.flight(this, phase);
             case "frontpack" -> FrontpackPlaytest.steps(this, phase);
             case "companions" -> CompanionIconsPlaytest.steps(this);
             case "delivery" -> DeliveryPlaytest.steps(this, phase);

@@ -54,6 +54,9 @@ final class WeatherPlayGoal extends Goal {
             boolean enabled = CompanionSettings.weatherReactions();
             Precipitation precipitation = enabled && !dog.isInWater()
                     ? dog.level().precipitationAt(BlockPos.containing(dog.getEyePosition())) : Precipitation.NONE;
+            if (precipitation == Precipitation.SNOW && !CompanionSettings.snowAccumulation()) {
+                precipitation = Precipitation.NONE;
+            }
             if (now >= nextHeatSample && (exposure.snowy() || precipitation == Precipitation.SNOW)) {
                 warm = nearHeat();
                 nextHeatSample = now + 20;
@@ -76,7 +79,7 @@ final class WeatherPlayGoal extends Goal {
     }
 
     private void syncSnowLayer() {
-        dog.setSnowLayer(CompanionSettings.weatherReactions() && CompanionSettings.visibleSnow()
+        dog.setSnowLayer(CompanionSettings.weatherReactions() && CompanionSettings.snowAccumulation()
                 ? exposure.snowLayer() : 0);
     }
 

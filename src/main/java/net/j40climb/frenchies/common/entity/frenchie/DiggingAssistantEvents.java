@@ -11,6 +11,13 @@ public final class DiggingAssistantEvents {
     private DiggingAssistantEvents() {}
 
     public static void ownerDigs(ServerLevel level, Player player, BlockPos pos, BlockState state) {
+        if (player.getMainHandItem().is(ItemTags.PICKAXES)) {
+            if (CompanionSettings.automaticAdventureOutfits() && level.getRandom().nextInt(9) == 0) {
+                level.getEntitiesOfClass(FrenchieEntity.class, player.getBoundingBox().inflate(6), dog -> dog.isOwnedBy(player))
+                        .stream().anyMatch(dog -> dog.watchOwnerMine(pos));
+            }
+            return;
+        }
         if (!player.getMainHandItem().is(ItemTags.SHOVELS)
                 || !DiggingAssistantGoal.diggable(state)
                 || level.getRandom().nextInt(5) != 0) return;

@@ -14,6 +14,7 @@ import net.minecraft.gametest.framework.TestData;
 import net.minecraft.gametest.framework.TestEnvironmentDefinition;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Rotation;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -70,6 +71,12 @@ public record CompanionTests(
         registerPlayTest(yard, "play_weather_snowball", 250, WeatherPlayTests::snowball);
         registerPlayTest(yard, "play_weather_snow_ambient", 250, AmbientSnowGameTests::diveWithoutSnowball);
         registerPlayTest(yard, "play_weather_swim", 200, WeatherPlayTests::swim);
+        registerPlayTest(yard, "adventure_mining", 260, TestEnvironmentDefinition.Weather.Type.CLEAR, true, AdventureOutfitGameTests::mining);
+        registerPlayTest(yard, "adventure_scuba", 600, TestEnvironmentDefinition.Weather.Type.CLEAR, true, AdventureOutfitGameTests::scuba);
+        registerPlayTest(yard, "adventure_scuba_from_shore", 240, TestEnvironmentDefinition.Weather.Type.CLEAR, true,
+                AdventureOutfitGameTests::scubaFromShore);
+        registerPlayTest(yard, "adventure_thunder", 1200, AdventureOutfitGameTests::thunder);
+        registerPlayTest(yard, "adventure_snow", 1150, TestEnvironmentDefinition.Weather.Type.RAIN, true, AdventureOutfitGameTests::snow);
         registerPlayTest(yard, "play_trick_backflop", 200, TrickBellyTests::trick);
         registerPlayTest(yard, "play_belly_rub", 200, TrickBellyTests::belly);
         registerPlayTest(yard, "play_whistle_interruptions", 400, PlayInterruptionGameTests::whistleDuringPlay);
@@ -112,9 +119,14 @@ public record CompanionTests(
     // Audience scans, production limits, and creeper warnings reach into adjacent structures.
     private void registerPlayTest(Identifier yard, String name,
                                          int ticks, Consumer<GameTestHelper> test) {
+        registerPlayTest(yard, name, ticks, TestEnvironmentDefinition.Weather.Type.CLEAR, false, test);
+    }
+
+    private void registerPlayTest(Identifier yard, String name, int ticks,
+                                  TestEnvironmentDefinition.Weather.Type weather, boolean skyAccess, Consumer<GameTestHelper> test) {
         var environment = addEnvironment.apply(Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, name),
-                new TestEnvironmentDefinition.Weather(TestEnvironmentDefinition.Weather.Type.CLEAR));
-        registerStructureTest(environment, name, yard, ticks, h -> {
+                new TestEnvironmentDefinition.Weather(weather));
+        registerStructureTest(environment, name, yard, ticks, skyAccess, h -> {
             // The registered dimension clock is available when the server starts the case.
             var level = h.getLevel();
             var clock = level.dimensionType().defaultClock().orElseThrow();
@@ -136,14 +148,22 @@ public record CompanionTests(
             int maxTicks,
             Consumer<GameTestHelper> testFunction
     ) {
+        registerStructureTest(env, name, structure, maxTicks, false, testFunction);
+    }
+
+    private void registerStructureTest(Holder<TestEnvironmentDefinition<?>> env, String name, Identifier structure,
+                                       int maxTicks, boolean skyAccess, Consumer<GameTestHelper> testFunction) {
         Identifier testId = Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, name);
 
         TestData<Holder<TestEnvironmentDefinition<?>>> testData = new TestData<>(
                 env,
+                //? if >=26.3 {
+                /*net.minecraft.world.level.Level.OVERWORLD,
+                *///?}
                 structure,
                 maxTicks,
-                20,   // setupTicks - give block entities time to load
-                true  // required
+                20, // setupTicks - give block entities time to load
+                true, Rotation.NONE, false, 1, 1, skyAccess, 0
         );
 
         addTest.accept(testId, new SimpleGameTestInstance(testData, testFunction));

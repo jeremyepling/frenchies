@@ -1,5 +1,6 @@
 package net.j40climb.frenchies.test;
 
+import net.j40climb.frenchies.common.entity.frenchie.AdventureOutfit;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.core.BlockPos;
@@ -7,6 +8,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -125,8 +127,14 @@ final class CompanionTravelTests {
                         h.setBlock(pos, dock ? Blocks.STONE : Blocks.WATER);
                     }
                 })
-                .thenWaitUntil(() -> h.assertTrue(dog.getVehicle() == boat && dog.hasFlotationVest(),
-                        "Floating captain never showed its vest"))
+                .thenWaitUntil(() -> h.assertTrue(dog.getVehicle() == boat && dog.hasFlotationVest()
+                                && dog.adventureOutfit() == AdventureOutfit.CAPTAIN,
+                        "Floating captain never showed its vest and cap"))
+                .thenExecute(() -> {
+                    Vec3 bow = new Vec3(0, 0, 1).yRot(-boat.getYRot() * Mth.DEG_TO_RAD);
+                    h.assertTrue(dog.position().subtract(boat.position()).dot(bow) > 0.5,
+                            "Dressed captain did not stay at the bow");
+                })
                 .thenExecute(owner::stopRiding)
                 .thenWaitUntil(() -> h.assertTrue(!dog.isPassenger()
                                 && h.getLevel().getBlockState(dog.blockPosition().below()).is(Blocks.STONE),
@@ -134,6 +142,10 @@ final class CompanionTravelTests {
                 .thenExecute(() -> {
                     h.assertTrue(guest.getVehicle() == boat && !dog.hasFlotationVest(),
                             "Owner exit ejected the second player or left the dog wearing the vest");
+                })
+                .thenWaitUntil(() -> h.assertTrue(dog.adventureOutfit() != AdventureOutfit.CAPTAIN,
+                        "Frenchie kept its captain hat after disembarking"))
+                .thenExecute(() -> {
                     h.assertTrue(!reload(h, dog).hasFlotationVest(), "Reload restored a vest on dry ground");
                     disconnect(guest, owner);
                 }).thenSucceed();

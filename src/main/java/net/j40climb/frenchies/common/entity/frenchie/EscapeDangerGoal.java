@@ -24,7 +24,8 @@ final class EscapeDangerGoal extends Goal {
             CompanionRoster.emergency(dog);
             return;
         }
-        submergedTicks = dog.isEyeInFluid(FluidTags.WATER) && !dog.isPassenger() ? submergedTicks + 1 : 0;
+        submergedTicks = dog.isEyeInFluid(FluidTags.WATER) && !dog.isPassenger() && !dog.inScubaContext()
+                ? submergedTicks + 1 : 0;
         if (!dog.isInLava() && !dog.isInPowderSnow && !dog.isInWall() && submergedTicks < 60
                 && !touchingDanger()) {
             hazardTicks = 0;

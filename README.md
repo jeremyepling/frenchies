@@ -28,6 +28,18 @@ Taming your first dog gives you a **Frenchie Whistle**. Right-click to call your
 - **Listen for two barks.** An awake Frenchie turns toward a visible creeper within 12 blocks. A green creeper face flashes with each bark, even above the hotbar when you're carrying the dog. Warnings have an eight-second cooldown.
 - **Share a bedtime.** Use a bed within ten blocks of your dog and it can curl up by your pillow, even after a sit order. Sleep through the night together for two minutes of **Well Rested** and 10% faster block breaking.
 
+## Adventure outfits
+
+Frenchies automatically dress for the trip. The captain wears a cap and life jacket at the bow. When you dive with enough water overhead, a following Frenchie can enter from a nearby bank and swim to you in a bubble helmet and flippers. It returns to surface swimming when you come up.
+
+In dark caves a Frenchie puts on a hard hat, keeps close, and sometimes looks at ore or watches you use a pickaxe. For the lamp to illuminate nearby terrain, install the matching [LambDynamicLights](https://modrinth.com/mod/lambdynamiclights) client mod on Fabric or NeoForge. The server needs only Frenchies. The lamp provides constant level-11 point light and makes no changes to world blocks.
+
+A snowy biome brings out boots and a scarf. Exposed snowfall gradually collects on the coat and melts under cover or in warmer surroundings. Frenchies sometimes shake off snow or rain, and a nearby thunderclap can send them back to their owner with a soft whimper. A dog asked to stay keeps its place.
+
+In the Nether, the backpack fan speeds up near lava and a following dog waits if you venture too close to a lava edge. In the End, a Frenchie wears a visor and ducks when a flying dragon passes overhead. A dog carried in a front pack wears its aviator outfit during Elytra or Happy Ghast flight and keeps its goggles on for a moment after landing.
+
+Server owners and single-player users can edit `config/florafauna_frenchies.properties` and restart. The available switches are `automaticAdventureOutfits`, `miningHelmetDynamicLight`, `weatherReactions`, `thunderFear`, and `snowAccumulation`. All five default to `true`.
+
 ## Send a special delivery
 
 Use a bundle on your Frenchie, choose an online player or **Your bed**, check the arrival estimate, and select **Send**. A trip of 160 blocks takes about 17 seconds at normal server speed. Couriers can cross dimensions without loading terrain along the route.
