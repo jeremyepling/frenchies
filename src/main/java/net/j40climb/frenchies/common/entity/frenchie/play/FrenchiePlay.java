@@ -101,6 +101,7 @@ public final class FrenchiePlay {
 
     public boolean canWatch(boolean allowWeatherPlay) {
         if (!dog.isAlive() || dog.isNoAi() || interruptedByOtherActivity() || dog.hasCompanionJob() || dog.hasToyJob()
+                || dog.explorerOutfit() != FrenchieEntity.ExplorerOutfit.NONE
                 || !allowWeatherPlay && weather.active() || celebration.requestedOrRunning()
                 || dog.trickStage() != PlayStages.Trick.NONE || dog.bellyStage() != PlayStages.BellyRub.NONE
                 || dog.isPassenger() || dog.isLeashed() || dog.isInLove()

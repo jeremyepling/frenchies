@@ -3,6 +3,7 @@ package net.j40climb.frenchies.common.entity.frenchie.frontpack;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
+import net.j40climb.frenchies.common.entity.frenchie.CompanionSettings;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieVariant;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -72,6 +73,7 @@ public record FrontpackData(
         CompoundTag appearance = new CompoundTag();
         if (hasCarriedFrenchie) {
             appearance.putInt("Variant", frenchieNBT.getIntOr("Variant", 0));
+            if (!CompanionSettings.automaticAdventureOutfits()) appearance.putBoolean("AutomaticAdventureOutfits", false);
             var name = frenchieNBT.get("CustomName");
             if (name != null) appearance.put("CustomName", name.copy());
             if (frenchieNBT.contains("FrenchieParcel")) appearance.putBoolean("FrenchieParcel", true);

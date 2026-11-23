@@ -24,10 +24,9 @@ final class OwnerConcernGoal extends Goal {
     }
 
     void hearThunder() {
-        if (!dog.canRespondToOwner()) return;
         long now = dog.level().getGameTime();
         thunderUntil = Math.max(thunderUntil, now + 300 + dog.getRandom().nextInt(301));
-        dog.setFrenchieSleeping(false);
+        if (dog.canRespondToOwner()) dog.setFrenchieSleeping(false);
     }
 
     void ownerFell() {
@@ -39,6 +38,7 @@ final class OwnerConcernGoal extends Goal {
     }
 
     boolean active() { return running; }
+    boolean frightened() { return dog.level().getGameTime() < thunderUntil; }
 
     boolean pending() {
         long now = dog.level().getGameTime();
@@ -117,7 +117,7 @@ final class OwnerConcernGoal extends Goal {
     @Override
     public void stop() {
         running = false;
-        thunderUntil = fallUntil = 0;
+        fallUntil = 0;
         dog.getNavigation().stop();
     }
 }

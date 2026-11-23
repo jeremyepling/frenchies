@@ -1,6 +1,7 @@
 package net.j40climb.frenchies.common.entity.frenchie.frontpack.client;
 
 import net.j40climb.frenchies.Frenchies;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.j40climb.frenchies.common.entity.frenchie.client.FrenchieTravelGesture;
 import net.minecraft.client.animation.KeyframeAnimation;
 import net.minecraft.client.model.EntityModel;
@@ -182,5 +183,17 @@ public class FrontpackModel extends EntityModel<AvatarRenderState> {
             head.getChild("earR").zRot -= 0.2F;
             head.getChild("earL").zRot += 0.2F;
         }
+        if (pack.flying()) FrenchieTravelGesture.flattenEars(head, 1F);
+    }
+
+    void translateToHead(PoseStack pose) {
+        root().translateAndRotate(pose);
+        root.translateAndRotate(pose);
+        var carriedDog = root.getChild("carried_dog");
+        carriedDog.translateAndRotate(pose);
+        var frenchie = carriedDog.getChild("frenchie");
+        frenchie.translateAndRotate(pose);
+        frenchie.getChild("body").translateAndRotate(pose);
+        head.translateAndRotate(pose);
     }
 }

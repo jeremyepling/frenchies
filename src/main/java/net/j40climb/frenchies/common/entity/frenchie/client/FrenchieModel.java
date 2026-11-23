@@ -33,12 +33,15 @@ public class FrenchieModel extends EntityModel<FrenchieRenderState> {
     private final ModelPart root;
     private final ModelPart body;
     private final ModelPart head;
+    private final ModelPart[] feet;
 
     public FrenchieModel(ModelPart root) {
         super(root);
         this.root = root.getChild("root");
         this.body = this.root.getChild("body");
         this.head = this.body.getChild("head");
+        this.feet = new ModelPart[]{body.getChild("leg_front_left"), body.getChild("leg_front_right"),
+                body.getChild("leg_back_left"), body.getChild("leg_back_right")};
 
         this.walkingAnimation = FrenchieAnimations.ANIM_WALK.bake(root);
         this.swimmingAnimation = FrenchieAnimations.ANIM_SWIM.bake(root);
@@ -234,6 +237,38 @@ public class FrenchieModel extends EntityModel<FrenchieRenderState> {
             head.getChild("earL").y -= lift;
             head.getChild("earR").y -= lift;
         }
+        applyAdventurePose(renderState);
+    }
+
+    private void applyAdventurePose(FrenchieRenderState state) {
+        if (state.adventureFlying) FrenchieTravelGesture.flattenEars(head, 1F);
+        if (state.dragonDuckTime > 0 && !state.isSleeping && !state.isSwimming) {
+            float duck = Mth.clamp(Math.min(22F - state.dragonDuckTime, state.dragonDuckTime) / 4F, 0F, 1F);
+            head.xRot += 0.47F * duck;
+            head.y += 0.95F * duck;
+            body.y += (state.isSitting ? 0.2F : 0.85F) * duck;
+            if (!state.isSitting) {
+                feet[0].xRot -= 0.39F * duck;
+                feet[1].xRot -= 0.39F * duck;
+            }
+        }
+    }
+
+    void translateToHead(PoseStack pose) {
+        translateToBody(pose);
+        head.translateAndRotate(pose);
+    }
+
+    void translateToFoot(PoseStack pose, int foot) {
+        translateToBody(pose);
+        feet[foot].translateAndRotate(pose);
+    }
+
+    private void translateToBody(PoseStack pose) {
+        // The keyframe lookup binds "root" to the outer baked part. Swimming pitches that part.
+        root().translateAndRotate(pose);
+        root.translateAndRotate(pose);
+        body.translateAndRotate(pose);
     }
 
     private void applySideSleep(float blend) {
@@ -417,15 +452,12 @@ public class FrenchieModel extends EntityModel<FrenchieRenderState> {
     }
 
     void translateToChest(PoseStack pose) {
-        root.translateAndRotate(pose);
-        body.translateAndRotate(pose);
+        translateToBody(pose);
         body.getChild("chest").translateAndRotate(pose);
     }
 
     void translateToMouth(PoseStack pose) {
-        root.translateAndRotate(pose);
-        body.translateAndRotate(pose);
-        head.translateAndRotate(pose);
+        translateToHead(pose);
         pose.translate(0, 3.0 / 16, -5.5 / 16);
     }
 

@@ -17,6 +17,7 @@ import net.j40climb.frenchies.common.entity.frenchie.travel.DeathTrackingGoal;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -27,6 +28,7 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Util;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
@@ -50,6 +52,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
@@ -93,6 +96,19 @@ public class FrenchieEntity extends TamableAnimal {
             SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.LONG);
     private CompanionReactions reactions;
     private FrenchiePlay play;
+    private MiningInterestGoal miningInterest;
+    private final AdventureContext adventure = new AdventureContext(this);
+    private static final EntityDataAccessor<Byte> ADVENTURE_OUTFIT =
+            SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<Byte> ADVENTURE_FLAGS =
+            SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<Long> DRAGON_DUCK_UNTIL =
+            SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.LONG);
+    private static final EntityDataAccessor<Byte> EXPLORER_OUTFIT =
+            SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.BYTE);
+    private static final int FLYING = 1, HEAT = 2, MINING_LIGHT = 4;
+    private float fanAngle;
+    private float fanStep;
     private long nextDangerReaction;
     private long respondingUntil;
     private long ownerAwaySince = -1;
@@ -250,6 +266,7 @@ public class FrenchieEntity extends TamableAnimal {
     public boolean canRespondToOwner() {
         return isAlive() && !isNoAi() && !isOrderedToSit() && !isPassenger()
                 && !isLeashed() && !hasCompanionJob() && !hasToyJob()
+                && explorerOutfit() == ExplorerOutfit.NONE && !adventure.wantsDive() && !waitingAtLava()
                 && !respondingToWhistle() && !isEscapingDanger() && !hasBedtimePlan()
                 && !isInWater() && !isInLava()
                 && dangerReaction() == DangerReaction.NONE && getTarget() == null
@@ -269,6 +286,11 @@ public class FrenchieEntity extends TamableAnimal {
 
     public FrenchieEntity(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
+        if (level.dimension() == Level.NETHER && CompanionSettings.lavaReactions()) {
+            // Keep walking paths away from fire and lava neighbors, including when following another goal.
+            setPathfindingMalus(PathType.FIRE_IN_NEIGHBOR, -1);
+            setPathfindingMalus(PathType.FIRE, -1);
+        }
         if (level instanceof ServerLevel) {
             goalSelector.addGoal(1, trail);
             goalSelector.addGoal(1, delivery);
@@ -279,13 +301,19 @@ public class FrenchieEntity extends TamableAnimal {
     protected void registerGoals() {
         reactions = new CompanionReactions(this);
         this.goalSelector.addGoal(0, reactions.escapeDanger());
-        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(0, new FloatGoal(this) {
+            @Override
+            public boolean canUse() {
+                return !isDivingWithOwner() && super.canUse();
+            }
+        });
         this.goalSelector.addGoal(0, reactions.lavaAvoidance());
         this.goalSelector.addGoal(1, new WhistleApproachGoal(this));
         this.goalSelector.addGoal(1, new BedtimeBuddyGoal(this));
         this.goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(2, reactions.ownerConcern());
+        this.goalSelector.addGoal(3, new DiveWithOwnerGoal(this));
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.25, Ingredient.of(Items.GLOW_BERRIES), false) {
             @Override
             public boolean canUse() {
@@ -293,17 +321,25 @@ public class FrenchieEntity extends TamableAnimal {
                 return !hasToyJob() && !play.celebrationPending() && super.canUse();
             }
         });
-        this.goalSelector.addGoal(4, new FollowOwnerGoal(this, 1.25d, 18f, 7f));
+        this.goalSelector.addGoal(4, new AdventureFollowGoal(this));
+        this.goalSelector.addGoal(4, new FollowOwnerGoal(this, 1.25d, 18f, 7f) {
+            @Override public boolean canUse() { return !waitingAtLava() && !isDivingWithOwner() && super.canUse(); }
+            @Override public boolean canContinueToUse() {
+                return !waitingAtLava() && !isDivingWithOwner() && super.canContinueToUse();
+            }
+        });
         this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.25));
         this.play = new FrenchiePlay(this);
         play.registerGoals(goalSelector);
         this.goalSelector.addGoal(7, reactions.quietCompanionship());
+        this.miningInterest = new MiningInterestGoal(this);
+        this.goalSelector.addGoal(7, miningInterest);
         this.goalSelector.addGoal(8, new RandomStrollGoal(this, 1.0) {
             @Override public boolean canUse() {
-                return !play.bellyInvitationPending() && super.canUse();
+                return !waitingAtLava() && !play.bellyInvitationPending() && super.canUse();
             }
             @Override public boolean canContinueToUse() {
-                return !play.bellyInvitationPending() && super.canContinueToUse();
+                return !waitingAtLava() && !play.bellyInvitationPending() && super.canContinueToUse();
             }
         });
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 6.0F));
@@ -383,6 +419,63 @@ public class FrenchieEntity extends TamableAnimal {
         builder.define(BELLY_STAGE_START, 0L);
         builder.define(JOB, (byte) 0);
         builder.define(WAITING_RECIPIENT, Optional.empty());
+        builder.define(ADVENTURE_OUTFIT, (byte) 0);
+        builder.define(ADVENTURE_FLAGS, (byte) 0);
+        builder.define(DRAGON_DUCK_UNTIL, 0L);
+        builder.define(EXPLORER_OUTFIT, (byte) 0);
+    }
+
+    public AdventureOutfit adventureOutfit() {
+        return AdventureOutfit.byId(entityData.get(ADVENTURE_OUTFIT));
+    }
+
+    public int miningLightLevel() {
+        return adventureOutfit() == AdventureOutfit.MINING && (entityData.get(ADVENTURE_FLAGS) & MINING_LIGHT) != 0 ? 11 : 0;
+    }
+
+    public boolean adventureFlying() { return (entityData.get(ADVENTURE_FLAGS) & FLYING) != 0; }
+    boolean adventureHot() { return (entityData.get(ADVENTURE_FLAGS) & HEAT) != 0; }
+    public float adventureFanAngle(float partial) { return fanAngle + fanStep * partial; }
+
+    void syncAdventure(AdventureOutfit outfit, boolean flying, boolean hot, boolean light) {
+        entityData.set(ADVENTURE_OUTFIT, (byte) outfit.ordinal());
+        entityData.set(ADVENTURE_FLAGS, (byte) ((flying && outfit == AdventureOutfit.AVIATOR ? FLYING : 0)
+                | (hot && outfit == AdventureOutfit.NETHER ? HEAT : 0) | (light && outfit == AdventureOutfit.MINING ? MINING_LIGHT : 0)));
+    }
+
+    /** Set by a structure-map guide only while navigation is active. Environmental outfits never change this value. */
+    public enum ExplorerOutfit { NONE, EXPLORER, PIRATE }
+
+    public void setExplorerOutfit(ExplorerOutfit outfit) {
+        if (!level().isClientSide()) entityData.set(EXPLORER_OUTFIT, (byte) outfit.ordinal());
+    }
+
+    public ExplorerOutfit explorerOutfit() {
+        return switch (entityData.get(EXPLORER_OUTFIT)) {
+            case 1 -> ExplorerOutfit.EXPLORER;
+            case 2 -> ExplorerOutfit.PIRATE;
+            default -> ExplorerOutfit.NONE;
+        };
+    }
+
+    void startDragonDuck(long now) { entityData.set(DRAGON_DUCK_UNTIL, now + 22); }
+    public float dragonDuckTime(float partial) { return entityData.get(DRAGON_DUCK_UNTIL) - level().getGameTime() - partial; }
+
+    public boolean isFrightened() { return reactions != null && reactions.isFrightened(); }
+    boolean wantsToDiveWithOwner() { return adventure.wantsDive() && canTakeAdventureMovement(); }
+    boolean isDivingWithOwner() { return isInWater() && wantsToDiveWithOwner(); }
+    public boolean inScubaContext() { return isInWater() && adventure.wantsDive(); }
+    boolean waitingAtLava() { return adventure.ownerNearLava(); }
+    boolean miningWithOwner() { return CompanionSettings.automaticAdventureOutfits() && adventure.mining(); }
+
+    boolean canTakeAdventureMovement() {
+        return !unableToMoveToOwner() && !hasCompanionJob() && !hasToyJob()
+                && explorerOutfit() == ExplorerOutfit.NONE && !hasBedtimePlan() && !isFrenchieSleeping()
+                && !respondingToWhistle() && !isEscapingDanger() && !isInLava() && !isOnFire();
+    }
+
+    public boolean watchOwnerMine(BlockPos pos) {
+        return miningInterest != null && miningInterest.watch(pos);
     }
 
     public boolean isDelivering() {
@@ -882,8 +975,10 @@ public class FrenchieEntity extends TamableAnimal {
 
             // Sleeping transitions and pose
             handleSleepingAnimations();
+            tickAdventureParticles();
         }
-        if (!this.level().isClientSide()) {
+        if (this.level() instanceof ServerLevel serverLevel) {
+            adventure.tick(serverLevel);
             play.tick();
             reactions.observeOwner();
             captain.tick(this);
@@ -899,6 +994,22 @@ public class FrenchieEntity extends TamableAnimal {
     private boolean hasIdleFooting() {
         // A client that starts tracking an already stationary dog can miss its last landing packet.
         return onGround() || (getY() == yo && !level().noCollision(this, getBoundingBox().move(0, -0.01, 0)));
+    }
+
+    private void tickAdventureParticles() {
+        if (adventureOutfit() == AdventureOutfit.NETHER) {
+            fanStep = adventureHot() ? 0.88F : 0.29F;
+            fanAngle = (fanAngle + fanStep) % ((float) Math.PI * 2);
+        }
+        if (isInvisible()) return;
+        if (adventureOutfit() == AdventureOutfit.SCUBA && isEyeInFluid(FluidTags.WATER)
+                && random.nextInt(26) == 0) {
+            var location = getEyePosition().add(getLookAngle().scale(0.18));
+            level().addParticle(ParticleTypes.BUBBLE, location.x, location.y, location.z, 0, 0.065, 0);
+        } else if (adventureOutfit() == AdventureOutfit.NETHER && random.nextInt(adventureHot() ? 125 : 260) == 0) {
+            var location = position().subtract(Vec3.directionFromRotation(0, yBodyRot).scale(0.20));
+            level().addParticle(ParticleTypes.POOF, location.x, getY(0.8), location.z, 0, 0.035, 0);
+        }
     }
 
     private void handleSittingAnimations() {

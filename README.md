@@ -47,6 +47,16 @@ In falling snow, a dusting spreads across your Frenchie's head and back over abo
 - **Take a breather.** Watch a standing Frenchie closely and you can see its ribs rise and an ear twitch. Stay still for a while and your dog may sit beside you, then stretch out. It favors a sheltered spot or a place near a lit campfire. Start walking and it gets up on its own.
 - **Explore a ravine.** If a fall costs you at least two hearts, a Frenchie within 24 blocks may come check on you. If it can't find safe footing down, it looks toward you from where it stands. At an exposed lava edge, it looks for room to back away and can wait back while you mine.
 
+## Adventure outfits
+
+Frenchies automatically dress for the trip. The captain wears a cap and life jacket at the bow. When you dive with enough water overhead, a following Frenchie can enter from a nearby bank and swim to you in a bubble helmet and flippers. It returns to surface swimming when you come up.
+
+In dark caves a Frenchie puts on a hard hat, keeps close, and sometimes looks at ore or watches you use a pickaxe. For the lamp to illuminate nearby terrain, install the matching [LambDynamicLights](https://modrinth.com/mod/lambdynamiclights) client mod on Fabric or NeoForge. The server needs only Frenchies. The lamp provides constant level-11 point light and makes no changes to world blocks.
+
+A snowy biome brings out boots and a scarf. Exposed snowfall gradually collects on the coat and melts under cover or in warmer surroundings. Frenchies sometimes shake off snow or rain, and a nearby thunderclap can send them back to their owner with a soft whimper. A dog asked to stay keeps its place.
+
+In the Nether, the backpack fan speeds up near lava and a following dog waits if you venture too close to a lava edge. In the End, a Frenchie wears a visor and ducks when a flying dragon passes overhead. A dog carried in a front pack wears its aviator outfit during Elytra or Happy Ghast flight and keeps its goggles on for a moment after landing.
+
 ## Send a special delivery
 
 Use a bundle on your Frenchie, choose an online player or **Your bed**, check the arrival estimate, and select **Send**. A trip of 160 blocks takes about 17 seconds at normal server speed. Couriers can cross dimensions without loading terrain along the route.
@@ -73,8 +83,11 @@ Fabric and NeoForge generate `config/florafauna_frenchies.properties` on startup
 
 | Option | Controls |
 | --- | --- |
+| `automaticAdventureOutfits` | Show automatic adventure outfits |
+| `miningHelmetDynamicLight` | Illuminate nearby terrain when the hard hat is active and the client has LambDynamicLights |
+| `snowAccumulation` | Let exposed snowfall collect on the coat and build up enough for a snow shake |
 | `weatherReactions` | Rain and snow exposure, precipitation shakes, and thunder reactions |
-| `visibleSnow` | Draw snow on the coat when `weatherReactions` is enabled |
+| `visibleSnow` | Draw the accumulated snow on the coat |
 | `thunderFear` | Seek company or cover after a lightning strike when `weatherReactions` is enabled |
 | `automaticHerding` | Assisting sheep and cows that follow wheat |
 | `fallReactions` | Checking on an owner who loses at least two hearts to a fall |
@@ -109,5 +122,7 @@ For the NeoForge scripted clients on Windows with PowerShell 7, run `./scripts/t
 To play with FloraFauna, Hammer and Frenchies together, run `./gradlew -PdevMods=all :26.1-neoforge:runClient` or `:26.3-neoforge:runClient` from a matching FloraFauna checkout. [FloraFauna development setup](https://github.com/jeremyepling/florafauna#play-with-the-hammer-and-frenchies)
 
 For companion reactions, run the NeoForge GameTests with `-PgameTestFilter=florafauna_frenchies:companion_reaction_*`. The scripted client accepts `-Scenario weather` to capture the same dog as its snow coat builds, shakes off, and begins to build again.
+
+Use `-PgameTestFilter=florafauna_frenchies:adventure_*` for outfit and traversal GameTests. The scripted client accepts `-Scenario adventure` for outfits and cave light and `-Scenario adventureflight` for a packed Frenchie on a Happy Ghast.
 
 Use `-Scenario rest` to see the standing idle and both sleep poses beside a bed, then watch the packed dog doze, snore, and wake for a creeper or daylight. The shared GameTest `florafauna_frenchies:frenchie_sleep_pose_save` covers saved poses and older worlds.
