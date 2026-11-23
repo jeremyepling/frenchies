@@ -6,6 +6,7 @@ import net.j40climb.frenchies.common.entity.frenchie.reaction.DangerReaction;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.j40climb.frenchies.Frenchies;
+import net.j40climb.frenchies.common.entity.frenchie.AdventureOutfit;
 import net.minecraft.client.animation.KeyframeAnimation;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -96,6 +97,7 @@ public class FrenchieModel extends EntityModel<FrenchieRenderState> {
     public void setupAnim(FrenchieRenderState renderState) {
         super.setupAnim(renderState);
         head.getChild("tongue").visible = renderState.captain;
+        if (renderState.outfit == AdventureOutfit.CAPTAIN) head.zScale = 1.4F;
 
         if (renderState.dangerReaction != DangerReaction.NONE) {
             if (renderState.captain || renderState.isSitting) sitPoseAnimation.applyStatic();

@@ -22,13 +22,19 @@ public final class AdventureOutfitModels {
             LENS = 12, AMBER = 13, GREEN = 14, WHITE = 15;
     static final float SCUBA_HALF_WIDTH = 4.9F, SCUBA_TOP = -6.85F, SCUBA_BOTTOM = 3.35F,
             SCUBA_FRONT = -6.24F, SCUBA_BACK = 0.65F;
+    static final float ASTRONAUT_VISOR_Z = -5.61F;
     private final ModelPart parts = bake();
 
     private static ModelPart bake() {
         Shape captain = new Shape()
-                .box(INK, -3.0F, -4.25F, -4.8F, 6, 0.55F, 4.0F)
-                .box(IVORY, -2.7F, -5.8F, -3.6F, 5.4F, 1.55F, 3.0F)
-                .box(GOLD, -0.38F, -5.4F, -3.72F, 0.76F, 0.78F, 0.14F);
+                .box(INK, -3.90F, -3.86F, -5.30F, 7.80F, 0.56F, 2.50F)
+                .box(INK, -3.52F, -4.01F, -3.95F, 7.04F, 0.69F, 4.96F)
+                .box(IVORY, -3.58F, -5.70F, -4.07F, 7.16F, 1.79F, 2.17F)
+                .box(WHITE, -3.09F, -6.01F, -3.73F, 6.18F, 0.40F, 1.67F)
+                // The crown spans the head with an opening on either side for the ears.
+                .box(IVORY, -0.79F, -5.32F, -2.02F, 1.58F, 1.41F, 2.66F)
+                .box(IVORY, -3.45F, -4.88F, -0.09F, 6.90F, 0.97F, 1.18F)
+                .box(GOLD, -0.43F, -5.48F, -4.22F, 0.86F, 0.88F, 0.17F);
         Shape mining = new Shape()
                 .box(ORANGE, -3.7F, -3.8F, -4.7F, 7.4F, 0.6F, 5.1F)
                 .box(GOLD, -3.12F, -5.45F, -3.65F, 6.25F, 1.65F, 3.8F)
@@ -38,13 +44,17 @@ public final class AdventureOutfitModels {
                 .box(IVORY, -0.64F, -5.03F, -5.15F, 1.28F, 0.84F, 0.18F);
         Shape scuba = scubaFrame();
         Shape astronaut = new Shape()
-                .box(IVORY, -3.85F, 2.65F, -4.8F, 7.7F, 1.2F, 5.7F)
-                .box(BLUE, -3.7F, 3.15F, -4.94F, 7.4F, 0.34F, 5.96F)
-                .box(IVORY, -5.1F, -2.9F, -1.9F, 1.65F, 3, 2.75F)
-                .box(IVORY, 3.45F, -2.9F, -1.9F, 1.65F, 3, 2.75F)
-                .box(RED, 4.85F, -2.3F, -1.25F, 0.43F, 1.75F, 1.4F)
-                .box(SILVER, 4.65F, -7.35F, -0.65F, 0.34F, 4.55F, 0.34F)
-                .box(RED, 4.32F, -7.85F, -1.02F, 1.0F, 0.9F, 0.98F);
+                .box(WHITE, -4.7F, -7.12F, -5.68F, 9.4F, 1.24F, 6.23F)
+                .box(IVORY, -4.7F, 2.35F, -5.68F, 9.4F, 0.95F, 6.23F)
+                .box(IVORY, -4.7F, -5.88F, -5.68F, 0.66F, 8.23F, 6.23F)
+                .box(IVORY, 4.04F, -5.88F, -5.68F, 0.66F, 8.23F, 6.23F)
+                .box(WHITE, -4.7F, -5.88F, 0.54F, 9.4F, 8.23F, 0.7F)
+                .box(BLUE, -4.48F, 2.66F, -5.75F, 8.96F, 0.34F, 0.14F)
+                .box(SILVER, 4.59F, -2.8F, -2.12F, 0.70F, 2.42F, 2.36F)
+                .box(RED, 5.21F, -2.36F, -1.63F, 0.17F, 1.48F, 1.37F)
+                .box(SILVER, 3.12F, -7.51F, -1.67F, 1.10F, 0.43F, 1.12F)
+                .box(METAL, 3.49F, -9.48F, -1.28F, 0.36F, 2.06F, 0.37F)
+                .box(RED, 3.18F, -9.98F, -1.56F, 0.99F, 0.62F, 0.95F);
         Shape aviatorCap = new Shape()
                 .box(LEATHER, -3.15F, -4.35F, -3.9F, 6.3F, 1.5F, 4.0F)
                 .box(SUEDE, -2.55F, -4.9F, -3.35F, 5.1F, 0.58F, 3.2F)
@@ -89,10 +99,15 @@ public final class AdventureOutfitModels {
                 .box(INK, -0.94F, -6.76F, 1.88F, 1.88F, 0.40F, 0.54F)
                 .box(SILVER, -0.27F, -6.87F, 1.81F, 0.54F, 0.20F, 0.68F);
         Shape winterScarf = new Shape()
-                .box(RED, -3.57F, -3.95F, -5.8F, 7.14F, 6.05F, 0.92F)
-                .box(IVORY, -3.64F, -3.45F, -5.92F, 7.28F, 0.42F, 1.11F)
-                .box(RED, -3.83F, -1.05F, -5.72F, 1.65F, 3.62F, 0.78F)
-                .box(IVORY, -3.83F, 2.23F, -5.77F, 1.65F, 0.46F, 0.88F);
+                .box(RED, -3.63F, -4.57F, -4.80F, 7.26F, 0.45F, 1.75F)
+                .box(IVORY, -3.64F, -4.59F, -3.44F, 7.28F, 0.20F, 0.32F)
+                .box(RED, -3.79F, -4.42F, -4.80F, 0.39F, 2.02F, 1.75F)
+                .box(RED, 3.40F, -4.42F, -4.80F, 0.39F, 2.02F, 1.75F)
+                .box(IVORY, -3.83F, -4.43F, -3.44F, 0.16F, 2.00F, 0.32F)
+                .box(IVORY, 3.67F, -4.43F, -3.44F, 0.16F, 2.00F, 0.32F)
+                .box(RED, 3.55F, -3.92F, -5.10F, 0.65F, 1.17F, 1.35F)
+                .box(RED, 3.52F, -2.98F, -4.84F, 0.48F, 1.95F, 1.06F)
+                .box(IVORY, 3.51F, -1.36F, -4.86F, 0.50F, 0.31F, 1.10F);
         Shape scarfKnot = new Shape()
                 .box(RED, 2.87F, 1.25F, -3.15F, 0.53F, 0.78F, 2.12F)
                 .box(RED, 2.99F, 1.00F, -1.24F, 1.22F, 1.44F, 1.48F)

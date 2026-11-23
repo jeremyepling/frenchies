@@ -143,16 +143,20 @@ public class FrontpackModel extends EntityModel<AvatarRenderState> {
         if (!carrying) return;
 
         float glide = renderState.isFallFlying ? renderState.fallFlyingScale() : 0F;
-        if (glide > 0F) {
-            // Raise the rim to the shoulders without lifting the seam under the rump.
+        float airborne = renderState.isFallFlying ? glide : pack.flying() ? 0.75F : 0F;
+        if (airborne > 0F) {
+            // Keep the pouch close to the carrier, with the hem above the rear paws.
             var pouch = carrier.getChild("pouch");
-            pouch.y -= 2.28F * glide;
-            pouch.yScale += 0.38F * glide;
-            pouch.zScale += 1.6F * glide;
-            dog.z -= 3.8F * glide;
+            pouch.y += 0.45F * airborne;
+            pouch.yScale -= 0.46F * airborne;
+            pouch.zScale -= 0.4F * airborne;
+            dog.z -= 0.95F * airborne;
         }
         if (fabricOnly) return;
         this.idlingAnimation.apply(this.idleAnimationState, renderState.ageInTicks, 1.0F);
+        // The dog is upright in the pouch, so moving along its Y axis brings the muzzle forward.
+        head.y += 0.85F * airborne;
+        head.z -= 0.32F * airborne;
         var tongue = head.getChild("tongue");
         var lids = head.getChild("eyelids");
         float doze = renderState.isFallFlying || pack.alertYaw() != null ? 0F : pack.doze();

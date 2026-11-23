@@ -53,9 +53,9 @@ Frenchies automatically dress for the trip. The captain wears a cap and life jac
 
 In dark caves a Frenchie puts on a hard hat, keeps close, and sometimes looks at ore or watches you use a pickaxe. For the lamp to illuminate nearby terrain, install the matching [LambDynamicLights](https://modrinth.com/mod/lambdynamiclights) client mod on Fabric or NeoForge. The server needs only Frenchies. The lamp provides constant level-11 point light and makes no changes to world blocks.
 
-A snowy biome brings out boots and a scarf. Exposed snowfall gradually collects on the coat and melts under cover or in warmer surroundings. Frenchies sometimes shake off snow or rain, and a nearby thunderclap can send them back to their owner with a soft whimper. A dog asked to stay keeps its place.
+A snowy biome brings out boots and a scarf wrapped around the shoulders. Exposed snowfall gradually collects on the coat and melts under cover or in warmer surroundings. Frenchies sometimes shake off snow or rain, and a nearby thunderclap can send them back to their owner with a soft whimper. A dog asked to stay keeps its place.
 
-In the Nether, the backpack fan speeds up near lava and a following dog waits if you venture too close to a lava edge. In the End, a Frenchie wears a visor and ducks when a flying dragon passes overhead. A dog carried in a front pack wears its aviator outfit during Elytra or Happy Ghast flight and keeps its goggles on for a moment after landing.
+In the Nether, the backpack fan speeds up near lava and a following dog waits if you venture too close to a lava edge. In the End, a Frenchie wears a square white helmet with an antenna and ducks when a flying dragon passes overhead. A dog carried in a front pack wears its aviator outfit during Elytra or Happy Ghast flight and keeps its goggles on for a moment after landing.
 
 ## Send a special delivery
 
