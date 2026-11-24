@@ -8,6 +8,11 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.wolf.WolfSoundVariants;
 import net.minecraft.world.entity.monster.Creeper;
+//? if <26.3 {
+import net.minecraft.world.entity.monster.EnderMan;
+//?} else {
+/*import net.minecraft.world.entity.monster.Enderman;
+*///?}
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
@@ -19,13 +24,16 @@ public final class FrenchieAwareness {
     private static final int WARNING_RADIUS = 12;
     private final FrenchieEntity dog;
     private @Nullable Creeper threat;
+    private long lookDownUntil;
 
     public FrenchieAwareness(FrenchieEntity dog) {
         this.dog = dog;
     }
 
     public void tick() {
-        if (!(dog.level() instanceof ServerLevel level) || !dog.isTame() || dog.isFrenchieSleeping()) return;
+        if (!(dog.level() instanceof ServerLevel level)) return;
+        updateEndermanLook(level);
+        if (!dog.isTame() || dog.isFrenchieSleeping()) return;
         long age = level.getGameTime() - dog.warningStart();
         if (age == SECOND_BARK_TICK) bark(dog, 1.18F);
         if (age < WARNING_TICKS && threat != null && threat.isAlive()) {
@@ -40,6 +48,24 @@ public final class FrenchieAwareness {
             faceThreat(threat);
             bark(dog, 1.4F);
         }
+    }
+
+    private void updateEndermanLook(ServerLevel level) {
+        long now = level.getGameTime();
+        if (dog.isFrenchieSleeping() || dog.hurtTime > 0 || dog.getTarget() != null
+                || dog.isEscapingDanger() || now - dog.warningStart() < WARNING_TICKS) {
+            lookDownUntil = now;
+        } else if (dog.tickCount % 10 == 0 && !level.getEntitiesOfClass(
+                //? if <26.3 {
+                EnderMan.class,
+                //?} else {
+                /*Enderman.class,
+                *///?}
+                dog.getBoundingBox().inflate(9), mob -> mob.isAlive() && dog.distanceToSqr(mob) <= 81
+                        && dog.hasLineOfSight(mob)).isEmpty()) {
+            lookDownUntil = now + 26;
+        }
+        dog.setAvoidingEnderman(now < lookDownUntil);
     }
 
     private void faceThreat(Creeper creeper) {

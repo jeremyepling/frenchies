@@ -187,6 +187,7 @@ public class FrenchieModel extends EntityModel<FrenchieRenderState> {
             body.zRot += renderState.turnLean;
             head.xRot -= 0.12F;
             FrenchieTravelGesture.applyInBoat(head, renderState.ageInTicks, renderState.travelOwnerId);
+            applyEndermanLook(renderState);
             return;
         }
 
@@ -234,6 +235,7 @@ public class FrenchieModel extends EntityModel<FrenchieRenderState> {
             head.getChild("earL").y -= lift;
             head.getChild("earR").y -= lift;
         }
+        applyEndermanLook(renderState);
     }
 
     private void applySideSleep(float blend) {
@@ -422,11 +424,22 @@ public class FrenchieModel extends EntityModel<FrenchieRenderState> {
         body.getChild("chest").translateAndRotate(pose);
     }
 
-    void translateToMouth(PoseStack pose) {
+    void translateToHead(PoseStack pose) {
         root.translateAndRotate(pose);
         body.translateAndRotate(pose);
         head.translateAndRotate(pose);
+    }
+
+    void translateToMouth(PoseStack pose) {
+        translateToHead(pose);
         pose.translate(0, 3.0 / 16, -5.5 / 16);
+    }
+
+    private void applyEndermanLook(FrenchieRenderState state) {
+        if (state.endermanLook > 0 && !state.isSleeping && !state.isSwimming) {
+            float pitch = Mth.lerp(state.endermanLook, head.xRot * Mth.RAD_TO_DEG, 40F);
+            applyHeadRotation(head.yRot * Mth.RAD_TO_DEG, pitch);
+        }
     }
 
     private void applyHeadRotation(float headYaw, float headPitch) {

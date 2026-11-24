@@ -31,7 +31,7 @@ def playtestPhase = providers.gradleProperty('playtestPhase').orNull
 def deliveryTestId = providers.gradleProperty('deliveryTestId').orNull
 def deliveryTestPort = providers.gradleProperty('deliveryTestPort').orNull
 def multiplayerScenario = providers.gradleProperty('multiplayerScenario').orElse('delivery').get()
-if (!(multiplayerScenario in ['delivery', 'play', 'whistle', 'legacy', 'playful'])) {
+if (!(multiplayerScenario in ['delivery', 'play', 'whistle', 'legacy', 'playful', 'explorer'])) {
     throw new GradleException('Unknown multiplayer scenario')
 }
 if (deliveryTestId != null && (!(deliveryTestId ==~ /[0-9a-f]{32}/) || !(deliveryTestPort ==~ /[0-9]{1,5}/) || !(1..65535).contains(deliveryTestPort.toInteger()))) {
@@ -69,8 +69,8 @@ neoForge {
                     client()
                     gameDirectory = new File(directory, role)
                     programArguments.addAll '--username', "FF${role}".toString(), '--width',
-                            multiplayerScenario == 'playful' ? '960' : '640', '--height',
-                            multiplayerScenario == 'playful' ? '540' : '360',
+                            multiplayerScenario in ['playful', 'explorer'] ? '960' : '640', '--height',
+                            multiplayerScenario in ['playful', 'explorer'] ? '540' : '360',
                             '--quickPlayMultiplayer', "127.0.0.1:${deliveryTestPort}".toString()
                     systemProperty "florafauna_frenchies.${multiplayerScenario}Test.client", role
                     jvmArgument '-Xmx1G'

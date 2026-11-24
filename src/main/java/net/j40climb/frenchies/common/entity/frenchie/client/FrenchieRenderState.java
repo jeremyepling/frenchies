@@ -3,6 +3,7 @@ package net.j40climb.frenchies.common.entity.frenchie.client;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieVariant;
 import net.j40climb.frenchies.common.entity.frenchie.play.PlayPose;
 import net.j40climb.frenchies.common.entity.frenchie.reaction.DangerReaction;
+import net.j40climb.frenchies.common.entity.frenchie.travel.ExplorerOutfit;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
@@ -13,6 +14,9 @@ public class FrenchieRenderState extends LivingEntityRenderState {
     public boolean captain;
     public int travelOwnerId;
     public boolean hasVest;
+    public ExplorerOutfit explorerOutfit = ExplorerOutfit.NONE;
+    public boolean hideExplorerHeadwear;
+    public float endermanLook;
     public float turnLean;
     public final ItemStackRenderState mouthItem = new ItemStackRenderState();
     public boolean toyStick;

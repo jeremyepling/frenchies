@@ -4,6 +4,8 @@ import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
 import net.j40climb.frenchies.common.entity.frenchie.delivery.CourierTrips;
 import net.j40climb.frenchies.common.entity.frenchie.delivery.DeliveryGoal;
 import net.j40climb.frenchies.common.entity.frenchie.reaction.FrenchieAwareness;
+import net.j40climb.frenchies.common.entity.frenchie.travel.DeathTrackingGoal;
+import net.j40climb.frenchies.common.entity.frenchie.travel.ExplorerOutfit;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -54,7 +56,7 @@ import java.util.UUID;
 
 /** Live dogs have only a locator here. Only a dismissed dog or one awaiting safe arrival has an entity save here. */
 public final class CompanionRoster extends SavedData {
-    private enum State { ACTIVE, CALLING, APPROACHING, DISMISSING, DISMISSED, RETURNING }
+    private enum State { ACTIVE, CALLING, CATCHING_UP, APPROACHING, DISMISSING, DISMISSED, RETURNING }
 
     private static final class Entry {
         static final Codec<Entry> CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -141,7 +143,8 @@ public final class CompanionRoster extends SavedData {
         var roster = get(level);
         UUID owner = dog.getOwnerReference().getUUID();
         var e = roster.dogs.get(dog.getUUID());
-        boolean following = !dog.isOrderedToSit() && !dog.hasCompanionJob() && !dog.mayBeLeashed();
+        boolean following = !dog.isOrderedToSit() && !dog.mayBeLeashed()
+                && (!dog.hasCompanionJob() || dog.explorerOutfit() != ExplorerOutfit.NONE);
         if (e == null || !e.owner.equals(owner)) {
             roster.register(dog.getUUID(), owner, dog.getName().getString(), GlobalPos.of(level.dimension(), dog.blockPosition()), following);
             return;
@@ -302,6 +305,7 @@ public final class CompanionRoster extends SavedData {
         if (dismiss && e.state == State.DISMISSED) return;
         long now = owner.level().getServer().overworld().getGameTime();
         e.state = dismiss ? State.DISMISSING : State.CALLING;
+        DeathTrackingGoal.clearSavedMap(e.saved);
         e.due = now;
         e.warned = false;
         roster.setDirty();
@@ -319,6 +323,7 @@ public final class CompanionRoster extends SavedData {
             var e = row.getValue();
             if (e.owner.equals(owner.getUUID()) && e.state != State.DISMISSED && e.state != State.DISMISSING) {
                 e.state = State.CALLING;
+                DeathTrackingGoal.clearSavedMap(e.saved);
                 e.due = 0;
                 e.warned = false;
                 roster.setDirty();
@@ -339,7 +344,7 @@ public final class CompanionRoster extends SavedData {
             if (e.state == State.ACTIVE) {
                 if (e.location.dimension().equals(owner.level().dimension())
                         && ChunkPos.containing(e.location.pos()).getChessboardDistance(owner.chunkPosition()) <= 2) continue;
-                e.state = State.CALLING;
+                e.state = State.CATCHING_UP;
                 e.due = now;
                 roster.setDirty();
             }
@@ -350,7 +355,8 @@ public final class CompanionRoster extends SavedData {
     private void process(MinecraftServer server, @Nullable ServerPlayer owner, UUID id, Entry e, long now) {
         // A dismissal requested before logout only needs the source endpoint to finish.
         if (owner == null && e.state != State.DISMISSING) return;
-        if (e.state == State.RETURNING) {
+        boolean catchingUp = e.state == State.CATCHING_UP;
+        if (e.state == State.RETURNING || catchingUp && e.saved != null) {
             if (now >= e.due) arrive(owner, id, e, now);
             return;
         }
@@ -379,7 +385,7 @@ public final class CompanionRoster extends SavedData {
             if (e.state == State.DISMISSING && owner != null && dog.level() == owner.level() && dog.distanceToSqr(owner) <= 256) {
                 FrenchieAwareness.bark(dog, 1.10f);
             }
-            storeLive(dog, e);
+            storeLive(dog, e, catchingUp && dog.level() == owner.level());
         } else if (e.saved == null) {
             var pack = owner == null ? null : FrontpackAttachments.packOrNull(owner);
             if (pack != null && pack.hasCarriedFrenchie() && matches(pack.frenchieNBT(), id, e.owner)) {
@@ -403,7 +409,7 @@ public final class CompanionRoster extends SavedData {
                 return;
             }
         }
-        e.state = e.state == State.DISMISSING ? State.DISMISSED : State.RETURNING;
+        if (!catchingUp) e.state = e.state == State.DISMISSING ? State.DISMISSED : State.RETURNING;
         e.following = false;
         e.due = now + 8;
         setDirty();
@@ -414,7 +420,11 @@ public final class CompanionRoster extends SavedData {
     }
 
     private void storeLive(FrenchieEntity dog, Entry entry) {
-        dog.cancelForWhistle();
+        storeLive(dog, entry, false);
+    }
+
+    private void storeLive(FrenchieEntity dog, Entry entry, boolean keepMap) {
+        dog.cancelForWhistle(keepMap);
         dog.stopRiding();
         dog.ejectPassengers();
         var out = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, dog.registryAccess());
@@ -465,7 +475,7 @@ public final class CompanionRoster extends SavedData {
         var dog = FrenchieRegistry.FRENCHIE.get().create(level, EntitySpawnReason.LOAD);
         if (dog == null) return;
         dog.load(TagValueInput.create(ProblemReporter.DISCARDING, level.registryAccess(), e.saved));
-        dog.cancelForWhistle();
+        dog.cancelForWhistle(e.state == State.CATCHING_UP && e.location.dimension().equals(level.dimension()));
         dog.snapTo(landing, owner.getYRot(), 0);
         dog.setDeltaMovement(Vec3.ZERO);
         dog.resetFallDistance();

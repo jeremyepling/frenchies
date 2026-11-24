@@ -14,6 +14,7 @@ import net.j40climb.frenchies.common.entity.frenchie.recall.WhistleApproachGoal;
 import net.j40climb.frenchies.common.entity.frenchie.rest.BedtimeBuddyGoal;
 import net.j40climb.frenchies.common.entity.frenchie.travel.CaptainControls;
 import net.j40climb.frenchies.common.entity.frenchie.travel.DeathTrackingGoal;
+import net.j40climb.frenchies.common.entity.frenchie.travel.ExplorerOutfit;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.core.BlockPos;
@@ -265,6 +266,10 @@ public class FrenchieEntity extends TamableAnimal {
     }
 
     private final DeathTrackingGoal trail = new DeathTrackingGoal(this);
+    private static final EntityDataAccessor<Byte> EXPLORER_OUTFIT =
+            SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<Boolean> AVOIDING_ENDERMAN =
+            SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.BOOLEAN);
     private final DeliveryGoal delivery = new DeliveryGoal(this);
 
     public FrenchieEntity(EntityType<? extends TamableAnimal> entityType, Level level) {
@@ -382,6 +387,8 @@ public class FrenchieEntity extends TamableAnimal {
         builder.define(BELLY_STAGE, PlayStages.BellyRub.NONE);
         builder.define(BELLY_STAGE_START, 0L);
         builder.define(JOB, (byte) 0);
+        builder.define(EXPLORER_OUTFIT, (byte) ExplorerOutfit.NONE.ordinal());
+        builder.define(AVOIDING_ENDERMAN, false);
         builder.define(WAITING_RECIPIENT, Optional.empty());
     }
 
@@ -402,11 +409,34 @@ public class FrenchieEntity extends TamableAnimal {
     }
 
     public boolean isDeathTracking() {
-        return level().isClientSide() ? entityData.get(JOB) == TRACKING : trail.active();
+        return level().isClientSide() ? entityData.get(JOB) == TRACKING : trail.isDeathTracking();
+    }
+
+    public ExplorerOutfit explorerOutfit() {
+        if (!level().isClientSide()) return trail.explorerOutfit();
+        return switch (entityData.get(EXPLORER_OUTFIT)) {
+            case 1 -> ExplorerOutfit.EXPLORER;
+            case 2 -> ExplorerOutfit.PIRATE;
+            default -> ExplorerOutfit.NONE;
+        };
+    }
+
+    public boolean isAvoidingEnderman() {
+        return entityData.get(AVOIDING_ENDERMAN);
+    }
+
+    public void setAvoidingEnderman(boolean avoiding) {
+        entityData.set(AVOIDING_ENDERMAN, avoiding);
+    }
+
+    private float endermanLook, oldEndermanLook;
+
+    public float endermanLook(float partialTick) {
+        return oldEndermanLook + (endermanLook - oldEndermanLook) * partialTick;
     }
 
     public boolean hasCompanionJob() {
-        return isDelivering() || isGoingHome() || isDeathTracking();
+        return isDelivering() || isGoingHome() || isDeathTracking() || explorerOutfit() != ExplorerOutfit.NONE;
     }
 
     public DeliveryGoal delivery() {
@@ -415,6 +445,7 @@ public class FrenchieEntity extends TamableAnimal {
 
     public void syncCompanionJob() {
         entityData.set(JOB, isDelivering() ? DELIVERING : isGoingHome() ? GOING_HOME : isDeathTracking() ? TRACKING : (byte) 0);
+        entityData.set(EXPLORER_OUTFIT, (byte) trail.explorerOutfit().ordinal());
         entityData.set(HANDOFF, delivery.handoffPhase());
         entityData.set(WAITING_RECIPIENT, Optional.ofNullable(delivery.waitingRecipient()).map(EntityReference::of));
     }
@@ -688,7 +719,8 @@ public class FrenchieEntity extends TamableAnimal {
         if (itemstack.is(FrenchieRegistry.SQUEAKY_TOY.get()) || itemstack.is(FrenchieRegistry.BUBBLE_TOY.get())) {
             return itemstack.getItem().use(level(), pPlayer, pHand);
         }
-        if (isPassenger()) return InteractionResult.SUCCESS;
+        boolean map = itemstack.is(Items.FILLED_MAP);
+        if (isPassenger() && !map) return InteractionResult.SUCCESS;
         Item item = itemstack.getItem();
         Item itemForTaming = Items.BONE;
         if(item == itemForTaming && !isTame()) {
@@ -711,17 +743,19 @@ public class FrenchieEntity extends TamableAnimal {
             }
         }
         if (isTame() && isOwnedBy(pPlayer) && !isFood(itemstack)) {
-            boolean compass = itemstack.is(Items.COMPASS) && !itemstack.has(DataComponents.LODESTONE_TRACKER);
+            boolean compass = isTrackingCompass(itemstack);
             boolean bundle = item instanceof BundleItem;
             boolean empty = itemstack.isEmpty();
-            if (pHand == InteractionHand.MAIN_HAND && empty && !hasCompanionJob() && !isBellyRubPose()) {
+            if (pHand == InteractionHand.MAIN_HAND && empty && !isBellyRubPose()) {
                 ItemStack offhand = pPlayer.getOffhandItem();
-                if (offhand.getItem() instanceof BundleItem || offhand.is(Items.COMPASS) || offhand.is(FrenchieRegistry.SQUEAKY_TOY.get())
-                        || offhand.is(FrenchieRegistry.BUBBLE_TOY.get()) || offhand.is(FrenchieRegistry.FRENCHIE_WHISTLE.get()) || isFood(offhand)) {
+                if (offhand.is(Items.FILLED_MAP) || explorerOutfit() != ExplorerOutfit.NONE && isTrackingCompass(offhand)
+                        || !hasCompanionJob() && (offhand.getItem() instanceof BundleItem || isTrackingCompass(offhand)
+                        || offhand.is(FrenchieRegistry.SQUEAKY_TOY.get()) || offhand.is(FrenchieRegistry.BUBBLE_TOY.get())
+                        || offhand.is(FrenchieRegistry.FRENCHIE_WHISTLE.get()) || isFood(offhand))) {
                     return InteractionResult.PASS;
                 }
             }
-            if (pHand != InteractionHand.MAIN_HAND && !compass && !bundle && !(empty && hasCompanionJob())) {
+            if (pHand != InteractionHand.MAIN_HAND && !map && !compass && !bundle && !(empty && hasCompanionJob())) {
                 return super.mobInteract(pPlayer, pHand);
             }
             if (level().isClientSide()) return InteractionResult.SUCCESS;
@@ -729,6 +763,14 @@ public class FrenchieEntity extends TamableAnimal {
             if (delivery.hasParcel() && !delivery.canUse() && pPlayer instanceof ServerPlayer owner) {
                 if (empty) delivery.collect(owner, pHand);
                 else owner.sendOverlayMessage(Component.translatable("frenchie.florafauna.whistle.collect", getName()));
+            } else if (map && pPlayer instanceof ServerPlayer owner) {
+                if (isDelivering() || isGoingHome() || hasToyJob()) orderMessage(owner, "busy");
+                else trail.useMap(owner, itemstack);
+                syncCompanionJob();
+            } else if (compass && !isDelivering() && !isGoingHome() && !isDeathTracking()
+                    && pPlayer instanceof ServerPlayer owner) {
+                trail.startTracking(owner);
+                syncCompanionJob();
             } else if (hasCompanionJob()) {
                 if (empty && pPlayer instanceof ServerPlayer owner) {
                     if (delivery.canUse()) delivery.collect(owner, pHand);
@@ -741,9 +783,6 @@ public class FrenchieEntity extends TamableAnimal {
                 } else {
                     orderMessage(pPlayer, "busy");
                 }
-            } else if (compass && pPlayer instanceof ServerPlayer owner) {
-                trail.startTracking(owner);
-                syncCompanionJob();
             } else if (bundle && hasToyJob()) {
                 orderMessage(pPlayer, "busy");
             } else if (bundle && pPlayer instanceof ServerPlayer owner) {
@@ -757,10 +796,19 @@ public class FrenchieEntity extends TamableAnimal {
         return super.mobInteract(pPlayer, pHand);
     }
 
+    private static boolean isTrackingCompass(ItemStack stack) {
+        return stack.is(Items.RECOVERY_COMPASS) || stack.is(Items.COMPASS) && !stack.has(DataComponents.LODESTONE_TRACKER);
+    }
+
     public void cancelForWhistle() {
+        cancelForWhistle(false);
+    }
+
+    public void cancelForWhistle(boolean keepMap) {
         delivery.closeDialog();
         delivery.cancelForCompanion();
-        trail.cancel();
+        if (keepMap && explorerOutfit() != ExplorerOutfit.NONE) trail.stop();
+        else trail.cancel();
         interruptPlay();
         respondingUntil = level().getGameTime() + 60;
         standUp();
@@ -863,6 +911,7 @@ public class FrenchieEntity extends TamableAnimal {
     public void tick() {
         if (isTame() && level() instanceof ServerLevel level) {
             if (CompanionRoster.finishPendingDismissal(this, level)) return;
+            trail.validateMapDimension(level);
             reactions.checkFooting(level);
             if (isRemoved()) return;
         }
@@ -870,6 +919,8 @@ public class FrenchieEntity extends TamableAnimal {
         if (isRemoved()) return;
 
         if(this.level().isClientSide()) {
+            oldEndermanLook = endermanLook;
+            endermanLook = Math.clamp(endermanLook + (isAvoidingEnderman() ? 0.16F : -0.12F), 0F, 1F);
             idleAnimationState.animateWhen(getPose() == Pose.STANDING && !isInWater()
                     && !isPassenger() && !isFrenchieSleeping() && getSleepTime() >= 20 && getPoseTime() >= 10
                     && walkAnimation.speed() < 0.05F && playPose() == PlayPose.NONE && hasIdleFooting(), tickCount);

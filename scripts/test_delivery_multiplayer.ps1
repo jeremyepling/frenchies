@@ -2,7 +2,7 @@
 # Two offline development clients connect only to a disposable loopback server.
 param(
     [switch]$Offline,
-    [ValidateSet('delivery','play','whistle','legacy')][string]$Scenario = 'delivery',
+    [ValidateSet('delivery','play','whistle','legacy','explorer')][string]$Scenario = 'delivery',
     [ValidateSet('26.1', '26.3')][string]$Target = '26.1'
 )
 

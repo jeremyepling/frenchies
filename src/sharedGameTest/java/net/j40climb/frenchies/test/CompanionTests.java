@@ -92,6 +92,13 @@ public record CompanionTests(
         registerPlayTest(yard, "companion_zoomies_laps", 550, h -> CompanionPlayTests.zoomies(h, true));
         registerPlayTest(yard, "companion_zoomies_crops", 550, h -> CompanionPlayTests.zoomies(h, false));
         registerPlayTest(yard, "frenchie_warning_sight", 160, FrenchieAwarenessGameTests::warningSight);
+        registerPlayTest(yard, "frenchie_explorer_maps", 100, ExplorerFrenchieGameTests::maps);
+        registerPlayTest(yard, "frenchie_explorer_pacing", 420, ExplorerFrenchieGameTests::pacing);
+        registerPlayTest(yard, "frenchie_explorer_route", 420, ExplorerFrenchieGameTests::route);
+        registerPlayTest(yard, "frenchie_explorer_travel", 2400, ExplorerFrenchieGameTests::travel);
+        registerPlayTest(yard, "frenchie_explorer_treasure", 420, h -> ExplorerFrenchieGameTests.treasure(h, true));
+        registerPlayTest(yard, "frenchie_explorer_treasure_missing", 240, h -> ExplorerFrenchieGameTests.treasure(h, false));
+        registerPlayTest(yard, "frenchie_explorer_enderman", 220, ExplorerFrenchieGameTests::enderman);
         registerStructureTest(defaultEnv, "frenchie_bedtime", yard, 100, FrenchieAwarenessGameTests::bedtime);
         registerTest(defaultEnv, "frenchie_sleep_pose_save", FrenchieGameTests::sleepPoseSave);
         registerTest(defaultEnv, "frenchie_owner_orders", FrenchieGameTests::ownerOrders);

@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Util;
 import net.minecraft.util.Mth;
 import net.minecraft.client.renderer.item.ItemModelResolver;
@@ -46,6 +47,7 @@ public class FrenchieRenderer extends MobRenderer<FrenchieEntity, FrenchieRender
         super(context, new FrenchieModel(context.bakeLayer(FrenchieModel.FRENCHIE)), 0.4f);
         addLayer(new SnowCoatLayer(this));
         addLayer(new FlotationVestLayer(this));
+        addLayer(new ExplorerOutfitLayer(this));
         itemResolver = context.getItemModelResolver();
         addLayer(new FrenchieMouthLayer(this));
     }
@@ -100,6 +102,9 @@ public class FrenchieRenderer extends MobRenderer<FrenchieEntity, FrenchieRender
             reusedState.turnLean = Mth.clamp(Mth.wrapDegrees(boat.getYRot() - boat.yRotO) * 0.023F, -0.16F, 0.16F);
         }
         reusedState.hasVest = entity.hasFlotationVest();
+        reusedState.explorerOutfit = entity.explorerOutfit();
+        reusedState.hideExplorerHeadwear = entity.isEyeInFluid(FluidTags.WATER);
+        reusedState.endermanLook = entity.endermanLook(partialTick);
         itemResolver.updateForLiving(reusedState.mouthItem, entity.getMouthItem(),
                 ItemDisplayContext.GROUND, entity);
         reusedState.toyStick = entity.getOffhandItem().is(Items.STICK) || entity.isShowingToyStick();

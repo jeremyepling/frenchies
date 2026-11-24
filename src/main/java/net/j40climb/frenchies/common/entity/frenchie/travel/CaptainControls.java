@@ -19,7 +19,7 @@ public final class CaptainControls {
     public static boolean canJoin(FrenchieEntity dog, AbstractBoat boat) {
         LivingEntity owner = dog.getOwner();
         return !dog.respondingToWhistle() && owner != null && owner.getVehicle() == boat && !dog.isOrderedToSit() && !dog.isLeashed()
-                && !dog.hasCompanionJob() && !dog.hasToyJob() && !boat.isUnderWater()
+                && (!dog.hasCompanionJob() || dog.explorerOutfit() != ExplorerOutfit.NONE) && !dog.hasToyJob() && !boat.isUnderWater()
                 && boat.getPassengers().stream().noneMatch(p -> p instanceof FrenchieEntity other && other.isTame());
     }
 
