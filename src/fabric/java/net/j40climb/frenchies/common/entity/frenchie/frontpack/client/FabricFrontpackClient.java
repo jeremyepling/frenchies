@@ -4,7 +4,9 @@ import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityRenderLayerRegist
 import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.j40climb.frenchies.Frenchies;
+//? if <26.4 {
 import net.minecraft.client.color.item.ItemTintSources;
+//?}
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.resources.Identifier;
@@ -12,8 +14,12 @@ import net.minecraft.resources.Identifier;
 public final class FabricFrontpackClient {
     public static void register() {
         var id = Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "front_pack");
+        //? if <26.4 {
         ItemTintSources.ID_MAPPER.put(id, FrontpackTint.CODEC);
         SpecialModelRenderers.ID_MAPPER.put(id, FrontpackItemRenderer.Unbaked.CODEC);
+        //?} else {
+        /*PreviewClientRegistries.registerFrontpackModels(id);
+        *///?}
         ModelLayerRegistry.registerModelLayer(FrontpackModel.LAYER_LOCATION, FrontpackModel::createBodyLayer);
         LivingEntityRenderLayerRegistrationCallback.EVENT.register((type, renderer, layers, context) -> {
             if (renderer instanceof AvatarRenderer<?> avatar) {

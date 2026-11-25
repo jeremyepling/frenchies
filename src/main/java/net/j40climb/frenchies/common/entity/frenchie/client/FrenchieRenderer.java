@@ -99,7 +99,7 @@ public class FrenchieRenderer extends MobRenderer<FrenchieEntity, FrenchieRender
             var owner = entity.getOwner();
             reusedState.travelOwnerId = owner == null ? entity.getId() : owner.getId();
             reusedState.bodyRot = Mth.rotLerp(partialTick, boat.yRotO, boat.getYRot());
-            reusedState.turnLean = Mth.clamp(Mth.wrapDegrees(boat.getYRot() - boat.yRotO) * 0.023F, -0.16F, 0.16F);
+            reusedState.turnLean = Math.clamp(Mth.wrapDegrees(boat.getYRot() - boat.yRotO) * 0.023F, -0.16F, 0.16F);
         }
         reusedState.hasVest = entity.hasFlotationVest();
         reusedState.explorerOutfit = entity.explorerOutfit();

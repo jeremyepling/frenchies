@@ -1,6 +1,6 @@
 #Requires -Version 7.0
 # Two offline development clients observe playful Frenchie poses on a disposable loopback server.
-param([switch]$Offline, [ValidateSet('26.1', '26.3')][string]$Target = '26.1')
+param([switch]$Offline, [ValidateSet('26.1', '26.3', '26.4')][string]$Target = '26.1')
 
 $Scenario = 'playful'
 

@@ -17,8 +17,9 @@ stonecutter.constants.put('neoforge', loader == 'neoforge')
 sourceSets.main.java.source(loaderSources.java)
 sourceSets.main.resources.source(loaderSources.resources)
 sourceSets.main.java.srcDir 'target/java'
+if (minecraft_version.startsWith('26.4-')) sourceSets.main.java.srcDir rootProject.file('versions/26.4/java')
 sourceSets.main.resources.srcDir 'target/resources'
-sourceSets.main.resources.srcDir rootProject.file("versions/${minecraft_version}/resources")
+sourceSets.main.resources.srcDir rootProject.file("versions/${minecraft_version.startsWith('26.4-') ? '26.3' : minecraft_version}/resources")
 
 sourceSets.create('sharedGameTest')
 sourceSets.test {
@@ -27,7 +28,7 @@ sourceSets.test {
 }
 dependencies {
     // Trinkets Updated ships a universal Fabric and NeoForge jar.
-    compileOnly "maven.modrinth:XaT8sLP6:${minecraft_version == '26.1' ? 'CFk62USu' : 'lVR1OKgV'}"
+    if (!minecraft_version.startsWith('26.4-')) compileOnly "maven.modrinth:XaT8sLP6:${minecraft_version == '26.1' ? 'CFk62USu' : 'lVR1OKgV'}"
     testImplementation 'org.junit.jupiter:junit-jupiter:6.1.3'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
@@ -37,7 +38,7 @@ tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
 stonecutter {
     replacements {
         string {
-            direction = project.minecraft_version == '26.3'
+            direction = project.minecraft_version != '26.1'
             replace('BlockPos.withinManhattan(', 'BlockPos.withinBoxByManhattanDistance(')
             replace('mc.screen', 'mc.gui.screen()')
             replace('mc.setScreen(', 'mc.gui.setScreen(')
@@ -54,8 +55,26 @@ stonecutter {
             replace('Blocks.RED_BED', 'Blocks.BED.red()')
             replace('Blocks.BLUE_BED', 'Blocks.BED.blue()')
         }
+        string {
+            direction = project.minecraft_version.startsWith('26.4-')
+            replace('net.minecraft.client.renderer.RenderPipelines;', 'net.minecraft.client.gui.GuiPipeline;')
+            replace('RenderPipelines.GUI_TEXTURED', 'GuiPipeline.TEXTURED')
+            replace('extractContents(GuiGraphicsExtractor g, int mouseX, int mouseY, float a)', 'extractContents(GuiGraphicsExtractor g)')
+            replace('extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float a)', 'extractBackground(GuiGraphicsExtractor g)')
+            replace('drawWarning(GuiGraphicsExtractor gui, DeltaTracker delta)', 'drawWarning(GuiGraphicsExtractor gui)')
+            replace('properties.spawnEgg(', 'properties.spawns(')
+            replace('adultSounds().whineSound().value()', 'adultSounds().whineSound().orElseThrow().value()')
+            replace('adultSounds().ambientSound().value()', 'adultSounds().ambientSound().orElseThrow().value()')
+            replace('sounds(recipient, bark.value()', 'sounds(recipient, bark.orElseThrow().value()')
+            replace('existsAtPosition(PoiTypes.HOME,', 'existsAtPosition(PoiTypes.HOME.unwrapKey().orElseThrow(),')
+        }
         regex {
-            direction = project.minecraft_version == '26.3'
+            direction = project.minecraft_version.startsWith('26.4-')
+            replace(/([\w.]+)\.getTextureDiffuseColor\(\)/, 'net.minecraft.util.CommonColors.TEXTURE_TINT_COLORS.pick($1)',
+                    /net\.minecraft\.util\.CommonColors\.TEXTURE_TINT_COLORS\.pick\(([\w.]+)\)/, '$1.getTextureDiffuseColor()')
+        }
+        regex {
+            direction = project.minecraft_version != '26.1'
             replace(/(?<![\w.])EntityType\.(?=[A-Z_]+\b)/, 'EntityTypes.',
                     /(?<![\w.])EntityTypes\.(?=[A-Z_]+\b)/, 'EntityType.')
         }

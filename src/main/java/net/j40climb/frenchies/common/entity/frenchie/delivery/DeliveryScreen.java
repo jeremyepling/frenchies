@@ -129,7 +129,7 @@ public final class DeliveryScreen extends Screen {
         var button = new Button(x, y, w, h, message, b -> action.run(), narration -> narration.get()) {
             @Override
             protected void extractContents(GuiGraphicsExtractor g, int mouseX, int mouseY, float a) {
-                boolean highlight = isHoveredOrFocused() && active;
+                boolean highlight = (isHovered() || isFocused()) && active;
                 int color = !active ? 0xFFD7C9AF : highlight ? INK : primary ? BLUE : 0xFFE8D5B4;
                 g.fill(x, y, x + w, y + h, color);
                 g.outline(x, y, w, h, highlight || primary ? INK : RULE);

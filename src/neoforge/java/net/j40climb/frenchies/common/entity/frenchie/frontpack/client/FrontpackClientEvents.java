@@ -26,6 +26,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
  */
 @EventBusSubscriber(modid = Frenchies.MOD_ID, value = Dist.CLIENT)
 public class FrontpackClientEvents {
+    //? if <26.4 {
     @SubscribeEvent
     public static void registerItemTints(RegisterColorHandlersEvent.ItemTintSources event) {
         event.register(Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "front_pack"), FrontpackTint.CODEC);
@@ -35,6 +36,7 @@ public class FrontpackClientEvents {
     public static void registerItemModels(RegisterSpecialModelRendererEvent event) {
         event.register(Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "front_pack"), FrontpackItemRenderer.Unbaked.CODEC);
     }
+    //?}
 
     @SubscribeEvent
     public static void registerWarningHud(RegisterGuiLayersEvent event) {

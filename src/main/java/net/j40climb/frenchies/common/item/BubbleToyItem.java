@@ -9,7 +9,6 @@ import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -52,7 +51,7 @@ public final class BubbleToyItem extends Item {
             Vec3 start = mouth.add(forward.scale(0.67)).add(side.scale(fan * 0.24));
             bubble.setPos(start);
             if (!level.noBlockCollision(bubble, bubble.getBoundingBox().expandTowards(mouth.subtract(start)))) continue;
-            double lift = Mth.clamp(player.getLookAngle().y * 0.07, -0.03, 0.035);
+            double lift = Math.clamp(player.getLookAngle().y * 0.07, -0.03, 0.035);
             bubble.setDeltaMovement(forward.scale(0.095 + level.getRandom().nextDouble() * 0.025)
                     .add(side.scale(fan * 0.105)).add(0, lift + level.getRandom().nextDouble() * 0.009, 0));
             if (level.addFreshEntity(bubble)) bubbles.add(bubble);

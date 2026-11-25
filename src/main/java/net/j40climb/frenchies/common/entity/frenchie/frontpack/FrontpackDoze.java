@@ -6,7 +6,6 @@ import net.j40climb.frenchies.common.entity.frenchie.rest.CompanionRest;
 import net.minecraft.server.level.ServerPlayer;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 
 public final class FrontpackDoze {
@@ -17,7 +16,7 @@ public final class FrontpackDoze {
     public static float amount(LivingEntity wearer, float partialTick) {
         var pack = FrontpackAttachments.packOrNull(wearer);
         if (pack == null || !pack.hasCarriedFrenchie() || pack.dozeAt() < 0) return 0F;
-        return Mth.clamp((wearer.level().getGameTime() - pack.dozeAt() + partialTick) / SETTLE_TICKS, 0F, 1F);
+        return Math.clamp((wearer.level().getGameTime() - pack.dozeAt() + partialTick) / SETTLE_TICKS, 0F, 1F);
     }
 
     public static void tick(ServerPlayer player) {

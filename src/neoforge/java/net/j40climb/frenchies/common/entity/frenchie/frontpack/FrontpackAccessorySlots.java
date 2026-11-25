@@ -2,14 +2,17 @@ package net.j40climb.frenchies.common.entity.frenchie.frontpack;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+//? if <26.4 {
 import net.neoforged.fml.ModList;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotResult;
+//?}
 
 public final class FrontpackAccessorySlots {
     private FrontpackAccessorySlots() {}
 
     public static ItemStack findEquipped(LivingEntity entity) {
+        //? if <26.4 {
         if (ModList.get().isLoaded("curios")) {
             var pack = CuriosSlots.find(entity);
             if (!pack.isEmpty()) return pack;
@@ -18,6 +21,7 @@ public final class FrontpackAccessorySlots {
             var pack = TrinketSlots.find(entity);
             if (!pack.isEmpty()) return pack;
         }
+        //?}
         //? if <26.3 {
         if (entity instanceof net.minecraft.world.entity.Avatar avatar && ModList.get().isLoaded("baubles")) {
             return BaublesFrontpack.findEquipped(avatar);
@@ -26,6 +30,7 @@ public final class FrontpackAccessorySlots {
         return ItemStack.EMPTY;
     }
 
+    //? if <26.4 {
     private static final class CuriosSlots {
         private static ItemStack find(LivingEntity entity) {
             var slots = CuriosApi.getCuriosInventoryOrNull(entity);
@@ -35,4 +40,5 @@ public final class FrontpackAccessorySlots {
                     .map(SlotResult::stack).orElse(ItemStack.EMPTY);
         }
     }
+    //?}
 }

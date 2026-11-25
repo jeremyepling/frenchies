@@ -43,6 +43,7 @@ if (playtestId != null && (!(playtestId ==~ /[0-9a-f]{32}/) || !(playtestScenari
 
 sourceSets.create('playtest') {
     java.srcDir 'target/playtest'
+    if (minecraft_version.startsWith('26.4-')) java.srcDir rootProject.file('versions/26.3-neoforge/target/playtest')
     compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
     runtimeClasspath += sourceSets.main.runtimeClasspath
 }
@@ -51,8 +52,9 @@ tasks.named('check') {
     dependsOn tasks.named('compilePlaytestJava')
 }
 
+def neoForgeVersion = minecraft_version.startsWith('26.4-') ? providers.gradleProperty('previewNeoVersion').get() : project.neo_version
 neoForge {
-    version = project.neo_version
+    version = neoForgeVersion
 
     runs {
         if (deliveryTestId != null) {
@@ -146,7 +148,7 @@ dependencies {
     if (minecraft_version == '26.1') {
         compileOnly 'top.theillusivec4.curios:curios-neoforge:15.0.0-beta.1+26.1:api'
         compileOnly 'maven.modrinth:DHpbnc1G:t4UkCgZP' // Baubles 2, version 1.0
-    } else {
+    } else if (minecraft_version == '26.3') {
         compileOnly 'top.theillusivec4.curios:curios-neoforge:17.0.1+26.3:api'
     }
 }
@@ -155,8 +157,8 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
     var replaceProperties = [
             minecraft_version      : minecraft_version,
             minecraft_version_range: minecraft_version_range,
-            neo_version            : neo_version,
-            neo_version_range      : neo_version_range,
+            neo_version            : neoForgeVersion,
+            neo_version_range      : minecraft_version.startsWith('26.4-') ? "[${neoForgeVersion}]" : neo_version_range,
             mod_id                 : mod_id,
             mod_name               : mod_name,
             mod_license            : mod_license,

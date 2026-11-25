@@ -238,7 +238,9 @@ final class FrontpackPlaytest {
         t.awaitClient("Check the empty red carrier is visible only while worn", mc ->
                 compareChest(mc.gameDirectory.toPath().resolve("screenshots")));
         t.server("Verify the repeat click left exactly one Frenchie", p -> Playtest.require(isRestored(p), "Dog was duplicated or lost"));
+        //? if <26.4 {
         AccessoryFrontpackPlaytest.addInstalledProviders(t);
+        //?}
         FrontpackFlightPlaytest.steps(t, DOG_ID);
     }
 

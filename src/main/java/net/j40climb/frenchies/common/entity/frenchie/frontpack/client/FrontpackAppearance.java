@@ -31,7 +31,7 @@ public record FrontpackAppearance(@Nullable FrenchieVariant coat, @Nullable Inte
         var data = FrontpackAttachments.packOrNull(avatar);
         var warning = FrontpackAttachments.warningOrNull(avatar);
         boolean alert = warning != null && warning.visible(avatar.level().getGameTime());
-        Float yaw = alert ? Mth.clamp(Mth.wrapDegrees(warning.bearing() - state.bodyRot), -60F, 60F) : null;
+        Float yaw = alert ? Math.clamp(Mth.wrapDegrees(warning.bearing() - state.bodyRot), -60F, 60F) : null;
         FrontpackRenderData.set(state, new FrontpackAppearance(data == null ? null : data.carriedCoat(),
                 FrontpackTint.dyedFabric(worn), yaw, statusLabel(data, state, alert),
                 FrontpackDoze.amount(avatar, state.ageInTicks - avatar.tickCount)));

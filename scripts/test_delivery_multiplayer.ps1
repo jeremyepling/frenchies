@@ -3,7 +3,7 @@
 param(
     [switch]$Offline,
     [ValidateSet('delivery','play','whistle','legacy','explorer')][string]$Scenario = 'delivery',
-    [ValidateSet('26.1', '26.3')][string]$Target = '26.1'
+    [ValidateSet('26.1', '26.3', '26.4')][string]$Target = '26.1'
 )
 
 $ErrorActionPreference = 'Stop'

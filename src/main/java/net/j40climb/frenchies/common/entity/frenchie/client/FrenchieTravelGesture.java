@@ -63,7 +63,7 @@ public final class FrenchieTravelGesture {
 
     private static float envelope(float tick, int start, int peak, int release, int end) {
         float progress = Math.min((tick - start) / (peak - start), (end - tick) / (end - release));
-        float t = Mth.clamp(progress, 0F, 1F);
+        float t = Math.clamp(progress, 0F, 1F);
         return t * t * (3F - 2F * t);
     }
 }

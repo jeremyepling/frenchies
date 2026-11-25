@@ -11,6 +11,8 @@ Take a French bulldog on your next expedition. It can ride on the bow while you 
 | 26.1.2 | 26.1 | 26.1.2.129 | 0.148.0+26.1.2 |
 | 26.3 | 26.3 | 26.3.0.101 | 0.165.2+26.3 |
 
+**26.4 Fabric preview.** Use the dedicated 26.4-pre-1 Fabric jar with Minecraft 26.4 Pre-Release 1, Loader 0.20.1, and Fabric API 0.167.1+26.4. Wear the front pack in the vanilla chest slot on this preview. Trinkets Updated does not yet provide a matching build.
+
 ![A Frenchie wearing an orange life jacket sits at the bow in front of its owner.](docs/images/frenchie-boat-captain.png)
 
 ## Meet your Frenchie
@@ -103,7 +105,9 @@ Fabric and NeoForge generate `config/florafauna_frenchies.properties` on startup
 | `client` | The Frenchie model, animations, and render layers |
 | `frontpack` | Equipment, crafting, attachments, and accessory integration. Its `client` package owns rendering, HUD, and client input. |
 
-Use Java 25 and this checkout's Gradle wrapper. The four Gradle projects use the form `:<minecraft-version>-<loader>`. For example, run `./gradlew :26.1-fabric:build :26.1-fabric:runGameTestServer` to build and test Fabric, or `./gradlew :26.3-neoforge:runClient` for a NeoForge development client. Run all four targets before a release. The spawn egg models and other runtime resources are checked in. Jars are under `versions/<minecraft-version>-<loader>/build/libs/`.
+Use Java 25 and this checkout's Gradle wrapper. The Gradle projects use the form `:<minecraft-version>-<loader>`. For example, run `./gradlew :26.1-fabric:build :26.1-fabric:runGameTestServer` to build and test Fabric, or `./gradlew :26.3-neoforge:runClient` for a NeoForge development client. Run the stable targets before a release. The Fabric preview uses `./gradlew :26.4-fabric:build :26.4-fabric:runGameTestServer`. The spawn egg models and other runtime resources are checked in. Jars are under `versions/<minecraft-version>-<loader>/build/libs/`.
+
+The experimental `:26.4-neoforge` target tracks Minecraft 26.4 Snapshot 10. As of November 25, 2026, the upstream snapshot port at [NeoForge e9012cb](https://github.com/neoforged/NeoForge/commit/e9012cb09aea9261144cdf41d62b5a63f1e5f5dd) fails its own Java compilation and no matching NeoForge release is available. To build when a compatible development artifact is available from Maven Local or the NeoForge Maven, use `./gradlew -PpreviewNeoVersion=<matching-version> :26.4-neoforge:build`. The scripted clients also accept `-Target 26.4` when `ORG_GRADLE_PROJECT_previewNeoVersion` is set.
 
 For the NeoForge scripted clients on Windows with PowerShell 7, run `./scripts/test_dev_world.ps1 -Target 26.1 -All -SourceWorld <closed-save-directory>` to check sleep, front-pack persistence, status icons and delivery with a real client. Use `-Target 26.3` for that version. Run `./scripts/test_delivery_multiplayer.ps1 -Target 26.1` to verify courier handoff between two real clients and a dedicated server, or `./scripts/test_playful_interactions.ps1 -Target 26.1` to inspect playful poses. These scripts accept either target and keep disposable worlds, logs and captures under `versions/<target>-neoforge/.tmp/`. Their default target is 26.1.
 

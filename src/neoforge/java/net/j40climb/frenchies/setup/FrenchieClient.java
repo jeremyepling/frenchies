@@ -20,11 +20,13 @@ public final class FrenchieClient {
         event.registerLayerDefinition(FrenchieModel.FRENCHIE, FrenchieModel::createBodyLayer);
     }
 
+    //? if <26.4 {
     @SubscribeEvent
     public static void renderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(FrenchieRegistry.FRENCHIE.get(), FrenchieRenderer::new);
         event.registerEntityRenderer(FrenchieRegistry.PLAY_BUBBLE.get(), PlayBubbleRenderer::new);
     }
+    //?}
 
     @SubscribeEvent
     public static void networking(RegisterClientPayloadHandlersEvent event) {

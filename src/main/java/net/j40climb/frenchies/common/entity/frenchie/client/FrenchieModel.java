@@ -225,7 +225,7 @@ public class FrenchieModel extends EntityModel<FrenchieRenderState> {
             attention = 1;
         }
         if (renderState.playPose == PlayPose.BUBBLE_WATCH && (renderState.isSleeping || renderState.isSitting)) {
-            head.yRot += Mth.clamp(renderState.yRot, -25F, 25F) * Mth.DEG_TO_RAD;
+            head.yRot += Math.clamp(renderState.yRot, -25F, 25F) * Mth.DEG_TO_RAD;
             head.xRot -= 0.1F;
         }
         if (attention > 0 && !renderState.isSleeping && !renderState.isSitting) {
@@ -443,8 +443,8 @@ public class FrenchieModel extends EntityModel<FrenchieRenderState> {
     }
 
     private void applyHeadRotation(float headYaw, float headPitch) {
-        headYaw = Mth.clamp(headYaw, -30f, 30f);
-        headPitch = Mth.clamp(headPitch, -32.5f, 45f);
+        headYaw = Math.clamp(headYaw, -30f, 30f);
+        headPitch = Math.clamp(headPitch, -32.5f, 45f);
 
         this.head.yRot = headYaw * ((float)Math.PI / 180f);
         this.head.xRot = headPitch *  ((float)Math.PI / 180f);

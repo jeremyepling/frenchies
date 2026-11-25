@@ -37,7 +37,6 @@ record BuriedTreasureSite(BlockPos chest, BlockPos cover) {
         // The vanilla piece moves its one-block bounding box to the chest during generation.
         // That position stays available after a player's first open clears the loot table.
         for (var start : chunk.getAllStarts().values()) {
-            if (!start.isValid()) continue;
             for (var piece : start.getPieces()) {
                 if (piece.getType() != StructurePieceType.BURIED_TREASURE_PIECE) continue;
                 var box = piece.getBoundingBox();

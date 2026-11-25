@@ -96,9 +96,15 @@ final class OwnerConcernGoal extends Goal {
             }
         }
         if (now >= nextSound) {
+            //? if <26.4 {
             var sound = dog.registryAccess().lookupOrThrow(Registries.WOLF_SOUND_VARIANT)
                     .getOrThrow(WolfSoundVariants.PUGLIN).value().adultSounds().whineSound().value();
             dog.level().playSound(null, dog.getX(), dog.getY(), dog.getZ(), sound, SoundSource.NEUTRAL, 0.32F, 1.12F);
+            //?} else {
+            /*dog.registryAccess().lookupOrThrow(Registries.WOLF_SOUND_VARIANT)
+                    .getOrThrow(WolfSoundVariants.PUGLIN).value().adultSounds().whineSound().ifPresent(event ->
+                            dog.level().playSound(null, dog.getX(), dog.getY(), dog.getZ(), event.value(), SoundSource.NEUTRAL, 0.32F, 1.12F));
+            *///?}
             nextSound = now + 140 + dog.getRandom().nextInt(101);
         }
     }

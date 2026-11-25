@@ -2,7 +2,7 @@
 # Run Minecraft clients against fresh copies of a closed save. Each scenario has its own copy.
 [CmdletBinding(DefaultParameterSetName = 'Selected')]
 param(
-    [ValidateSet('26.1', '26.3')]
+    [ValidateSet('26.1', '26.3', '26.4')]
     [string]$Target = '26.1',
     [Parameter(ParameterSetName = 'Selected', Position = 0)]
     [ValidateSet('frenchie', 'frontpack', 'companions', 'delivery', 'weather', 'rest')]

@@ -1,5 +1,6 @@
 package net.j40climb.frenchies.playtest;
 
+//? if <26.4 {
 import eu.pb4.trinkets.api.TrinketsApi;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.core.component.DataComponents;
@@ -164,3 +165,4 @@ final class AccessoryFrontpackPlaytest {
         }
     }
 }
+//?}

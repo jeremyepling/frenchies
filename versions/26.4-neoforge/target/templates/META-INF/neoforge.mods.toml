@@ -1,0 +1,34 @@
+license="${mod_license}"
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+authors="${mod_authors}"
+description='''${mod_description}'''
+[[dependencies.${mod_id}]]
+    modId="neoforge"
+    type="required"
+    versionRange="${neo_version_range}"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    type="required"
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="florafauna"
+    type="incompatible"
+    versionRange="[0,0.0.2)"
+    reason="Older FloraFauna builds already contain Frenchies. Upgrade FloraFauna to 0.0.2 or later."
+    ordering="NONE"
+    side="BOTH"
+
+[[mixins]]
+config="frenchies.mixins.json"
+[[mixins]]
+config="frenchies.neoforge-gameplay.mixins.json"
+[[mixins]]
+config="frenchies.preview.client.mixins.json"

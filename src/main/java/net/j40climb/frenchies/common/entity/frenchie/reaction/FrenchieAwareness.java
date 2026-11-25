@@ -86,8 +86,14 @@ public final class FrenchieAwareness {
     }
 
     public static void bark(LivingEntity observer, float pitch) {
+        //? if <26.4 {
         var bark = observer.registryAccess().lookupOrThrow(Registries.WOLF_SOUND_VARIANT)
                 .getOrThrow(WolfSoundVariants.PUGLIN).value().adultSounds().ambientSound().value();
         observer.level().playSound(null, observer.getX(), observer.getY(), observer.getZ(), bark, SoundSource.NEUTRAL, 0.85F, pitch);
+        //?} else {
+        /*observer.registryAccess().lookupOrThrow(Registries.WOLF_SOUND_VARIANT)
+                .getOrThrow(WolfSoundVariants.PUGLIN).value().adultSounds().ambientSound().ifPresent(event ->
+                        observer.level().playSound(null, observer.getX(), observer.getY(), observer.getZ(), event.value(), SoundSource.NEUTRAL, 0.85F, pitch));
+        *///?}
     }
 }

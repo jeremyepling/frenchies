@@ -69,7 +69,7 @@ public final class PlayBubbleEntity extends Entity {
     // Match the scale and limited head yaw of the rendered adult and puppy muzzles.
     static Vec3 nosePosition(FrenchieEntity dog) {
         double scale = dog.isBaby() ? 0.5 : 1.0;
-        float yaw = dog.yBodyRot + Mth.clamp(Mth.wrapDegrees(dog.getYHeadRot() - dog.yBodyRot), -30F, 30F);
+        float yaw = dog.yBodyRot + Math.clamp(Mth.wrapDegrees(dog.getYHeadRot() - dog.yBodyRot), -30F, 30F);
         Vec3 forward = Vec3.directionFromRotation(0, yaw);
         return dog.position().add(forward.scale(0.47 * scale)).add(0, 0.48 * scale, 0);
     }

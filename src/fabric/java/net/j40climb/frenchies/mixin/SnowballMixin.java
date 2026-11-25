@@ -8,10 +8,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+//? if <26.4 {
 @Mixin(Snowball.class)
+//?} else {
+/*@Mixin(net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableBallProjectile.class)
+*///?}
 abstract class SnowballMixin {
     @Inject(method = "onHit", at = @At("HEAD"))
     private void frenchies$inviteSnowPlay(HitResult hit, CallbackInfo ci) {
-        SnowballPlayEvents.onImpact((Snowball) (Object) this, hit);
+        if ((Object) this instanceof Snowball snowball) SnowballPlayEvents.onImpact(snowball, hit);
     }
 }
