@@ -96,7 +96,7 @@ public final class Playtest {
         }
         verifyCopyDirectory(mc);
         for (var child : screen.children()) {
-            if (child instanceof Button button && button.active && button.visible && label.equals(button.getMessage())) {
+            if (child instanceof Button button && button.isActive() && label.equals(button.getMessage())) {
                 var click = new MouseButtonEvent(button.getX() + button.getWidth() / 2.0,
                         button.getY() + button.getHeight() / 2.0, new MouseButtonInfo(InputConstants.MOUSE_BUTTON_LEFT, 0));
                 require(screen.mouseClicked(click, false), "World upgrade button did not accept click");

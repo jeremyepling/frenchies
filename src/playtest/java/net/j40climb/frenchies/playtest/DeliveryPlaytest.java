@@ -3,6 +3,7 @@ package net.j40climb.frenchies.playtest;
 //? if >=26.3 {
 /*import net.minecraft.world.phys.Vec3;
 *///?}
+import com.mojang.blaze3d.platform.InputConstants;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
 import net.j40climb.frenchies.common.entity.frenchie.delivery.DeliveryScreen;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
@@ -31,11 +32,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.BlockHitResult;
-//? if <26.3 {
-import org.lwjgl.glfw.GLFW;
-//?} else {
-/*import com.mojang.blaze3d.platform.InputConstants;
-*///?}
 
 import java.util.Optional;
 import java.util.Set;
@@ -72,11 +68,7 @@ final class DeliveryPlaytest {
             });
             useDog(t, true);
             t.awaitClient("Escape the chooser without transferring the bundle", mc ->
-                    //? if <26.3 {
-                    mc.screen instanceof DeliveryScreen && mc.screen.keyPressed(new KeyEvent(GLFW.GLFW_KEY_ESCAPE, 0, 0)));
-                    //?} else {
-                    /*mc.screen instanceof DeliveryScreen && mc.screen.keyPressed(new KeyEvent(InputConstants.KEY_ESCAPE, 0, 0)));
-                    *///?}
+                    mc.screen instanceof DeliveryScreen && mc.screen.keyPressed(keyPress(InputConstants.KEY_ESCAPE)));
             useDog(t, true);
             openChooser(t);
             t.screenshot("delivery-choose-destination");
@@ -238,11 +230,15 @@ final class DeliveryPlaytest {
     static boolean pressLabel(Minecraft mc, String label) {
         if (!(mc.screen instanceof DeliveryScreen)) return false;
         Optional<Button> button = widgets(mc.screen).filter(Button.class::isInstance).map(Button.class::cast)
-                .filter(b -> b.active && b.visible && b.getMessage().getString().equals(label)).findFirst();
-        //? if <26.3 {
-        return button.isPresent() && button.get().keyPressed(new KeyEvent(GLFW.GLFW_KEY_ENTER, 0, 0));
+                .filter(b -> b.isActive() && b.getMessage().getString().equals(label)).findFirst();
+        return button.isPresent() && button.get().keyPressed(keyPress(InputConstants.KEY_RETURN));
+    }
+
+    private static KeyEvent keyPress(int key) {
+        //? if <26.4 {
+        return new KeyEvent(key, 0, 0);
         //?} else {
-        /*return button.isPresent() && button.get().keyPressed(new KeyEvent(InputConstants.KEY_RETURN, 0, 0));
+        /*return new KeyEvent(key, 0, 0, false);
         *///?}
     }
 
