@@ -19,7 +19,7 @@ import java.util.Optional;
 
 /** A small airmail card that leaves the dog and its surroundings visible. */
 public final class DeliveryScreen extends Screen {
-    private static final Identifier PARCEL = Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "frenchie/parcel");
+    private static final Identifier PARCEL = Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "frenchie/parcel");
     private static final int PAPER = 0xFFFFEED2;
     private static final int INK = 0xFF293448;
     private static final int BLUE = 0xFF385976;
@@ -56,7 +56,7 @@ public final class DeliveryScreen extends Screen {
     }
 
     private static Component label(String key, Object... args) {
-        return Component.translatable("frenchie.florafauna.delivery." + key, args);
+        return Component.translatable("frenchie.frenchies.delivery." + key, args);
     }
 
     private static Component duration(int seconds) {

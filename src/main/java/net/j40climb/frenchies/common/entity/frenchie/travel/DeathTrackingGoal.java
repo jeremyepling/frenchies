@@ -375,10 +375,10 @@ public final class DeathTrackingGoal extends Goal {
     }
 
     private void tell(ServerPlayer owner, String key) {
-        owner.sendOverlayMessage(Component.translatable("frenchie.florafauna.tracking." + key, dog.getName()));
+        owner.sendOverlayMessage(Component.translatable("frenchie.frenchies.tracking." + key, dog.getName()));
     }
 
     private void tellExplorer(ServerPlayer owner, String key) {
-        owner.sendOverlayMessage(Component.translatable("frenchie.florafauna.explorer." + key, dog.getName()));
+        owner.sendOverlayMessage(Component.translatable("frenchie.frenchies.explorer." + key, dog.getName()));
     }
 }

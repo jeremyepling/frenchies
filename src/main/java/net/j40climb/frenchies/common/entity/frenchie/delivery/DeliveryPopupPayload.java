@@ -29,7 +29,7 @@ public record DeliveryPopupPayload(UUID dog, List<Choice> choices, Optional<Prev
     }
 
     public static final Type<DeliveryPopupPayload> TYPE =
-            new Type<>(Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "delivery_popup"));
+            new Type<>(Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "delivery_popup"));
     public static final StreamCodec<RegistryFriendlyByteBuf, DeliveryPopupPayload> STREAM_CODEC = StreamCodec.composite(
             UUIDUtil.STREAM_CODEC, DeliveryPopupPayload::dog,
             Choice.CODEC.apply(ByteBufCodecs.list()), DeliveryPopupPayload::choices,

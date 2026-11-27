@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_dye",
+  "category": "equipment",
+  "target": "frenchies:front_pack",
+  "dye": "#minecraft:dyes",
+  "result": { "id": "frenchies:front_pack" }
+}

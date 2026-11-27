@@ -10,7 +10,7 @@ Use this repo folder as the only working copy. Screenshots and temporary exports
 4. Save the edited `.bbmodel` and any changed linked PNGs. If you’re working with Codex, ask it to apply the saved outfit edits to the mod and verify them in-game.
 5. Apply the changes to the matching Java model and runtime textures as needed. Review the diff, preview the affected outfit in Minecraft, and commit the editable files and corresponding runtime changes together.
 
-The mod loads its outfit geometry from [AdventureOutfitModels.java](../../../src/main/java/net/j40climb/frenchies/common/entity/frenchie/client/AdventureOutfitModels.java), its carrier geometry from [FrontpackModel.java](../../../src/main/java/net/j40climb/frenchies/common/entity/frenchie/frontpack/client/FrontpackModel.java), and its dog and outfit textures from the [runtime texture folder](../../../src/main/resources/assets/florafauna/textures/entity/frenchie/). Saving in Blockbench updates the editable files. The Gradle build reads the Java models and runtime textures directly.
+The mod loads its outfit geometry from [AdventureOutfitModels.java](../../../src/main/java/net/j40climb/frenchies/common/entity/frenchie/client/AdventureOutfitModels.java), its carrier geometry from [FrontpackModel.java](../../../src/main/java/net/j40climb/frenchies/common/entity/frenchie/frontpack/client/FrontpackModel.java), and its dog and outfit textures from the [runtime texture folder](../../../src/main/resources/assets/frenchies/textures/entity/frenchie/). Saving in Blockbench updates the editable files. The Gradle build reads the Java models and runtime textures directly.
 
 ## What is here
 

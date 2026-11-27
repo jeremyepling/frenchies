@@ -29,11 +29,11 @@ public class FrontpackLayer extends RenderLayer<AvatarRenderState, PlayerModel> 
 
     // Variant-specific textures for the entire frontpack model
     static final Identifier FAWN_TEXTURE =
-            Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE,
+            Identifier.fromNamespaceAndPath(Frenchies.MOD_ID,
                     "textures/entity/frenchie/frenchie_fawn_texture.png");
 
     private static final Identifier BRINDLE_TEXTURE =
-            Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE,
+            Identifier.fromNamespaceAndPath(Frenchies.MOD_ID,
                     "textures/entity/frenchie/frenchie_brindle_texture.png");
 
     public FrontpackLayer(RenderLayerParent<AvatarRenderState, PlayerModel> parent, EntityModelSet modelSet) {

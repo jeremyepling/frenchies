@@ -69,7 +69,7 @@ try {
         if ($Scenario -eq 'legacy' -and $phase -eq 2) {
             # This disposable fixture owns exactly one live, sitting dog. Preserve the first run's
             # locator outside the world to reproduce upgrading a world that predates whistle saves.
-            $roster = Join-Path $root 'Server/world/data/florafauna/companions.dat'
+            $roster = Join-Path $root 'Server/world/data/frenchies/companions.dat'
             Move-Item -LiteralPath $roster -Destination (Join-Path $root 'pre-upgrade-companions.dat')
         }
         Write-Host "Launching dedicated $Scenario phase $phase"

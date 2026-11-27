@@ -64,7 +64,7 @@ public final class CourierTrips extends SavedData {
     }
 
     private static final SavedDataType<CourierTrips> TYPE = new SavedDataType<>(
-            Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "courier_trips"), () -> new CourierTrips(List.of(), Map.of()),
+            Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "courier_trips"), () -> new CourierTrips(List.of(), Map.of()),
             RecordCodecBuilder.create(i -> i.group(
                     Trip.CODEC.listOf().fieldOf("trips").forGetter(data -> List.copyOf(data.trips)),
                     Codec.unboundedMap(UUIDUtil.STRING_CODEC, Stop.CODEC).optionalFieldOf("stops", Map.of())

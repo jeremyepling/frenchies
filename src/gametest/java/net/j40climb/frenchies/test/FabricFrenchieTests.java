@@ -35,7 +35,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
 public final class FabricFrenchieTests {
-    @GameTest(structure = "florafauna_frenchies:companion_yard")
+    @GameTest(structure = "frenchies:companion_yard")
     public void hostileTargets(GameTestHelper helper) {
         var owner = helper.makeMockPlayer(GameType.SURVIVAL);
         var dog = helper.spawnWithNoFreeWill(FrenchieRegistry.FRENCHIE.get(), 3, 1, 3);
@@ -56,7 +56,7 @@ public final class FabricFrenchieTests {
         helper.succeed();
     }
 
-    @GameTest(structure = "florafauna_frenchies:companion_yard", maxTicks = 60)
+    @GameTest(structure = "frenchies:companion_yard", maxTicks = 60)
     public void packedCourier(GameTestHelper helper) {
         var level = helper.getLevel();
         var owner = helper.makeMockServerPlayerInLevel();

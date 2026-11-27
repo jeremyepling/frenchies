@@ -1,7 +1,0 @@
-{
-  "type": "minecraft:crafting_dye",
-  "category": "equipment",
-  "target": "florafauna:winged_front_pack",
-  "dye": "#minecraft:dyes",
-  "result": { "id": "florafauna:winged_front_pack" }
-}

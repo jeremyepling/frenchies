@@ -36,7 +36,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class FrenchieRegistry extends FrenchieRegistries {
-    public static final ResourceKey<EntityType<?>> FRENCHIE_KEY = ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "frenchie"));
+    public static final ResourceKey<EntityType<?>> FRENCHIE_KEY = ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "frenchie"));
 
     public static final Supplier<EntityType<FrenchieEntity>> FRENCHIE = ENTITY_TYPES.register("frenchie",
             () -> EntityType.Builder.of(FrenchieEntity::new, MobCategory.CREATURE)
@@ -48,19 +48,19 @@ public final class FrenchieRegistry extends FrenchieRegistries {
     public static final Supplier<FrenchieWhistleItem> FRENCHIE_WHISTLE =
             item("frenchie_whistle",
                     properties -> new FrenchieWhistleItem(properties.stacksTo(1).component(DataComponents.LORE, new ItemLore(List.of(
-                            Component.translatable("item.florafauna.frenchie_whistle.use"),
-                            Component.translatable("item.florafauna.frenchie_whistle.select"))))));
+                            Component.translatable("item.frenchies.frenchie_whistle.use"),
+                            Component.translatable("item.frenchies.frenchie_whistle.select"))))));
     public static final Supplier<SqueakyToyItem> SQUEAKY_TOY = item("squeaky_toy", SqueakyToyItem::new);
     public static final Supplier<BubbleToyItem> BUBBLE_TOY = item("bubble_toy", BubbleToyItem::new);
 
     public static final Supplier<EntityType<PlayBubbleEntity>> PLAY_BUBBLE = ENTITY_TYPES.register("play_bubble",
             () -> EntityType.Builder.of(PlayBubbleEntity::new, MobCategory.MISC)
                     .sized(0.20F, 0.20F).noSave().noSummon().noLootTable().clientTrackingRange(4).updateInterval(2)
-                    .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "play_bubble"))));
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "play_bubble"))));
 
     private static final ItemLore FRONT_PACK_LORE = new ItemLore(List.of(
-            Component.translatable("item.florafauna.front_pack.equip"),
-            Component.translatable("item.florafauna.front_pack.dye")));
+            Component.translatable("item.frenchies.front_pack.equip"),
+            Component.translatable("item.frenchies.front_pack.dye")));
 
     public static final Supplier<Item> FRONT_PACK = item("front_pack",
             properties -> new Item(properties.stacksTo(1).equippable(EquipmentSlot.CHEST).component(DataComponents.LORE, FRONT_PACK_LORE)));

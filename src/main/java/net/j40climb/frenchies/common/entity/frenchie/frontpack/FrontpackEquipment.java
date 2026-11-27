@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 public final class FrontpackEquipment {
     private FrontpackEquipment() {}
 
-    public static final TagKey<Item> PACKS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "front_packs"));
+    public static final TagKey<Item> PACKS = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "front_packs"));
 
     public static ItemStack wornBy(LivingEntity wearer) {
         var chest = wearer.getItemBySlot(EquipmentSlot.CHEST);

@@ -246,7 +246,7 @@ public final class RestPosePlaytest {
 
     @SubscribeEvent
     public static void hearSnore(PlaySoundSourceEvent event) {
-        if (!"rest".equals(System.getProperty("florafauna_frenchies.playtest.scenario"))) return;
+        if (!"rest".equals(System.getProperty("frenchies.playtest.scenario"))) return;
         var mc = Minecraft.getInstance();
         var sound = event.getSound();
         if (mc.player != null && sound.getIdentifier().equals(FrenchieRegistry.FRENCHIE_SNORE.get().location())

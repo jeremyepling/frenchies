@@ -16,7 +16,7 @@ import net.minecraft.util.Mth;
 
 /** Small pieces in Frenchie model pixels. Both dog models use the same head geometry and anchors. */
 public final class AdventureOutfitModels {
-    private static final Identifier ATLAS = Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE,
+    private static final Identifier ATLAS = Identifier.fromNamespaceAndPath(Frenchies.MOD_ID,
             "textures/entity/frenchie/adventure_outfits.png");
     private static final int INK = 0, IVORY = 1, GOLD = 2, ORANGE = 3, TEAL = 4, AQUA = 5,
             BLUE = 6, RED = 7, LEATHER = 8, SUEDE = 9, METAL = 10, SILVER = 11,

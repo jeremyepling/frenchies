@@ -1,0 +1,15 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_front_pack": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": { "items": [{ "items": "frenchies:winged_front_pack" }] }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": { "recipe": "frenchies:winged_front_pack_dyed" }
+    }
+  },
+  "requirements": [["has_front_pack", "has_the_recipe"]],
+  "rewards": { "recipes": ["frenchies:winged_front_pack_dyed"] }
+}

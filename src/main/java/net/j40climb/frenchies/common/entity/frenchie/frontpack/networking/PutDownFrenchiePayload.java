@@ -17,7 +17,7 @@ public enum PutDownFrenchiePayload implements CustomPacketPayload {
     INSTANCE;
 
     public static final Type<PutDownFrenchiePayload> TYPE =
-        new Type<>(Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "put_down_frenchie"));
+        new Type<>(Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "put_down_frenchie"));
 
     public static final StreamCodec<ByteBuf, PutDownFrenchiePayload> STREAM_CODEC =
         StreamCodec.unit(INSTANCE);

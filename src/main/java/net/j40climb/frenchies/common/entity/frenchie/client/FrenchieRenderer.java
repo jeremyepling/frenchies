@@ -37,9 +37,9 @@ public class FrenchieRenderer extends MobRenderer<FrenchieEntity, FrenchieRender
     private static final Map<FrenchieVariant, Identifier> TEXTURE_LOCATION_BY_VARIANT =
             Util.make(Maps.newEnumMap(FrenchieVariant.class), map -> {
                 map.put(FrenchieVariant.FAWN,
-                        Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "textures/entity/frenchie/frenchie_fawn_texture.png"));
+                        Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "textures/entity/frenchie/frenchie_fawn_texture.png"));
                 map.put(FrenchieVariant.BRINDLE,
-                        Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "textures/entity/frenchie/frenchie_brindle_texture.png"));
+                        Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "textures/entity/frenchie/frenchie_brindle_texture.png"));
             });
 
     private final ItemModelResolver itemResolver;

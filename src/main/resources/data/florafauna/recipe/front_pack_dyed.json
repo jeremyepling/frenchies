@@ -1,7 +1,0 @@
-{
-  "type": "minecraft:crafting_dye",
-  "category": "equipment",
-  "target": "florafauna:front_pack",
-  "dye": "#minecraft:dyes",
-  "result": { "id": "florafauna:front_pack" }
-}

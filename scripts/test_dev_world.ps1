@@ -76,7 +76,7 @@ try {
             if ((Get-FileHash -LiteralPath (Join-Path $copy 'level.dat')).Hash -ne $hash) {
                 throw 'Source save changed during the copy.'
             }
-            Set-Content -LiteralPath (Join-Path $gameDir '.florafauna-playtest') -Value $name
+            Set-Content -LiteralPath (Join-Path $gameDir '.frenchies-playtest') -Value $name
             $gameOptions = (Get-Content -LiteralPath 'dev/options-template.txt') -replace '^pauseOnLostFocus:.*','pauseOnLostFocus:false'
             $gameOptions | Set-Content -LiteralPath (Join-Path $gameDir 'options.txt')
         }

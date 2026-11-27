@@ -112,7 +112,7 @@ public final class Playtest {
     private void verifyCopyDirectory(Minecraft mc) {
         try {
             require(mc.gameDirectory.toPath().toRealPath().equals(directory.toRealPath()), "Wrong game directory");
-            require(Files.readString(directory.resolve(".florafauna-playtest")).trim().equals(scenario), "Missing test marker");
+            require(Files.readString(directory.resolve(".frenchies-playtest")).trim().equals(scenario), "Missing test marker");
         } catch (IOException e) {
             throw new IllegalStateException("Cannot verify the copy's game directory", e);
         }
@@ -162,12 +162,12 @@ public final class Playtest {
 
     @SubscribeEvent
     public static void tick(ClientTickEvent.Post event) {
-        String path = System.getProperty("florafauna_frenchies.playtest.directory");
+        String path = System.getProperty("frenchies.playtest.directory");
         if (path == null) return;
         Minecraft mc = Minecraft.getInstance();
         if (active == null) {
-            active = new Playtest(Path.of(path), System.getProperty("florafauna_frenchies.playtest.scenario"),
-                    Integer.getInteger("florafauna_frenchies.playtest.phase"));
+            active = new Playtest(Path.of(path), System.getProperty("frenchies.playtest.scenario"),
+                    Integer.getInteger("frenchies.playtest.phase"));
         }
         if (!active.finished) active.advance(mc);
     }

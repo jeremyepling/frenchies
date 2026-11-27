@@ -19,7 +19,7 @@ import net.minecraft.util.Mth;
 public class FrenchieModel extends EntityModel<FrenchieRenderState> {
 
     public static final ModelLayerLocation FRENCHIE = new ModelLayerLocation(
-            Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "frenchie"), "frenchie"); // is path is folder under textures/entity?
+            Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "frenchie"), "frenchie"); // is path is folder under textures/entity?
 
     private final KeyframeAnimation walkingAnimation;
     private final KeyframeAnimation swimmingAnimation;

@@ -20,7 +20,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 /** Drives Minecraft's use key and captures the tracked poses from another player's client. */
 @EventBusSubscriber(modid = Frenchies.MOD_ID, value = Dist.CLIENT)
 public final class ExplorerClient {
-    private static final String ROLE = System.getProperty("florafauna_frenchies.explorerTest.client");
+    private static final String ROLE = System.getProperty("frenchies.explorerTest.client");
     private static String cue;
     private static int readyTicks;
 

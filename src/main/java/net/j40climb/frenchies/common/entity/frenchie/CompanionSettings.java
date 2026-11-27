@@ -14,7 +14,7 @@ public final class CompanionSettings {
     private CompanionSettings() {}
 
     public static void load(Path directory) {
-        var file = directory.resolve("florafauna_frenchies.properties");
+        var file = directory.resolve("frenchies.properties");
         try {
             if (Files.notExists(file)) {
                 Files.createDirectories(directory);

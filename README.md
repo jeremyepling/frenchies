@@ -17,6 +17,8 @@ Take a French bulldog on your next expedition. It can ride on the bow while you 
 
 Frenchies come in fawn and brindle. To meet one in Creative, use the Frenchie Spawn Egg. Offer a bone to tame it, then right-click with an empty hand to switch between sitting and following. Feed two adult Frenchies glow berries to breed a pup.
 
+Use `/summon frenchies:frenchie` or `/give @s frenchies:frenchie_spawn_egg` to meet one by command. Worlds saved with the earlier `florafauna` IDs need a separate migration to retain their existing dogs, equipment and courier data.
+
 Tamed Frenchies stay healthy through ordinary hazards and never need healing. They react to danger, try to get clear, and can return to you for safety. A following dog catches up after ordinary separation. A dog you ask to sit waits there until called or until it needs rescuing.
 
 Taming your first dog gives you a **Frenchie Whistle**. Right-click to call your selected Frenchie, or crouch and right-click to dismiss it until next time. Type `/frenchie select` and click a name to choose among your dogs, even while they are away. Use `/frenchie whistle` for a free replacement. Calls work across dimensions and interrupt jobs. A recalled courier keeps its parcel for you to collect with an empty hand. Move to open, dry ground if your dog can't land. Active dogs rejoin you after respawn. Dismissed dogs wait for your whistle.
@@ -80,7 +82,7 @@ On a quiet nighttime walk, your passenger can close its eyes, lower its head, an
 
 ## Companion settings
 
-Fabric and NeoForge generate `config/florafauna_frenchies.properties` on startup. The settings apply to every Frenchie on the server, or in your local game for singleplayer. All default to `true`. To lead livestock yourself, for example, set `automaticHerding=false` and restart. You can add any missing option to an existing file. Each dog's sit and follow orders still come from its owner.
+Fabric and NeoForge generate `config/frenchies.properties` on startup. The settings apply to every Frenchie on the server, or in your local game for singleplayer. All default to `true`. To lead livestock yourself, for example, set `automaticHerding=false` and restart. You can add any missing option to an existing file. Each dog's sit and follow orders still come from its owner.
 
 | Option | Controls |
 | --- | --- |
@@ -128,8 +130,8 @@ For the NeoForge scripted clients on Windows with PowerShell 7, run `./scripts/t
 
 To play with FloraFauna, Hammer and Frenchies together, run `./gradlew -PdevMods=all :26.1-neoforge:runClient` or `:26.3-neoforge:runClient` from a matching FloraFauna checkout. [FloraFauna development setup](https://github.com/jeremyepling/florafauna#play-with-the-hammer-and-frenchies)
 
-For companion reactions, run the NeoForge GameTests with `-PgameTestFilter=florafauna_frenchies:companion_reaction_*`. The scripted client accepts `-Scenario weather` to capture the same dog as its snow coat builds, shakes off, and begins to build again.
+For companion reactions, run the NeoForge GameTests with `-PgameTestFilter=frenchies:companion_reaction_*`. The scripted client accepts `-Scenario weather` to capture the same dog as its snow coat builds, shakes off, and begins to build again.
 
-Use `-PgameTestFilter=florafauna_frenchies:adventure_*` for outfit and traversal GameTests. The scripted client accepts `-Scenario adventure` for outfits and cave light and `-Scenario adventureflight` for a packed Frenchie on a Happy Ghast.
+Use `-PgameTestFilter=frenchies:adventure_*` for outfit and traversal GameTests. The scripted client accepts `-Scenario adventure` for outfits and cave light and `-Scenario adventureflight` for a packed Frenchie on a Happy Ghast.
 
-Use `-Scenario rest` to see the standing idle and both sleep poses beside a bed, then watch the packed dog doze, snore, and wake for a creeper or daylight. The shared GameTest `florafauna_frenchies:frenchie_sleep_pose_save` covers saved poses and older worlds.
+Use `-Scenario rest` to see the standing idle and both sleep poses beside a bed, then watch the packed dog doze, snore, and wake for a creeper or daylight. The shared GameTest `frenchies:frenchie_sleep_pose_save` covers saved poses and older worlds.

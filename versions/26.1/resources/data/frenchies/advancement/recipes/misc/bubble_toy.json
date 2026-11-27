@@ -1,0 +1,17 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_glass_bottle": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "items": "minecraft:glass_bottle" }]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": { "recipe": "frenchies:bubble_toy" }
+    }
+  },
+  "requirements": [["has_glass_bottle", "has_the_recipe"]],
+  "rewards": { "recipes": ["frenchies:bubble_toy"] }
+}

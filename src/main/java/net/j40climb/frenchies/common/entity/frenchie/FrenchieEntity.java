@@ -843,7 +843,7 @@ public class FrenchieEntity extends TamableAnimal {
             delivery.closeDialog();
             if (delivery.hasParcel() && !delivery.canUse() && pPlayer instanceof ServerPlayer owner) {
                 if (empty) delivery.collect(owner, pHand);
-                else owner.sendOverlayMessage(Component.translatable("frenchie.florafauna.whistle.collect", getName()));
+                else owner.sendOverlayMessage(Component.translatable("frenchie.frenchies.whistle.collect", getName()));
             } else if (map && pPlayer instanceof ServerPlayer owner) {
                 if (isDelivering() || isGoingHome() || hasToyJob()) orderMessage(owner, "busy");
                 else trail.useMap(owner, itemstack);
@@ -902,7 +902,7 @@ public class FrenchieEntity extends TamableAnimal {
     }
 
     private void orderMessage(Player owner, String key) {
-        owner.sendOverlayMessage(Component.translatable("frenchie.florafauna.order." + key, getName()));
+        owner.sendOverlayMessage(Component.translatable("frenchie.frenchies.order." + key, getName()));
     }
     /* SITTING */
     public boolean isSitting() {
@@ -1152,7 +1152,7 @@ public class FrenchieEntity extends TamableAnimal {
         var bed = BedtimeBuddyGoal.ownerBed(this);
         boolean settled = bed != null && BedtimeBuddyGoal.besideBed(this, bed);
         if (settled && !isBedtimeBuddy() && getOwner() instanceof ServerPlayer owner) {
-            owner.sendOverlayMessage(Component.translatable("frenchie.florafauna.bedtime.settled", getName()));
+            owner.sendOverlayMessage(Component.translatable("frenchie.frenchies.bedtime.settled", getName()));
         }
         entityData.set(BEDTIME, (byte)(settled ? 2 : bed == null ? 0 : 1));
         if (settled) getNavigation().stop();

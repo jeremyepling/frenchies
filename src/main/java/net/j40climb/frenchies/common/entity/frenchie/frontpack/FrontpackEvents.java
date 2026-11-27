@@ -50,7 +50,7 @@ public class FrontpackEvents {
             if (held.isEmpty() || held.is(FrontpackEquipment.PACKS)) {
                 // Keep a failed pickup from toggling Sit or canceling the dog's current job.
                 if (!player.level().isClientSide()) {
-                    player.sendOverlayMessage(Component.translatable("frenchie.florafauna.frontpack.equip_first"));
+                    player.sendOverlayMessage(Component.translatable("frenchie.frenchies.frontpack.equip_first"));
                 }
                 return InteractionResult.SUCCESS;
             }
@@ -82,7 +82,7 @@ public class FrontpackEvents {
         );
 
         FrontpackAttachments.setPack(player, newData);
-        if (frenchie.hasCompanionJob()) player.sendOverlayMessage(Component.translatable("frenchie.florafauna.order.packed"));
+        if (frenchie.hasCompanionJob()) player.sendOverlayMessage(Component.translatable("frenchie.frenchies.order.packed"));
 
         // Despawn the entity
         CourierTrips.forget(frenchie);
@@ -105,7 +105,7 @@ public class FrontpackEvents {
         if (data.releasePending() && player.tickCount % 10 != 0) return;
         if (!releaseNearby(player, data) && !data.releasePending()) {
             FrontpackAttachments.setPack(player, data.withReleasePending(true));
-            player.sendOverlayMessage(Component.translatable("frenchie.florafauna.frontpack.wait_for_ground"));
+            player.sendOverlayMessage(Component.translatable("frenchie.frenchies.frontpack.wait_for_ground"));
         }
     }
 
@@ -136,7 +136,7 @@ public class FrontpackEvents {
         if (!level.noCollision(dog, dog.getBoundingBox()) || !level.addFreshEntity(dog)) return false;
 
         FrontpackAttachments.setPack(player, FrontpackData.DEFAULT);
-        if (dog.hasCompanionJob()) player.sendOverlayMessage(Component.translatable("frenchie.florafauna.order.resumed"));
+        if (dog.hasCompanionJob()) player.sendOverlayMessage(Component.translatable("frenchie.frenchies.order.resumed"));
         player.playSound(SoundEvents.ARMOR_EQUIP_LEATHER.value(), 1.0f, 1.0f);
         return true;
     }

@@ -16,7 +16,7 @@ import net.minecraft.resources.Identifier;
 import static net.j40climb.frenchies.common.entity.frenchie.client.AdventureOutfitModels.*;
 
 final class AdventureOutfitLayer extends RenderLayer<FrenchieRenderState, FrenchieModel> {
-    private static final Identifier ATLAS = Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE,
+    private static final Identifier ATLAS = Identifier.fromNamespaceAndPath(Frenchies.MOD_ID,
             "textures/entity/frenchie/adventure_outfits.png");
     private static final Point[] SCUBA_CORNERS = {
             new Point(-SCUBA_HALF_WIDTH, SCUBA_TOP, SCUBA_FRONT),

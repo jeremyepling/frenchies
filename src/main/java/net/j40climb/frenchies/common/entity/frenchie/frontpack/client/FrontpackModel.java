@@ -24,7 +24,7 @@ import java.util.Set;
 public class FrontpackModel extends EntityModel<AvatarRenderState> {
 
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "french_frontpack"), "main");
+            Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "french_frontpack"), "main");
 
     private final KeyframeAnimation idlingAnimation;
     private final AnimationState idleAnimationState = new AnimationState();

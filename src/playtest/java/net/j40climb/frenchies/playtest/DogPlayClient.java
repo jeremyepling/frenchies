@@ -19,7 +19,7 @@ import java.util.Locale;
 
 @EventBusSubscriber(modid = Frenchies.MOD_ID, value = Dist.CLIENT)
 public final class DogPlayClient {
-    private static final String ROLE = System.getProperty("florafauna_frenchies.playTest.client");
+    private static final String ROLE = System.getProperty("frenchies.playTest.client");
     private enum Step { WAIT, BLOW, BLOW_AGAIN, BUBBLES, NOSE, BOW, RESTORED, EXIT }
     private static Step step = Step.WAIT;
     private static int frames;

@@ -208,29 +208,29 @@ final class DeliveryPlaytest {
 
     private static void openChooser(Playtest t) {
         t.awaitClient("Open the destination chooser with the parcel still in hand", mc ->
-                mc.screen instanceof DeliveryScreen && mc.screen.getTitle().equals(Component.translatable("frenchie.florafauna.delivery.title"))
+                mc.screen instanceof DeliveryScreen && mc.screen.getTitle().equals(Component.translatable("frenchie.frenchies.delivery.title"))
                         && ItemStack.matches(mc.player.getMainHandItem(), parcel()));
     }
 
     private static void chooseHome(Playtest t, int expectedSeconds) {
         press(t, "home");
         t.awaitClient("Preview Your bed and the confirmation-to-arrival ETA with the bundle in hand", mc ->
-                mc.screen instanceof DeliveryScreen && mc.screen.getTitle().equals(Component.translatable("frenchie.florafauna.delivery.confirm_title"))
+                mc.screen instanceof DeliveryScreen && mc.screen.getTitle().equals(Component.translatable("frenchie.frenchies.delivery.confirm_title"))
                         && ItemStack.matches(mc.player.getMainHandItem(), parcel())
-                        && mc.screen.getNarrationMessage().getString().contains(Component.translatable("frenchie.florafauna.delivery.home").getString())
+                        && mc.screen.getNarrationMessage().getString().contains(Component.translatable("frenchie.frenchies.delivery.home").getString())
                         && mc.screen.getNarrationMessage().getString().contains(Component.translatable("dimension.minecraft.overworld").getString())
                         && mc.screen.getNarrationMessage().getString().contains(eta(expectedSeconds))
                         && !mc.screen.getNarrationMessage().getString().contains(BED.toShortString()));
     }
 
     static String eta(int seconds) {
-        return Component.translatable("frenchie.florafauna.delivery.seconds", seconds).getString();
+        return Component.translatable("frenchie.frenchies.delivery.seconds", seconds).getString();
     }
 
     private static void press(Playtest t, String action, Object... args) {
         t.awaitClient("Select the " + action + " dialog button", mc -> {
             if (mc.screen == null) return false;
-            String label = Component.translatable("frenchie.florafauna.delivery." + action, args).getString();
+            String label = Component.translatable("frenchie.frenchies.delivery." + action, args).getString();
             return pressLabel(mc, label);
         });
     }

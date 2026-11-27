@@ -22,7 +22,7 @@ buildCache {
 }
 
 
-rootProject.name = 'florafauna-frenchies'
+rootProject.name = 'frenchies'
 
 stonecutter {
     centralScript = 'build.gradle'

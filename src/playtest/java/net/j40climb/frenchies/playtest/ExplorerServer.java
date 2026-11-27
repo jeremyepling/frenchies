@@ -67,7 +67,7 @@ public final class ExplorerServer {
 
     @SubscribeEvent
     public static void started(ServerStartedEvent event) throws IOException {
-        String path = System.getProperty("florafauna_frenchies.explorerTest.root");
+        String path = System.getProperty("frenchies.explorerTest.root");
         if (path == null) return;
         root = Path.of(path).toRealPath();
         require(event.getServer().getWorldPath(LevelResource.ROOT).toRealPath()

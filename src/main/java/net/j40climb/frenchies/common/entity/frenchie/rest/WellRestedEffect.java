@@ -10,7 +10,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 public final class WellRestedEffect extends MobEffect {
     public WellRestedEffect() {
         super(MobEffectCategory.BENEFICIAL, 0x90cde3);
-        addAttributeModifier(Attributes.BLOCK_BREAK_SPEED, Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "well_rested"),
+        addAttributeModifier(Attributes.BLOCK_BREAK_SPEED, Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "well_rested"),
                 0.1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
     }
 }

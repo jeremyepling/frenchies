@@ -90,7 +90,7 @@ public final class CompanionRoster extends SavedData {
     }
 
     private static final SavedDataType<CompanionRoster> TYPE = new SavedDataType<>(
-            Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "companions"),
+            Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "companions"),
             () -> new CompanionRoster(Map.of(), Map.of(), List.of()), RecordCodecBuilder.create(i -> i.group(
                     Codec.unboundedMap(UUIDUtil.STRING_CODEC, Entry.CODEC).fieldOf("dogs").forGetter(r -> r.dogs),
                     Codec.unboundedMap(UUIDUtil.STRING_CODEC, UUIDUtil.CODEC).fieldOf("selected").forGetter(r -> r.selected),
@@ -269,7 +269,7 @@ public final class CompanionRoster extends SavedData {
         var entries = roster.dogs.entrySet().stream().filter(e -> e.getValue().owner.equals(owner.getUUID()))
                 .sorted(Comparator.comparing((Map.Entry<UUID, Entry> e) -> e.getValue().name).thenComparing(Map.Entry::getKey)).toList();
         if (entries.isEmpty()) tell(owner, roster.scansInProgress > 0 ? "indexing" : "none");
-        else owner.sendSystemMessage(Component.translatable("frenchie.florafauna.whistle.choose"));
+        else owner.sendSystemMessage(Component.translatable("frenchie.frenchies.whistle.choose"));
         for (var row : entries) {
             UUID id = row.getKey();
             boolean current = id.equals(roster.selected.get(owner.getUUID()));
@@ -285,7 +285,7 @@ public final class CompanionRoster extends SavedData {
     }
 
     private static void tell(ServerPlayer player, String key, Object... args) {
-        player.sendOverlayMessage(Component.translatable("frenchie.florafauna.whistle." + key, args));
+        player.sendOverlayMessage(Component.translatable("frenchie.frenchies.whistle." + key, args));
     }
 
     public static void whistle(ServerPlayer owner, boolean dismiss) {
