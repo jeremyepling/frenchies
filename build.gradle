@@ -17,10 +17,6 @@ repositories {
     }
 }
 
-base {
-    archivesName = "${mod_id}-${minecraft_version}"
-}
-
 sourceSets.main.java.source(sourceSets.sharedGameTest.java)
 
 def wt = rootProject.projectDir.name

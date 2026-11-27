@@ -1,4 +1,5 @@
 version = mod_version
+base.archivesName = "${mod_id}-${minecraft_version}-${loader}"
 group = mod_group_id
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 

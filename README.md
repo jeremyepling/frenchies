@@ -4,6 +4,8 @@ Take a French bulldog on your next expedition. It can ride on the bow while you 
 
 **Standalone Fabric and NeoForge mod for Minecraft Java 26.1, 26.1.1, 26.1.2, and 26.3.** Install the same Frenchies jar on the client and server. For either 26.1 hotfix, choose the 26.1 jar for your loader. Fabric requires Loader 0.19.5 or later and Fabric API for your Minecraft version.
 
+Jars use `frenchies-<minecraft-version>-<loader>-<mod-version>.jar`, for example `frenchies-26.3-neoforge-0.0.1.jar`.
+
 | Minecraft Java | Frenchies jar line | NeoForge tested | Fabric API tested with Loader 0.19.5 |
 | --- | --- | --- | --- |
 | 26.1 | 26.1 | 26.1.0.19-beta | 0.145.1+26.1 |

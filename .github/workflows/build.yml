@@ -52,7 +52,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: frenchies-${{ matrix.target }}
-          path: versions/${{ matrix.target }}/build/libs/*.jar
+          path: versions/${{ matrix.target }}/build/libs/frenchies-${{ matrix.target }}-*.jar
+          if-no-files-found: error
           retention-days: 14
 
   patch-server:
@@ -84,4 +85,4 @@ jobs:
           LOADER: ${{ matrix.loader }}
           VERSION: ${{ matrix.version }}
           API: ${{ matrix.api }}
-        run: python3 scripts/test_patch_server.py packaged/*.jar "$MC" "$LOADER" "$VERSION" --fabric-api "$API"
+        run: python3 scripts/test_patch_server.py packaged/frenchies-26.1-"$LOADER"-*.jar "$MC" "$LOADER" "$VERSION" --fabric-api "$API"
