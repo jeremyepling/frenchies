@@ -32,7 +32,7 @@ Taming your first dog gives you a **Frenchie Whistle**. Right-click to call your
 - **Bring a digging assistant.** Dig nearby dirt or sand with a shovel and an available Frenchie may dig beside you, then proudly carry its reusable toy stick. Its digging leaves the ground untouched.
 - **Take the boat.** Board with your dog following and it rides at the bow, leaving the passenger seat free. Its life jacket appears automatically on the water. When you step out, it looks for a safe landing.
 - **Follow its nose.** Use an ordinary compass or a recovery compass on your dog and follow it toward your last death in this dimension. It waits if you fall behind and signals when you reach the spot.
-- **Explore with a map.** Use a structure explorer map on your Frenchie to let it lead the way. Use the same map again to stop, or use another map to change destinations. The dog carries its own satchel and wears pirate gear for buried treasure. If it can verify the chest and reach the ground above it, it shows you where to dig.
+- **Explore with a map.** Use a structure explorer map on your Frenchie to let it lead the way to the map's marked destination. Structure guidance requires a map supplied by the owner; the dog does not independently discover structures. Use the same map again to stop, or use another map to change destinations. The dog carries its own satchel and wears pirate gear for buried treasure. If it can verify the chest and reach the ground above it, it shows you where to dig.
 - **Listen for two barks.** An awake Frenchie turns toward a visible creeper within 12 blocks. A green creeper face flashes with each bark, even above the hotbar when you're carrying the dog. Warnings have an eight-second cooldown.
 - **Share a bedtime.** Use a bed within ten blocks of your dog and it can curl up by your pillow, even after a sit order. Each time it falls asleep, it may settle on its belly or roll onto its side. Sleep through the night together for two minutes of **Well Rested** and 10% faster block breaking.
 
@@ -85,6 +85,8 @@ Fabric and NeoForge generate `config/florafauna_frenchies.properties` on startup
 | `stickRetrieval` | Fetching a dropped stick after tree chopping |
 
 ## Development
+
+The [behavior decisions](docs/behavior-decisions.md) record the accepted scope and remaining ideas.
 
 ### Building and testing
 
