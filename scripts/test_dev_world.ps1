@@ -5,7 +5,7 @@ param(
     [ValidateSet('26.1', '26.3')]
     [string]$Target = '26.1',
     [Parameter(ParameterSetName = 'Selected', Position = 0)]
-    [ValidateSet('frenchie', 'frontpack', 'companions', 'delivery', 'weather', 'rest')]
+    [ValidateSet('frenchie', 'frontpack', 'companions', 'delivery', 'weather', 'rest', 'adventure', 'adventureflight', 'adventurenether')]
     [string[]]$Scenario,
     [Parameter(ParameterSetName = 'Full')]
     [switch]$All,
@@ -17,7 +17,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $false
 if ($All) {
-    $Scenario = @('frenchie', 'frontpack', 'companions', 'delivery', 'weather', 'rest')
+    $Scenario = @('frenchie', 'frontpack', 'companions', 'delivery', 'weather', 'rest', 'adventure', 'adventureflight')
 } elseif (!$Scenario) {
     throw 'Choose a client scenario, e.g. -Scenario delivery, or use -All for the full gameplay suite.'
 }
@@ -64,6 +64,12 @@ try {
             if ($accessories.Count) {
                 $mods = [IO.Directory]::CreateDirectory((Join-Path $gameDir 'mods'))
                 Copy-Item -LiteralPath $accessories -Destination $mods.FullName
+                if ($Target -eq '26.3') {
+                    # Older provider metadata can show a modal warning before Quick Play.
+                    # Preserve the warnings in the log while keeping the scripted launch unattended.
+                    $config = [IO.Directory]::CreateDirectory((Join-Path $gameDir 'config'))
+                    Set-Content -LiteralPath (Join-Path $config.FullName 'neoforge-client.toml') -Value 'showLoadWarnings = false'
+                }
             }
             & robocopy $world $copy /E /XJ /XF session.lock /R:0 /W:0 /NFL /NDL /NJH /NJS /NP | Out-Null
             if ($LASTEXITCODE -ge 8) { throw "Could not copy $world into $copy (robocopy exit $LASTEXITCODE)." }
@@ -79,7 +85,7 @@ try {
     $failed = @()
     foreach ($name in $Scenario) {
         $gameDir = Join-Path $runRoot $name
-        $phases = if ($name -in 'frenchie', 'companions', 'weather', 'rest') { @(1) } else { @(1, 2) }
+        $phases = if ($name -in 'frenchie', 'companions', 'weather', 'rest', 'adventure', 'adventureflight', 'adventurenether') { @(1) } else { @(1, 2) }
         foreach ($phase in $phases) {
             Write-Host "Launching $name phase $phase ..."
             $log = Join-Path $gameDir "phase-$phase.log"

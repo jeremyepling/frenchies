@@ -1,5 +1,6 @@
 package net.j40climb.frenchies.common.entity.frenchie.client;
 
+import net.j40climb.frenchies.common.entity.frenchie.AdventureOutfit;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieVariant;
 import net.j40climb.frenchies.common.entity.frenchie.play.PlayPose;
 import net.j40climb.frenchies.common.entity.frenchie.reaction.DangerReaction;
@@ -17,6 +18,10 @@ public class FrenchieRenderState extends LivingEntityRenderState {
     public ExplorerOutfit explorerOutfit = ExplorerOutfit.NONE;
     public boolean hideExplorerHeadwear;
     public float endermanLook;
+    public AdventureOutfit outfit = AdventureOutfit.NONE;
+    public boolean adventureFlying;
+    public float fanAngle;
+    public float dragonDuckTime;
     public float turnLean;
     public final ItemStackRenderState mouthItem = new ItemStackRenderState();
     public boolean toyStick;

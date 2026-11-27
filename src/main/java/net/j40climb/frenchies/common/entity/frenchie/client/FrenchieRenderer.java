@@ -1,5 +1,6 @@
 package net.j40climb.frenchies.common.entity.frenchie.client;
 
+import net.j40climb.frenchies.common.entity.frenchie.AdventureOutfit;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieStatusIcon;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieVariant;
@@ -47,7 +48,7 @@ public class FrenchieRenderer extends MobRenderer<FrenchieEntity, FrenchieRender
         super(context, new FrenchieModel(context.bakeLayer(FrenchieModel.FRENCHIE)), 0.4f);
         addLayer(new SnowCoatLayer(this));
         addLayer(new FlotationVestLayer(this));
-        addLayer(new ExplorerOutfitLayer(this));
+        addLayer(new AdventureOutfitLayer(this));
         itemResolver = context.getItemModelResolver();
         addLayer(new FrenchieMouthLayer(this));
     }
@@ -105,6 +106,10 @@ public class FrenchieRenderer extends MobRenderer<FrenchieEntity, FrenchieRender
         reusedState.explorerOutfit = entity.explorerOutfit();
         reusedState.hideExplorerHeadwear = entity.isEyeInFluid(FluidTags.WATER);
         reusedState.endermanLook = entity.endermanLook(partialTick);
+        reusedState.outfit = entity.adventureOutfit();
+        reusedState.adventureFlying = entity.adventureFlying();
+        reusedState.fanAngle = entity.adventureFanAngle(partialTick);
+        reusedState.dragonDuckTime = entity.dragonDuckTime(partialTick);
         itemResolver.updateForLiving(reusedState.mouthItem, entity.getMouthItem(),
                 ItemDisplayContext.GROUND, entity);
         reusedState.toyStick = entity.getOffhandItem().is(Items.STICK) || entity.isShowingToyStick();

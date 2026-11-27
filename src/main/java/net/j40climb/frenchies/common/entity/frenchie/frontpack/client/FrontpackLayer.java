@@ -2,12 +2,14 @@ package net.j40climb.frenchies.common.entity.frenchie.frontpack.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.j40climb.frenchies.Frenchies;
+import net.j40climb.frenchies.common.entity.frenchie.client.AdventureOutfitModels;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieVariant;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.resources.Identifier;
 
@@ -18,6 +20,7 @@ import net.minecraft.resources.Identifier;
  * The texture for this model is the same as the frenchie entity
  */
 public class FrontpackLayer extends RenderLayer<AvatarRenderState, PlayerModel> {
+    private final AdventureOutfitModels clothes = new AdventureOutfitModels();
 
     static final Identifier FABRIC = Identifier.withDefaultNamespace("textures/block/white_wool.png");
 
@@ -77,6 +80,22 @@ public class FrontpackLayer extends RenderLayer<AvatarRenderState, PlayerModel> 
         if (tint != null) {
             renderColoredCutoutModel(dyedFabricModel, FABRIC, poseStack, nodeCollector, packedLight,
                     renderState, tint, renderState.outlineColor);
+        }
+        if (pack.aviator()) {
+            frontpackModel.setupAnim(renderState);
+            var clothesCollector = nodeCollector.order(2);
+            int overlay = LivingEntityRenderer.getOverlayCoords(renderState, 0);
+            // The carried cap moves toward the front of the pouch in carrier coordinates.
+            poseStack.pushPose();
+            poseStack.translate(0, 0, -1F / 16);
+            frontpackModel.translateToHead(poseStack);
+            clothes.submitAviatorCap(poseStack, clothesCollector, packedLight, overlay);
+            poseStack.popPose();
+
+            poseStack.pushPose();
+            frontpackModel.translateToHead(poseStack);
+            clothes.submitAviatorScarf(poseStack, clothesCollector, packedLight, overlay, renderState.ageInTicks, pack.flying());
+            poseStack.popPose();
         }
         poseStack.popPose();
     }

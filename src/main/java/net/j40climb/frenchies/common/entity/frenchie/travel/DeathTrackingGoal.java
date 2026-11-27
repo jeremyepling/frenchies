@@ -124,7 +124,7 @@ public final class DeathTrackingGoal extends Goal {
     @Override
     public boolean canUse() {
         if (map == null) return target != null;
-        return dog.getOwner() instanceof ServerPlayer owner && owner.isAlive() && !owner.isSpectator()
+        return !dog.wantsToDiveWithOwner() && dog.getOwner() instanceof ServerPlayer owner && owner.isAlive() && !owner.isSpectator()
                 && owner.level() == dog.level() && !owner.isPassenger() && !owner.isFallFlying()
                 && !dog.isPassenger() && !dog.isOrderedToSit() && !dog.isLeashed() && dog.getTarget() == null;
     }

@@ -4,6 +4,8 @@ This checkout builds Fabric and NeoForge targets for Minecraft 26.1 and 26.3 wit
 
 The 26.1 artifacts also support 26.1.1 and 26.1.2. CI starts the packaged 26.1 jars on both hotfixes and summons a Frenchie. When extending support, also join a dedicated server with the same jar and verify front-pack pickup, rendering, and release.
 
+The editable outfit projects live in `art/blockbench/adventure-outfits/` in the active Frenchies checkout. Preserve saved Blockbench edits and linked textures. When applying a saved edit to the game, compare the project with the shared Java model and runtime textures, carry over the intended changes, and verify the affected outfit in a scripted client. Keep the editable project and its corresponding runtime changes together in Git. [Blockbench outfit workflow](art/blockbench/adventure-outfits/Start%20Here.md)
+
 Add gameplay GameTests under `src/sharedGameTest` and register them in `CompanionTests` so both loaders run the same cases with the same IDs, structures and timing. The Fabric test mod under `src/gametest` also exercises Fabric's targeting and packed-courier hooks.
 
 During iteration, run the smallest check that exercises the change. Run the target’s `test` task for value and timing rules. For world behavior, run a filtered headless case, for example `./gradlew '-PgameTestFilter=florafauna_frenchies:frenchie_bedtime' :26.1-neoforge:runGameTestServer`. Run the four targets' `build` and `runGameTestServer` tasks on an integrated revision for a substantial final pass or release. Inspect the selected test names, counts and failures. CI checks each loader and version. Draft PRs get `check`. Ready PRs and pushes to main get builds and the headless suite.
