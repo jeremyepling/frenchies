@@ -137,6 +137,7 @@ final class ExplorerFrenchieGameTests {
         fill(h, pillar, pillar.above(2), Blocks.OBSIDIAN);
         var marker = h.absolutePos(pillar);
         var arrivalMap = map(h, marker, MapDecorationTypes.TRIAL_CHAMBERS);
+        var arrivalPosition = new Vec3[1];
         var lastPosition = new Vec3[]{dog.position()};
         h.onEachTick(() -> {
             h.assertTrue(lastPosition[0].distanceToSqr(dog.position()) < 4, "Frenchie teleported while leading on foot");
@@ -160,9 +161,16 @@ final class ExplorerFrenchieGameTests {
                 .thenWaitUntil(() -> h.assertTrue(dog.explorerOutfit() == ExplorerOutfit.NONE
                                 && dog.position().subtract(Vec3.atCenterOf(marker)).horizontalDistanceSqr() <= 16,
                         "Approaching the marked pillar did not finish guidance at the destination"))
-                .thenExecuteFor(25, () -> h.assertTrue(dog.explorerOutfit() == ExplorerOutfit.NONE
-                                && dog.distanceToSqr(owner) < 64,
-                        "Frenchie restarted guidance or left the owner after arrival"))
+                .thenExecute(() -> arrivalPosition[0] = dog.position())
+                .thenWaitUntil(() -> h.assertTrue(dog.celebrationBow(0) > 0, "Arrival did not trigger a celebration bow"))
+                .thenExecuteFor(20, () -> {
+                    h.assertTrue(dog.explorerOutfit() == ExplorerOutfit.NONE && !dog.isOrderedToSit()
+                                    && dog.distanceToSqr(owner) < 64,
+                            "Celebration restarted guidance, imposed a sit order, or left the owner");
+                    h.assertTrue(dog.position().distanceToSqr(arrivalPosition[0]) < 1,
+                            "Celebration moved the Frenchie away from the arrival spot");
+                })
+                .thenExecute(() -> h.assertTrue(dog.celebrationBow(0) == 0, "Arrival bow did not end promptly"))
                 .thenSucceed();
     }
 

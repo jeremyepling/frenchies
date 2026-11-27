@@ -22,6 +22,7 @@ public class FrenchieRenderState extends LivingEntityRenderState {
     public boolean toyStick;
     public boolean presenting;
     public float toyEarLift;
+    public float celebrationBow;
     public FrenchieVariant variant;
     public int digStage;
     public float digStageAge;

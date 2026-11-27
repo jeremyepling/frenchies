@@ -211,7 +211,18 @@ public class FrenchieModel extends EntityModel<FrenchieRenderState> {
 
         // Apply idle animation
         this.idlingAnimation.apply(renderState.idleAnimationState, renderState.ageInTicks, 1.0F);
-        float attention = renderState.toyEarLift;
+        float celebration = renderState.isSleeping || renderState.isSwimming || renderState.presenting ? 0f : renderState.celebrationBow;
+        if (celebration > 0f) {
+            float bow = celebration * (1f - Mth.clamp(renderState.walkAnimationSpeed * 10f, 0f, 1f));
+            head.xRot -= 0.25F * celebration;
+            if (!renderState.isSitting && renderState.playPose == PlayPose.NONE) {
+                body.xRot += 0.32F * bow;
+                body.y += 1.2F * bow;
+                body.getChild("leg_front_left").xRot -= 1.05F * bow;
+                body.getChild("leg_front_right").xRot -= 1.05F * bow;
+            }
+        }
+        float attention = Math.max(renderState.toyEarLift, celebration);
         if (renderState.playPose == PlayPose.SLIME_NOTICE || renderState.playPose == PlayPose.BUBBLE_NOSE) {
             head.zRot += renderState.playPose == PlayPose.SLIME_NOTICE ? 0.23F : -0.15F;
             attention = 1;

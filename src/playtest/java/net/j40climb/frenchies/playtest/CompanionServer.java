@@ -55,7 +55,7 @@ final class CompanionServer {
             }
             case FINISH -> {
                 var dog = (FrenchieEntity) level.getEntity(RETRIEVER);
-                if (!dog.getOffhandItem().isEmpty()) return false;
+                if (!dog.getOffhandItem().isEmpty() || !frameExists(root, "fetch-celebration")) return false;
                 require(frameExists(root, "courier-arrival") && frameExists(root, "toy"), "Missing companion frame");
                 require(visitor.getInventory().countItem(FrenchieRegistry.SQUEAKY_TOY.get()) == 1
                         && Component.literal("The pocket squeaker").equals(visitor.getMainHandItem().get(DataComponents.CUSTOM_NAME)),

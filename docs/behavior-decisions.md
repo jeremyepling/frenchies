@@ -12,7 +12,7 @@ This behavior already exists. The shared `frenchie_explorer_maps` GameTest cover
 
 ## Dropped ideas
 
-- Zoomies. Removed the bow, running laps, hop, and flop sequence from all events, including fetch, delivery, reunions, boat landings, and map arrivals.
+- Zoomies. Fetch, delivery, reunions, boat landings, and map arrivals can earn a brief cosmetic celebration. Running laps, jumping, and flopping were removed.
 - Seeking warm or brightly lit places to rest or sleep. A Frenchie can settle near its idle owner, with a preference for shelter, or sleep beside the owner's bed.
 - Hunger growls. There is no hunger system requiring the owner to feed the dog.
 - Expanding this mod into generic dogs or pets. Keep its French bulldog focus.

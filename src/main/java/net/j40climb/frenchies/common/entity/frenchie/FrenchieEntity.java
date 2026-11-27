@@ -94,6 +94,7 @@ public class FrenchieEntity extends TamableAnimal {
     private FrenchiePlay play;
     private long nextDangerReaction;
     private long respondingUntil;
+    private long ownerAwaySince = -1;
     public FrenchiePlay play() {
         return play;
     }
@@ -141,6 +142,8 @@ public class FrenchieEntity extends TamableAnimal {
     private static final EntityDataAccessor<ItemStack> PARCEL = SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.ITEM_STACK);
     private static final EntityDataAccessor<Integer> HANDOFF = SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Long> TOY_EARS_UNTIL = SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.LONG);
+    private static final EntityDataAccessor<Long> CELEBRATION_UNTIL = SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.LONG);
+    private static final int CELEBRATION_TICKS = 16;
     private static final EntityDataAccessor<Byte> PLAY_POSE = SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Integer> DIG_STAGE = SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Long> DIG_STAGE_START = SynchedEntityData.defineId(FrenchieEntity.class, EntityDataSerializers.LONG);
@@ -344,6 +347,7 @@ public class FrenchieEntity extends TamableAnimal {
         builder.define(HANDOFF, 0);
         builder.define(PARCEL, ItemStack.EMPTY);
         builder.define(TOY_EARS_UNTIL, 0L);
+        builder.define(CELEBRATION_UNTIL, 0L);
         builder.define(DANGER_REACTION, (byte) 0);
         builder.define(DANGER_START, 0L);
         builder.define(WEATHER_STAGE, (byte) 0);
@@ -501,6 +505,31 @@ public class FrenchieEntity extends TamableAnimal {
 
     public float toyEarLift(float partialTick) {
         return Math.clamp((entityData.get(TOY_EARS_UNTIL) - level().getGameTime() - partialTick) / 5f, 0f, 1f);
+    }
+
+    /** A visual reaction. It never takes control of the dog's pose or movement on the server. */
+    public void celebrate() {
+        if (!level().isClientSide() && isAlive() && isTame()) {
+            entityData.set(CELEBRATION_UNTIL, level().getGameTime() + CELEBRATION_TICKS);
+        }
+    }
+
+    public float celebrationBow(float partialTick) {
+        float remaining = entityData.get(CELEBRATION_UNTIL) - level().getGameTime() - partialTick;
+        float phase = Math.clamp(remaining / CELEBRATION_TICKS, 0f, 1f);
+        return 4f * phase * (1f - phase);
+    }
+
+    private void checkReunion() {
+        if (!isTame() || tickCount % 20 != 0) return;
+        LivingEntity owner = getOwner();
+        long now = level().getGameTime();
+        if (owner == null || distanceToSqr(owner) >= 32 * 32) {
+            if (ownerAwaySince < 0) ownerAwaySince = now;
+        } else if (distanceToSqr(owner) <= 7 * 7) {
+            if (ownerAwaySince >= 0 && now - ownerAwaySince >= 2400) celebrate();
+            ownerAwaySince = -1;
+        }
     }
 
     private final CaptainControls captain = new CaptainControls();
@@ -683,6 +712,7 @@ public class FrenchieEntity extends TamableAnimal {
                 ItemStack fetched = getOffhandItem();
                 setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
                 pPlayer.setItemInHand(pHand, fetched);
+                if (fetched.is(FrenchieRegistry.SQUEAKY_TOY.get())) celebrate();
             }
             return InteractionResult.SUCCESS;
         }
@@ -832,6 +862,7 @@ public class FrenchieEntity extends TamableAnimal {
         output.putBoolean("HasToyStick", entityData.get(HAS_TOY_STICK));
         play.save(output);
         if (nextDangerReaction > level().getGameTime()) output.putLong("NextDangerReaction", nextDangerReaction);
+        if (ownerAwaySince >= 0) output.putLong("OwnerAwaySince", ownerAwaySince);
         output.putInt("Variant", this.getTypeVariant());
         output.putString("Pose", this.getPose().name());
         output.putBoolean("IsSleeping", this.isFrenchieSleeping());
@@ -849,6 +880,7 @@ public class FrenchieEntity extends TamableAnimal {
         setDigStage(PlayStages.Digging.NONE);
         play.load(input);
         nextDangerReaction = input.getLongOr("NextDangerReaction", 0L);
+        ownerAwaySince = input.getLongOr("OwnerAwaySince", -1L);
         trail.load(input);
         delivery.load(input);
         if (delivery.canUse()) trail.cancel();
@@ -907,6 +939,7 @@ public class FrenchieEntity extends TamableAnimal {
             reactions.observeOwner();
             captain.tick(this);
             if (isTame() && !isRemoved()) CompanionRoster.track(this);
+            checkReunion();
             updateSleepState();
             syncCompanionJob();
             awareness.tick();

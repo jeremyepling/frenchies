@@ -22,7 +22,7 @@ import java.nio.file.Files;
 
 @EventBusSubscriber(modid = Frenchies.MOD_ID, value = Dist.CLIENT)
 public final class CompanionClient {
-    private enum Step { WAIT, TIP, THROW, FETCH, TAKE }
+    private enum Step { WAIT, TIP, THROW, FETCH, TAKE, CELEBRATE }
     private static Step step = Step.WAIT;
     private static int frames;
 
@@ -57,7 +57,7 @@ public final class CompanionClient {
             return;
         }
         var id = switch (step) {
-            case FETCH, TAKE -> CompanionServer.RETRIEVER;
+            case FETCH, TAKE, CELEBRATE -> CompanionServer.RETRIEVER;
             default -> DeliveryMultiplayerServer.DOG;
         };
         var target = mc.level.getEntity(id);
@@ -83,6 +83,16 @@ public final class CompanionClient {
             case TAKE -> {
                 if (!Files.isRegularFile(mc.gameDirectory.toPath().resolve("screenshots/toy.png"))) return;
                 mc.gameMode.interact(mc.player, dog, new EntityHitResult(dog, dog.getBoundingBox().getCenter()), InteractionHand.MAIN_HAND);
+                step = Step.CELEBRATE;
+                return;
+            }
+            case CELEBRATE -> {
+                if (dog.celebrationBow(0f) < 0.65F || !dog.onGround()) return;
+                //? if <26.3 {
+                Screenshot.grab(mc.gameDirectory, "fetch-celebration.png", mc.getMainRenderTarget(), 1, ignored -> {});
+                //?} else {
+                /*Screenshot.grab(mc.gameDirectory, "fetch-celebration.png", mc.gameRenderer.mainRenderTarget(), 1, ignored -> {});
+                *///?}
             }
         }
         step = Step.WAIT;
