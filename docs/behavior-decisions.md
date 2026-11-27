@@ -12,12 +12,10 @@ This behavior already exists. The shared `frenchie_explorer_maps` GameTest cover
 
 ## Dropped ideas
 
-- Random zoomies and zoomies triggered by throwing a toy. Keep the existing event celebrations, including after a completed fetch; throwing should leave the dog free to chase the toy.
-- Independently seeking warm or brightly lit sleeping destinations. Keep the existing rest beside an idle owner and bedside sleep.
+- Random zoomies and zoomies triggered by throwing a toy. Only the dog involved in an event can celebrate it, including after a completed fetch. Throwing starts the chase.
+- Seeking warm or brightly lit places to rest or sleep. A Frenchie can settle near its idle owner, with a preference for shelter, or sleep beside the owner's bed.
 - Hunger growls. There is no hunger system requiring the owner to feed the dog.
 - Expanding this mod into generic dogs or pets. Keep its French bulldog focus.
-
-These decisions retire backlog proposals. They do not remove the existing celebrations, companionship, or map guidance.
 
 ## Ideas still open
 

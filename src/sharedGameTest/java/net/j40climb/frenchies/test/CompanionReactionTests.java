@@ -19,6 +19,7 @@ import net.minecraft.world.entity.animal.wolf.WolfSoundVariants;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.phys.Vec3;
 
 import static net.j40climb.frenchies.test.CompanionTravelTests.disconnect;
@@ -117,10 +118,24 @@ final class CompanionReactionTests {
     static void quiet(GameTestHelper h) {
         var owner = player(h, 6.5, 6.5);
         var dog = CompanionWhistleTests.dog(h, owner, 3, 5);
+        var sheltered = new BlockPos(4, 1, 6);
+        var open = new BlockPos(6, 1, 4);
+        var campfire = new BlockPos(8, 1, 5);
+        h.setBlock(sheltered.above(3), Blocks.STONE);
+        // The old preference ranked the open spot near the lit campfire ahead of shelter.
+        h.setBlock(campfire, Blocks.CAMPFIRE.defaultBlockState().setValue(CampfireBlock.LIT, true));
+        var shelteredSpot = Vec3.atBottomCenterOf(h.absolutePos(sheltered));
         dog.standUp();
         h.startSequence().thenWaitUntil(() -> h.assertTrue(dog.playPose() == PlayPose.AMBIENT_SIT
                                 && dog.distanceToSqr(owner) <= 12 && !dog.isOrderedToSit(),
                         "Idle dog never sat beside its owner voluntarily"))
+                .thenExecute(() -> {
+                    h.assertTrue(!h.getLevel().canSeeSky(h.absolutePos(sheltered))
+                                    && h.getLevel().canSeeSky(h.absolutePos(open)),
+                            "Fixture needs a sheltered spot and an open spot beside the owner");
+                    h.assertTrue(dog.distanceToSqr(shelteredSpot) < 0.8,
+                            "Lit campfire drew the Frenchie away from the sheltered resting spot");
+                })
                 .thenWaitUntil(() -> h.assertTrue(dog.playPose() == PlayPose.AMBIENT_REST && !dog.isOrderedToSit(),
                         "Longer idle period did not lead to a resting pose"))
                 .thenExecute(() -> owner.snapTo(h.absoluteVec(new Vec3(2.5, 1, 2.5)), 90, 0))

@@ -24,7 +24,7 @@ Taming your first dog gives you a **Frenchie Whistle**. Right-click to call your
 - **Play fetch.** Craft a squeaky toy with orange wool and a slimeball. Right-click to squeak it and watch the ears turn your way. Squeak a few times to draw a small audience, or crouch and right-click to throw it. When your dog brings it back, right-click with an empty hand to take it.
 - **Blow bubbles.** Craft a bubble toy with a glass bottle, a slimeball and a stick in any arrangement. Right-click to blow a small fan of bubbles. Up to three nearby Frenchies can join in. A sitting dog watches from its spot, and a lucky hunter might catch one on its nose. You can blow another group after two seconds.
 - **Watch a Frenchie tease a slime.** Give an idle dog and a tiny slime a little room on level ground. The dog cocks its head, barks, bows and hops from side to side, then circles for another invitation. The slime can go about its business the whole time.
-- **Catch the zoomies.** A reunion, a finished delivery or a good game of fetch can earn a play bow, a couple of loops, and a belly-down sploot. A nearby Frenchie can join the fun.
+- **Catch the zoomies.** A reunion, a finished delivery or a completed fetch can earn a play bow, a couple of loops, and a belly-down sploot.
 - **Ask for a trick.** Crouch and use a bone on your Frenchie to see its ambitious attempt at a backflip. Give it room for the victory lap.
 - **Offer belly rubs.** Crouch beside an idle Frenchie with empty hands for a moment, then use an empty hand to rub its belly. Walk away or give a command when playtime is over.
 - **Watch the drying routine.** After a real swim, a Frenchie shakes off and may roll on nearby grass or moss before dragging its belly forward.
@@ -45,7 +45,7 @@ In falling snow, a dusting spreads across your Frenchie's head and back over abo
 - **Weather a storm together.** A nearby lightning strike can send a following dog to your side with a quiet whimper. It settles down about 15–30 seconds after the last nearby strike. A dog you asked to sit holds its place.
 - **Lead a herd.** Walk with wheat in either hand while sheep or cows follow. Your Frenchie works along the outside and can gently nudge a straggler on clear, level ground. Put the wheat away to end the help.
 - **Bring home a stick.** After you chop a log, your dog may pick up one freshly dropped stick once nearby players step away. It brings the stick to your inventory and leaves saplings for replanting. If your inventory is full, take the stick from its mouth with an empty hand.
-- **Take a breather.** Watch a standing Frenchie closely and you can see its ribs rise and an ear twitch. Stay still for a while and your dog may sit beside you, then stretch out. It favors a sheltered spot or a place near a lit campfire. Start walking and it gets up on its own.
+- **Take a breather.** Watch a standing Frenchie closely and you can see its ribs rise and an ear twitch. Stay still for a while and your dog may sit beside you, then stretch out. It favors a sheltered spot. Start walking and it gets up on its own.
 - **Explore a ravine.** If a fall costs you at least two hearts, a Frenchie within 24 blocks may come check on you. If it can't find safe footing down, it looks toward you from where it stands. At an exposed lava edge, it looks for room to back away and can wait back while you mine.
 
 ## Send a special delivery

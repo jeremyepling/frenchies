@@ -59,7 +59,7 @@ public final class FrenchiePlay {
     public boolean requestDigging(BlockPos broken) { return digging.request(broken); }
     public void inviteSnowball(Vec3 impact) { weather.inviteSnowball(impact); }
 
-    public boolean requestCelebration(boolean guest) { return celebration.request(guest); }
+    public void requestCelebration() { celebration.request(); }
     public boolean celebrationPending() { return celebration.requestedOrRunning(); }
     public void requestTrick() { trick.request(); }
     public void rubBelly(ServerPlayer owner) { bellyRub.rub(owner); }

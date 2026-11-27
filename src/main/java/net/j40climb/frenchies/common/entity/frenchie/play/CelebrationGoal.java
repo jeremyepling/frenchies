@@ -25,7 +25,6 @@ final class CelebrationGoal extends Goal {
     private final FrenchieEntity dog;
     private long nextCelebration;
     private long requestUntil = -1;
-    private boolean guest;
     private BlockPos center;
     private int waypoint;
     private int stageTicks;
@@ -42,14 +41,12 @@ final class CelebrationGoal extends Goal {
         return requestUntil >= dog.level().getGameTime() || dog.celebrationStage() != NONE;
     }
 
-    boolean request(boolean asGuest) {
+    void request() {
         long now = dog.level().getGameTime();
         if (now < nextCelebration || requestedOrRunning() || !available()) {
-            return false;
+            return;
         }
-        guest = asGuest;
         requestUntil = now + 12;
-        return true;
     }
 
     private boolean available() {
@@ -83,12 +80,6 @@ final class CelebrationGoal extends Goal {
         center = dog.blockPosition().west(2);
         waypoint = 0;
         stage(BOW);
-        if (!guest && dog.getRandom().nextBoolean()) {
-            for (FrenchieEntity friend : dog.level().getEntitiesOfClass(FrenchieEntity.class,
-                    dog.getBoundingBox().inflate(5), f -> f != dog && f.getNavigation().isDone())) {
-                if (friend.play().requestCelebration(true)) break;
-            }
-        }
     }
 
     @Override
@@ -106,7 +97,7 @@ final class CelebrationGoal extends Goal {
                 if (stageTicks > 120 || !dog.onGround() || !clearSegment(dog.position(), target)) {
                     finishRun();
                 } else if (dog.distanceToSqr(target) < 0.17) {
-                    if (++waypoint == (guest ? LAP.length : LAP.length * 2)) finishRun();
+                    if (++waypoint == LAP.length * 2) finishRun();
                 } else {
                     dog.getMoveControl().setWantedPosition(target.x, target.y, target.z, 1.55);
                 }

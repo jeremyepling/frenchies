@@ -99,7 +99,7 @@ public class FrenchieEntity extends TamableAnimal {
     private long ownerAwaySince = -1;
 
     public void tryCelebrate() {
-        if (!level().isClientSide()) play.requestCelebration(false);
+        if (!level().isClientSide()) play.requestCelebration();
     }
 
     public FrenchiePlay play() {
