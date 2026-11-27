@@ -12,7 +12,7 @@ This behavior already exists. The shared `frenchie_explorer_maps` GameTest cover
 
 ## Dropped ideas
 
-- Random zoomies and zoomies triggered by throwing a toy. Only the dog involved in an event can celebrate it, including after a completed fetch. Throwing starts the chase.
+- Zoomies. Removed the bow, running laps, hop, and flop sequence from all events, including fetch, delivery, reunions, boat landings, and map arrivals.
 - Seeking warm or brightly lit places to rest or sleep. A Frenchie can settle near its idle owner, with a preference for shelter, or sleep beside the owner's bed.
 - Hunger growls. There is no hunger system requiring the owner to feed the dog.
 - Expanding this mod into generic dogs or pets. Keep its French bulldog focus.

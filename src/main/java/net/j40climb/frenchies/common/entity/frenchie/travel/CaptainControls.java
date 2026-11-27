@@ -14,8 +14,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public final class CaptainControls {
-    private Vec3 tripOrigin;
-
     public static boolean canJoin(FrenchieEntity dog, AbstractBoat boat) {
         LivingEntity owner = dog.getOwner();
         return !dog.respondingToWhistle() && owner != null && owner.getVehicle() == boat && !dog.isOrderedToSit() && !dog.isLeashed()
@@ -24,28 +22,16 @@ public final class CaptainControls {
     }
 
     public void tick(FrenchieEntity dog) {
-        followOwner(dog);
-        if (dog.getVehicle() instanceof AbstractBoat boat) {
-            if (tripOrigin == null) tripOrigin = boat.position();
-        } else {
-            tripOrigin = null;
-        }
-    }
-
-    private void followOwner(FrenchieEntity dog) {
         if (!dog.isTame()) return;
         LivingEntity owner = dog.getOwner();
         if (dog.getVehicle() instanceof AbstractBoat boat) {
             if (owner != null && owner.getVehicle() == boat) return;
             Vec3 landing = findShore(dog, boat);
-            boolean ashore = landing != null;
-            if (!ashore) landing = findWater(dog, boat);
+            if (landing == null) landing = findWater(dog, boat);
             if (landing == null) return;
-            boolean celebrate = ashore && tripOrigin != null && dog.distanceToSqr(tripOrigin) >= 16;
             dog.stopRiding();
             if (!dog.isPassenger()) {
                 dog.snapTo(landing.x, landing.y, landing.z, boat.getYRot(), 0F);
-                if (celebrate) dog.tryCelebrate();
             }
         } else if (!dog.isPassenger() && owner != null && owner.getVehicle() instanceof AbstractBoat boat
                 && dog.distanceToSqr(boat) <= 36 && canJoin(dog, boat) && dog.hasLineOfSight(boat)

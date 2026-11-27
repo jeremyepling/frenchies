@@ -111,7 +111,6 @@ public class FrenchieRenderer extends MobRenderer<FrenchieEntity, FrenchieRender
         reusedState.presenting = entity.handoffPhase() != 0;
         reusedState.toyEarLift = entity.toyEarLift(partialTick);
         reusedState.variant = entity.getVariant();
-        reusedState.celebrationStage = entity.celebrationStage();
         reusedState.digStage = entity.digStage();
         reusedState.digStageAge = entity.digStageAge(partialTick);
         reusedState.trickStage = entity.trickStage();

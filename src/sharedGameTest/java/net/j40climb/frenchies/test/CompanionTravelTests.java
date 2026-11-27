@@ -84,14 +84,9 @@ final class CompanionTravelTests {
         var loose = h.getLevel().getEntitiesOfClass(ItemEntity.class, owner.getBoundingBox().inflate(6),
                 item -> ItemStack.matches(item.getItem(), toy));
         h.assertTrue(loose.size() == 1, "Throw should create exactly one named toy");
-        boolean[] celebratedDuringChase = {dog.celebrationStage() != 0};
         h.startSequence()
-                .thenWaitUntil(() -> {
-                    celebratedDuringChase[0] |= dog.celebrationStage() != 0;
-                    h.assertTrue(ItemStack.matches(dog.getOffhandItem(), toy), "Dog never picked up the toy");
-                })
+                .thenWaitUntil(() -> h.assertTrue(ItemStack.matches(dog.getOffhandItem(), toy), "Dog never picked up the toy"))
                 .thenExecute(() -> {
-                    h.assertTrue(!celebratedDuringChase[0], "Throwing the toy started zoomies during the chase");
                     h.assertTrue(loose.getFirst().isRemoved(), "Dog and ground both retained the thrown toy");
                     dog.sitDown();
                     var restored = reload(h, dog);

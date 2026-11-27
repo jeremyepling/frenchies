@@ -55,17 +55,9 @@ final class CompanionServer {
             }
             case FINISH -> {
                 var dog = (FrenchieEntity) level.getEntity(RETRIEVER);
-                if (dog.celebrationStage() == 4 && !visitor.isSpectator()) {
-                    // A low side view shows whether the belly and outstretched feet meet the ground.
-                    double yaw = Math.toRadians(dog.yBodyRot);
-                    visitor.setGameMode(GameType.SPECTATOR);
-                    visitor.teleportTo(level, dog.getX() + 2.15 * Math.cos(yaw), dog.getY() - 0.8,
-                            dog.getZ() + 2.15 * Math.sin(yaw), Set.of(), 0, 0, true);
-                }
-                if (!frameExists(root, "sploot")) return false;
-                if (dog.celebrationStage() != 0) return false;
-                require(frameExists(root, "courier-arrival") && frameExists(root, "toy") && frameExists(root, "bow"), "Missing companion frame");
-                require(dog.getOffhandItem().isEmpty() && visitor.getInventory().countItem(FrenchieRegistry.SQUEAKY_TOY.get()) == 1
+                if (!dog.getOffhandItem().isEmpty()) return false;
+                require(frameExists(root, "courier-arrival") && frameExists(root, "toy"), "Missing companion frame");
+                require(visitor.getInventory().countItem(FrenchieRegistry.SQUEAKY_TOY.get()) == 1
                         && Component.literal("The pocket squeaker").equals(visitor.getMainHandItem().get(DataComponents.CUSTOM_NAME)),
                         "Toy handoff lost, changed or duplicated the named toy");
                 //? if <26.3 {
@@ -82,6 +74,7 @@ final class CompanionServer {
                 /*owner.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.ELYTRA));
                 *///?}
                 owner.teleportTo(level, 48.5, 275, 0.5, Set.of(), 0, 0, true);
+                visitor.setGameMode(GameType.SPECTATOR);
                 visitor.setCamera(owner);
                 owner.sendSystemMessage(Component.literal("FF flight glide"));
                 visitor.sendSystemMessage(Component.literal("FF flight gesture"));

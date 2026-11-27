@@ -24,7 +24,6 @@ Taming your first dog gives you a **Frenchie Whistle**. Right-click to call your
 - **Play fetch.** Craft a squeaky toy with orange wool and a slimeball. Right-click to squeak it and watch the ears turn your way. Squeak a few times to draw a small audience, or crouch and right-click to throw it. When your dog brings it back, right-click with an empty hand to take it.
 - **Blow bubbles.** Craft a bubble toy with a glass bottle, a slimeball and a stick in any arrangement. Right-click to blow a small fan of bubbles. Up to three nearby Frenchies can join in. A sitting dog watches from its spot, and a lucky hunter might catch one on its nose. You can blow another group after two seconds.
 - **Watch a Frenchie tease a slime.** Give an idle dog and a tiny slime a little room on level ground. The dog cocks its head, barks, bows and hops from side to side, then circles for another invitation. The slime can go about its business the whole time.
-- **Catch the zoomies.** A reunion, a finished delivery or a completed fetch can earn a play bow, a couple of loops, and a belly-down sploot.
 - **Ask for a trick.** Crouch and use a bone on your Frenchie to see its ambitious attempt at a backflip. Give it room for the victory lap.
 - **Offer belly rubs.** Crouch beside an idle Frenchie with empty hands for a moment, then use an empty hand to rub its belly. Walk away or give a command when playtime is over.
 - **Watch the drying routine.** After a real swim, a Frenchie shakes off and may roll on nearby grass or moss before dragging its belly forward.
@@ -94,7 +93,7 @@ The [behavior decisions](docs/behavior-decisions.md) record the accepted scope a
 
 | Package | What lives there |
 | --- | --- |
-| `play` | Toys, fetch, tree-stick retrieval, bubbles, tricks, celebrations, and shared play rules |
+| `play` | Toys, fetch, tree-stick retrieval, bubbles, tricks, and shared play rules |
 | `assistance` | Livestock herding and digging assistance |
 | `travel` | Boat boarding and dismounting, and following a trail to the owner's last death |
 | `delivery` | Courier trips, parcel handoffs, the destination picker, and its packets |

@@ -152,20 +152,12 @@ public class FrenchieModel extends EntityModel<FrenchieRenderState> {
             head.xRot -= 0.25F;
             return;
         }
-        if (renderState.celebrationStage == PlayStages.Celebration.BOW) {
-            body.xRot = 0.32F;
-            body.y += 1.2F;
-            head.xRot = -0.24F;
-            body.getChild("leg_front_left").xRot = -1.05F;
-            body.getChild("leg_front_right").xRot = -1.05F;
-            return;
-        }
         if (renderState.playPose == PlayPose.AMBIENT_SIT) {
             sitPoseAnimation.applyStatic();
             applyHeadRotation(renderState.yRot, renderState.xRot);
             return;
         }
-        if (renderState.celebrationStage == PlayStages.Celebration.SPLOOT || renderState.playPose == PlayPose.AMBIENT_REST) {
+        if (renderState.playPose == PlayPose.AMBIENT_REST) {
             body.y += 1.9F;
             head.y += 1.0F;
             head.xRot = -0.1F;

@@ -61,10 +61,8 @@ public record CompanionTests(
         registerPlayTest(yard, "companion_whistle_packed_dismiss", 650, h -> CompanionWhistleTests.courier(h, true, true));
         registerPlayTest(yard, "companion_whistle_transit_call", 650, h -> CompanionWhistleTests.courier(h, false, false));
         registerPlayTest(yard, "companion_whistle_transit_dismiss", 650, h -> CompanionWhistleTests.courier(h, true, false));
-        registerPlayTest(yard, "companion_whistle_boat_call", 650, h -> CompanionWhistleTests.boatOrPlay(h, true, false));
-        registerPlayTest(yard, "companion_whistle_boat_dismiss", 650, h -> CompanionWhistleTests.boatOrPlay(h, true, true));
-        registerPlayTest(yard, "companion_whistle_play_call", 650, h -> CompanionWhistleTests.boatOrPlay(h, false, false));
-        registerPlayTest(yard, "companion_whistle_play_dismiss", 650, h -> CompanionWhistleTests.boatOrPlay(h, false, true));
+        registerPlayTest(yard, "companion_whistle_boat_call", 650, h -> CompanionWhistleTests.boat(h, false));
+        registerPlayTest(yard, "companion_whistle_boat_dismiss", 650, h -> CompanionWhistleTests.boat(h, true));
         registerPlayTest(yard, "play_bubble_toy", 230, BubblePlayTests::toy);
         registerPlayTest(yard, "play_bubble_audience", 230, BubblePlayTests::audience);
         registerPlayTest(yard, "play_bubble_pops", 200, BubblePlayTests::pops);
@@ -87,10 +85,7 @@ public record CompanionTests(
         registerPlayTest(yard, "play_whistle_interruptions", 400, PlayInterruptionGameTests::whistleDuringPlay);
         registerPlayTest(yard, "companion_fetch", 550, CompanionTravelTests::fetch);
         registerStructureTest(defaultEnv, "companion_captain", yard, 550, CompanionTravelTests::captain);
-        registerPlayTest(yard, "companion_zoomies_interrupt", 550, CompanionPlayTests::interruptCelebration);
         registerPlayTest(yard, "companion_audience", 550, CompanionPlayTests::audience);
-        registerPlayTest(yard, "companion_zoomies_laps", 550, h -> CompanionPlayTests.zoomies(h, true));
-        registerPlayTest(yard, "companion_zoomies_crops", 550, h -> CompanionPlayTests.zoomies(h, false));
         registerPlayTest(yard, "frenchie_warning_sight", 160, FrenchieAwarenessGameTests::warningSight);
         registerPlayTest(yard, "frenchie_explorer_maps", 100, ExplorerFrenchieGameTests::maps);
         registerPlayTest(yard, "frenchie_explorer_pacing", 420, ExplorerFrenchieGameTests::pacing);

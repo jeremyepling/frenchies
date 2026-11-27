@@ -46,7 +46,6 @@ public final class DeliveryGoal extends Goal {
     private static final int EXPECTING = 2, TIPPED = 3, GLANCING = 4;
     private int reaction;
     private int reactionTicks;
-    private boolean completedDelivery;
 
     public int handoffPhase() {
         return reaction != 0 ? reaction : waitingRecipient() != null ? 1 : 0;
@@ -135,7 +134,6 @@ public final class DeliveryGoal extends Goal {
 
     private void beginOrder(ServerPlayer owner, ItemStack bundle, @Nullable ServerPlayer target, @Nullable GlobalPos bed) {
         reaction = 0;
-        completedDelivery = false;
         parcel = bundle;
         dog.syncParcel(parcel);
         goingHome = bundle.isEmpty();
@@ -201,7 +199,6 @@ public final class DeliveryGoal extends Goal {
         reaction = 0;
         returning = false;
         atDestination = false;
-        completedDelivery = false;
         CourierTrips.forget(dog);
     }
 
@@ -328,8 +325,6 @@ public final class DeliveryGoal extends Goal {
             dog.resetLastPoseChangeTick(dog.level().getGameTime());
         } else if (!goingHome && back && !hasParcel()) {
             dog.standUp();
-            if (completedDelivery) dog.tryCelebrate();
-            completedDelivery = false;
         }
         dog.syncCompanionJob();
     }
@@ -397,7 +392,6 @@ public final class DeliveryGoal extends Goal {
         tell(player, "received", dog.getName());
         var owner = player.level().getServer().getPlayerList().getPlayer(dog.getOwnerReference().getUUID());
         tell(owner, "complete", player.getName());
-        completedDelivery = true;
         reaction(EXPECTING, 60);
     }
 
@@ -411,7 +405,6 @@ public final class DeliveryGoal extends Goal {
     }
 
     public void save(ValueOutput output) {
-        if (completedDelivery) output.putBoolean("FrenchieCompletedDelivery", true);
         if (retained && hasParcel()) {
             output.store("FrenchieParcel", ItemStack.CODEC, parcel);
             output.putBoolean("FrenchieParcelRetained", true);
@@ -438,7 +431,6 @@ public final class DeliveryGoal extends Goal {
         parcel = input.read("FrenchieParcel", ItemStack.CODEC).orElse(ItemStack.EMPTY);
         dog.syncParcel(parcel);
         retained = hasParcel() && input.getBooleanOr("FrenchieParcelRetained", false);
-        completedDelivery = input.getBooleanOr("FrenchieCompletedDelivery", false);
         reaction = parcel.isEmpty() ? input.getIntOr("FrenchieHandoffReaction", 0) : 0;
         reactionTicks = Math.clamp(input.getIntOr("FrenchieHandoffTicks", 0), 0, 60);
         goingHome = parcel.isEmpty() && input.getBooleanOr("FrenchieGoingHome", false);

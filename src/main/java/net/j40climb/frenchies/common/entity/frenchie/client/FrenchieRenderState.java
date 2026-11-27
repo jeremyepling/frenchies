@@ -23,7 +23,6 @@ public class FrenchieRenderState extends LivingEntityRenderState {
     public boolean presenting;
     public float toyEarLift;
     public FrenchieVariant variant;
-    public int celebrationStage;
     public int digStage;
     public float digStageAge;
     public int trickStage;

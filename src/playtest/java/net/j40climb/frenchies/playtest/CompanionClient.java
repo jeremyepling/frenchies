@@ -22,10 +22,9 @@ import java.nio.file.Files;
 
 @EventBusSubscriber(modid = Frenchies.MOD_ID, value = Dist.CLIENT)
 public final class CompanionClient {
-    private enum Step { WAIT, TIP, THROW, FETCH, TAKE, BOW, SPLOOT }
+    private enum Step { WAIT, TIP, THROW, FETCH, TAKE }
     private static Step step = Step.WAIT;
     private static int frames;
-    private static int poseTicks;
 
     @SubscribeEvent
     public static void message(ClientChatReceivedEvent.System event) {
@@ -58,7 +57,7 @@ public final class CompanionClient {
             return;
         }
         var id = switch (step) {
-            case FETCH, TAKE, BOW, SPLOOT -> CompanionServer.RETRIEVER;
+            case FETCH, TAKE -> CompanionServer.RETRIEVER;
             default -> DeliveryMultiplayerServer.DOG;
         };
         var target = mc.level.getEntity(id);
@@ -84,32 +83,6 @@ public final class CompanionClient {
             case TAKE -> {
                 if (!Files.isRegularFile(mc.gameDirectory.toPath().resolve("screenshots/toy.png"))) return;
                 mc.gameMode.interact(mc.player, dog, new EntityHitResult(dog, dog.getBoundingBox().getCenter()), InteractionHand.MAIN_HAND);
-                step = Step.BOW;
-                frames = 0;
-                return;
-            }
-            case BOW -> {
-                if (dog.celebrationStage() != 1 || ++poseTicks < 2) return;
-                //? if <26.3 {
-                Screenshot.grab(mc.gameDirectory, "bow.png", mc.getMainRenderTarget(), 1, ignored -> {});
-                //?} else {
-                /*Screenshot.grab(mc.gameDirectory, "bow.png", mc.gameRenderer.mainRenderTarget(), 1, ignored -> {});
-                *///?}
-                step = Step.SPLOOT;
-                poseTicks = 0;
-                return;
-            }
-            case SPLOOT -> {
-                if (dog.celebrationStage() != 4 || !dog.onGround() || !mc.player.isSpectator()) {
-                    poseTicks = 0;
-                    return;
-                }
-                if (++poseTicks < 8) return;
-                //? if <26.3 {
-                Screenshot.grab(mc.gameDirectory, "sploot.png", mc.getMainRenderTarget(), 1, ignored -> {});
-                //?} else {
-                /*Screenshot.grab(mc.gameDirectory, "sploot.png", mc.gameRenderer.mainRenderTarget(), 1, ignored -> {});
-                *///?}
             }
         }
         step = Step.WAIT;

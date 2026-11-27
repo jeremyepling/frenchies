@@ -236,7 +236,6 @@ public final class DeathTrackingGoal extends Goal {
                 tellExplorer(owner, "arrived");
                 cancel();
                 dog.perkToyEars();
-                dog.tryCelebrate();
                 return;
             }
             if (treasure == null && !reportedArea) {

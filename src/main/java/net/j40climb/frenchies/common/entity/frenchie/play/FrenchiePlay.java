@@ -22,7 +22,6 @@ public final class FrenchiePlay {
     private final ToyPlayGoal toy;
     private final TrickGoal trick;
     private final BellyRubGoal bellyRub;
-    private final CelebrationGoal celebration;
     private final DiggingAssistantGoal digging;
     private final WeatherPlayGoal weather;
     private final BubblePlayGoal bubbles;
@@ -35,7 +34,6 @@ public final class FrenchiePlay {
         toy = new ToyPlayGoal(dog);
         trick = new TrickGoal(dog);
         bellyRub = new BellyRubGoal(dog);
-        celebration = new CelebrationGoal(dog);
         digging = new DiggingAssistantGoal(dog);
         weather = new WeatherPlayGoal(dog);
         bubbles = new BubblePlayGoal(dog);
@@ -46,7 +44,6 @@ public final class FrenchiePlay {
         selector.addGoal(4, toy);
         selector.addGoal(4, trick);
         selector.addGoal(4, bellyRub);
-        selector.addGoal(5, celebration);
         selector.addGoal(5, digging);
         selector.addGoal(5, new HerdLivestockGoal(dog));
         selector.addGoal(6, weather);
@@ -59,8 +56,6 @@ public final class FrenchiePlay {
     public boolean requestDigging(BlockPos broken) { return digging.request(broken); }
     public void inviteSnowball(Vec3 impact) { weather.inviteSnowball(impact); }
 
-    public void requestCelebration() { celebration.request(); }
-    public boolean celebrationPending() { return celebration.requestedOrRunning(); }
     public void requestTrick() { trick.request(); }
     public void rubBelly(ServerPlayer owner) { bellyRub.rub(owner); }
     public void cancelBellyRub() { bellyRub.command(); }
@@ -72,7 +67,6 @@ public final class FrenchiePlay {
     }
 
     public void save(ValueOutput output) {
-        output.putLong("NextCelebration", celebration.cooldown());
         output.putLong("NextSlimePlay", slime.cooldown());
         digging.save(output);
         weather.save(output);
@@ -81,7 +75,6 @@ public final class FrenchiePlay {
     }
 
     public void load(ValueInput input) {
-        celebration.loadCooldown(input.getLongOr("NextCelebration", 0));
         slime.loadCooldown(input.getLongOr("NextSlimePlay", 0));
         digging.load(input);
         weather.load(input);
@@ -101,7 +94,7 @@ public final class FrenchiePlay {
 
     public boolean canWatch(boolean allowWeatherPlay) {
         if (!dog.isAlive() || dog.isNoAi() || interruptedByOtherActivity() || dog.hasCompanionJob() || dog.hasToyJob()
-                || !allowWeatherPlay && weather.active() || celebration.requestedOrRunning()
+                || !allowWeatherPlay && weather.active()
                 || dog.trickStage() != PlayStages.Trick.NONE || dog.bellyStage() != PlayStages.BellyRub.NONE
                 || dog.isPassenger() || dog.isLeashed() || dog.isInLove()
                 || dog.isInWater() || dog.isInLava() || dog.isOnFire() || dog.isFullyFrozen() || dog.hurtTime > 0 || dog.getTarget() != null
@@ -125,12 +118,11 @@ public final class FrenchiePlay {
     }
 
     public void interrupt(GoalSelector selector) {
-        stopRunning(selector, goal -> goal == toy || goal == celebration || goal == dog.reactions().ownerConcern() || stopsOnSleep(goal));
+        stopRunning(selector, goal -> goal == toy || goal == dog.reactions().ownerConcern() || stopsOnSleep(goal));
 
         // A thrown toy, invitation or sleeping spectator can be pending outside the selector.
         toy.stop();
         bubbles.stop();
-        celebration.stop();
         digging.stop();
         weather.interrupt();
         trick.stop();

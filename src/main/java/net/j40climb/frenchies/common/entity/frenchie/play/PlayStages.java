@@ -26,8 +26,4 @@ public final class PlayStages {
             SNOW_PLOW = 8, SNOW_POP = 9;
     }
 
-    public static final class Celebration {
-        private Celebration() {}
-        public static final int NONE = 0, BOW = 1, RUN = 2, HOP = 3, SPLOOT = 4;
-    }
 }
