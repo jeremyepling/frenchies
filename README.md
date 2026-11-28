@@ -11,7 +11,7 @@ Take a French bulldog on your next expedition. It can ride on the bow while you 
 | 26.1.2 | 26.1 | 26.1.2.129 | 0.148.0+26.1.2 |
 | 26.3 | 26.3 | 26.3.0.101 | 0.165.2+26.3 |
 
-**26.4 Fabric preview.** Use the dedicated 26.4-pre-1 Fabric jar with Minecraft 26.4 Pre-Release 1, Loader 0.20.1, and Fabric API 0.167.1+26.4. Wear the front pack in the vanilla chest slot on this preview. Trinkets Updated does not yet provide a matching build.
+**26.4 Fabric preview.** Use the dedicated 26.4-pre-2 Fabric jar with Minecraft 26.4 Pre-Release 2, Loader 0.20.1, and Fabric API 0.167.1+26.4. Wear the front pack in the vanilla chest slot on this preview. Trinkets Updated does not yet provide a matching build.
 
 ![A Frenchie wearing an orange life jacket sits at the bow in front of its owner.](docs/images/frenchie-boat-captain.png)
 
