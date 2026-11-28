@@ -186,7 +186,7 @@ final class CompanionIconsPlaytest {
 
     static boolean shows(Minecraft mc, FrenchieEntity dog, String sprite) {
         var tag = mc.getEntityRenderDispatcher().getRenderer(dog).createRenderState(dog, 1).nameTag;
-        var id = Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "frenchie/" + sprite);
+        var id = Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "frenchie/" + sprite);
         var atlas = mc.getAtlasManager().getAtlasOrThrow(AtlasIds.GUI);
         if (tag == null || !(tag.getContents() instanceof ObjectContents icon)
                 || !icon.contents().equals(new AtlasSprite(AtlasIds.GUI, id)) || atlas.getSprite(id) == atlas.missingSprite()) return false;

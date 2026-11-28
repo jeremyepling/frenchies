@@ -12,8 +12,8 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 
 public final class FrontpackClient {
-    static final Identifier WARNING_HUD = Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "frontpack_warning");
-    private static final Identifier CREEPER_SPRITE = Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "frenchie/creeper");
+    static final Identifier WARNING_HUD = Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "frontpack_warning");
+    private static final Identifier CREEPER_SPRITE = Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "frenchie/creeper");
 
     static void drawWarning(GuiGraphicsExtractor gui, DeltaTracker delta) {
         var mc = Minecraft.getInstance();

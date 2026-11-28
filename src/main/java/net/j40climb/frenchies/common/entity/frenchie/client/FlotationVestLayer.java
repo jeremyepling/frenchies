@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.resources.Identifier;
 
 final class FlotationVestLayer extends RenderLayer<FrenchieRenderState, FrenchieModel> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE,
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(Frenchies.MOD_ID,
             "textures/entity/frenchie/flotation_vest.png");
 
     private final ModelPart vest;

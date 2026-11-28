@@ -23,7 +23,7 @@ class CompanionSettingsTest {
                 "lavaReactions", CompanionSettings::lavaReactions,
                 "stickRetrieval", CompanionSettings::stickRetrieval);
         CompanionSettings.load(config);
-        var file = config.resolve("florafauna_frenchies.properties");
+        var file = config.resolve("frenchies.properties");
         var generated = Files.readString(file);
         try {
             for (var key : switches.keySet()) {

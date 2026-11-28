@@ -14,6 +14,7 @@ import net.minecraft.gametest.framework.TestData;
 import net.minecraft.gametest.framework.TestEnvironmentDefinition;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Rotation;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -61,10 +62,8 @@ public record CompanionTests(
         registerPlayTest(yard, "companion_whistle_packed_dismiss", 650, h -> CompanionWhistleTests.courier(h, true, true));
         registerPlayTest(yard, "companion_whistle_transit_call", 650, h -> CompanionWhistleTests.courier(h, false, false));
         registerPlayTest(yard, "companion_whistle_transit_dismiss", 650, h -> CompanionWhistleTests.courier(h, true, false));
-        registerPlayTest(yard, "companion_whistle_boat_call", 650, h -> CompanionWhistleTests.boatOrPlay(h, true, false));
-        registerPlayTest(yard, "companion_whistle_boat_dismiss", 650, h -> CompanionWhistleTests.boatOrPlay(h, true, true));
-        registerPlayTest(yard, "companion_whistle_play_call", 650, h -> CompanionWhistleTests.boatOrPlay(h, false, false));
-        registerPlayTest(yard, "companion_whistle_play_dismiss", 650, h -> CompanionWhistleTests.boatOrPlay(h, false, true));
+        registerPlayTest(yard, "companion_whistle_boat_call", 650, h -> CompanionWhistleTests.boat(h, false));
+        registerPlayTest(yard, "companion_whistle_boat_dismiss", 650, h -> CompanionWhistleTests.boat(h, true));
         registerPlayTest(yard, "play_bubble_toy", 230, BubblePlayTests::toy);
         registerPlayTest(yard, "play_bubble_audience", 230, BubblePlayTests::audience);
         registerPlayTest(yard, "play_bubble_pops", 200, BubblePlayTests::pops);
@@ -82,15 +81,18 @@ public record CompanionTests(
         registerPlayTest(yard, "play_weather_snowball", 250, WeatherPlayTests::snowball);
         registerPlayTest(yard, "play_weather_snow_ambient", 250, AmbientSnowGameTests::diveWithoutSnowball);
         registerPlayTest(yard, "play_weather_swim", 200, WeatherPlayTests::swim);
+        registerPlayTest(yard, "adventure_mining", 260, TestEnvironmentDefinition.Weather.Type.CLEAR, true, AdventureOutfitGameTests::mining);
+        registerPlayTest(yard, "adventure_scuba", 600, TestEnvironmentDefinition.Weather.Type.CLEAR, true, AdventureOutfitGameTests::scuba);
+        registerPlayTest(yard, "adventure_scuba_from_shore", 240, TestEnvironmentDefinition.Weather.Type.CLEAR, true,
+                AdventureOutfitGameTests::scubaFromShore);
+        registerPlayTest(yard, "adventure_thunder", 1200, AdventureOutfitGameTests::thunder);
+        registerPlayTest(yard, "adventure_snow", 1150, TestEnvironmentDefinition.Weather.Type.RAIN, true, AdventureOutfitGameTests::snow);
         registerPlayTest(yard, "play_trick_backflop", 200, TrickBellyTests::trick);
         registerPlayTest(yard, "play_belly_rub", 200, TrickBellyTests::belly);
         registerPlayTest(yard, "play_whistle_interruptions", 400, PlayInterruptionGameTests::whistleDuringPlay);
         registerPlayTest(yard, "companion_fetch", 550, CompanionTravelTests::fetch);
         registerStructureTest(defaultEnv, "companion_captain", yard, 550, CompanionTravelTests::captain);
-        registerPlayTest(yard, "companion_zoomies_interrupt", 550, CompanionPlayTests::interruptCelebration);
         registerPlayTest(yard, "companion_audience", 550, CompanionPlayTests::audience);
-        registerPlayTest(yard, "companion_zoomies_laps", 550, h -> CompanionPlayTests.zoomies(h, true));
-        registerPlayTest(yard, "companion_zoomies_crops", 550, h -> CompanionPlayTests.zoomies(h, false));
         registerPlayTest(yard, "frenchie_warning_sight", 160, FrenchieAwarenessGameTests::warningSight);
         registerPlayTest(yard, "frenchie_explorer_maps", 100, ExplorerFrenchieGameTests::maps);
         registerPlayTest(yard, "frenchie_explorer_pacing", 420, ExplorerFrenchieGameTests::pacing);
@@ -136,9 +138,14 @@ public record CompanionTests(
 
     private void registerPlayTest(Identifier yard, String name, int ticks,
                                   TestEnvironmentDefinition.Weather.Type weather, Consumer<GameTestHelper> test) {
+        registerPlayTest(yard, name, ticks, weather, weather != TestEnvironmentDefinition.Weather.Type.CLEAR, test);
+    }
+
+    private void registerPlayTest(Identifier yard, String name, int ticks,
+                                  TestEnvironmentDefinition.Weather.Type weather, boolean skyAccess, Consumer<GameTestHelper> test) {
         var environment = addEnvironment.apply(Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, name),
                 new TestEnvironmentDefinition.Weather(weather));
-        registerStructureTest(environment, name, yard, ticks, weather != TestEnvironmentDefinition.Weather.Type.CLEAR, h -> {
+        registerStructureTest(environment, name, yard, ticks, skyAccess, h -> {
             // The registered dimension clock is available when the server starts the case.
             var level = h.getLevel();
             var clock = level.dimensionType().defaultClock().orElseThrow();
@@ -174,8 +181,8 @@ public record CompanionTests(
                 *///?}
                 structure,
                 maxTicks,
-                20,   // setupTicks - give block entities time to load
-                true, net.minecraft.world.level.block.Rotation.NONE, false, 1, 1, skyAccess, 0
+                20, // setupTicks - give block entities time to load
+                true, Rotation.NONE, false, 1, 1, skyAccess, 0
         );
 
         addTest.accept(testId, new SimpleGameTestInstance(testData, testFunction));

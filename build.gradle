@@ -63,7 +63,7 @@ neoForge {
                 server()
                 gameDirectory = new File(directory, 'server')
                 programArgument '--nogui'
-                systemProperty "florafauna_frenchies.${multiplayerScenario}Test.root", directory.absolutePath
+                systemProperty "frenchies.${multiplayerScenario}Test.root", directory.absolutePath
                 jvmArgument '-Xmx1G'
             }
             ['Owner', 'Visitor'].each { role ->
@@ -74,7 +74,7 @@ neoForge {
                             multiplayerScenario in ['playful', 'explorer'] ? '960' : '640', '--height',
                             multiplayerScenario in ['playful', 'explorer'] ? '540' : '360',
                             '--quickPlayMultiplayer', "127.0.0.1:${deliveryTestPort}".toString()
-                    systemProperty "florafauna_frenchies.${multiplayerScenario}Test.client", role
+                    systemProperty "frenchies.${multiplayerScenario}Test.client", role
                     jvmArgument '-Xmx1G'
                 }
             }
@@ -85,9 +85,9 @@ neoForge {
                 def directory = file(".tmp/world-playtests/${playtestId}/${playtestScenario}")
                 gameDirectory = directory
                 programArguments.addAll '--width', '960', '--height', '540', '--quickPlaySingleplayer', 'playtest'
-                systemProperty 'florafauna_frenchies.playtest.directory', directory.absolutePath
-                systemProperty 'florafauna_frenchies.playtest.scenario', playtestScenario
-                systemProperty 'florafauna_frenchies.playtest.phase', playtestPhase
+                systemProperty 'frenchies.playtest.directory', directory.absolutePath
+                systemProperty 'frenchies.playtest.scenario', playtestScenario
+                systemProperty 'frenchies.playtest.phase', playtestPhase
             }
         }
         client {
@@ -113,7 +113,7 @@ neoForge {
             def selector = providers.gradleProperty('gameTestFilter').orNull
             if (selector != null) {
                 if (!(selector ==~ /[a-z0-9_.*?-]+:[a-z0-9_.*?\/-]+/)) {
-                    throw new GradleException('Use a namespaced GameTest ID or wildcard, e.g. florafauna_frenchies:frenchie_bedtime')
+                    throw new GradleException('Use a namespaced GameTest ID or wildcard, e.g. frenchies:frenchie_bedtime')
                 }
                 programArguments.addAll '--tests', selector
             }

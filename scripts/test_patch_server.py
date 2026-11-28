@@ -25,7 +25,7 @@ async def check_server(server, launch, minecraft):
                 if message.endswith(f"Starting minecraft server version {minecraft}"):
                     version_seen = True
                 if "Done (" in message and 'For help, type "help"' in message:
-                    process.stdin.write(b"summon florafauna:frenchie\n")
+                    process.stdin.write(b"summon frenchies:frenchie\n")
                     await process.stdin.drain()
                 elif "Summoned new Frenchie" in message:
                     summoned = True

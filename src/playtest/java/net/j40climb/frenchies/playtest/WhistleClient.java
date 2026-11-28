@@ -18,8 +18,8 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 @EventBusSubscriber(modid = Frenchies.MOD_ID, value = Dist.CLIENT)
 public final class WhistleClient {
-    private static final String ROLE = System.getProperty("florafauna_frenchies.whistleTest.client",
-            System.getProperty("florafauna_frenchies.legacyTest.client"));
+    private static final String ROLE = System.getProperty("frenchies.whistleTest.client",
+            System.getProperty("frenchies.legacyTest.client"));
     private enum Step { IDLE, DISMISS, CALL_ACTIVE, CALL_COURIER, RELEASE, SWING, BLAST, PEEK, RELAXED, TUMBLE, STARTLE, EXIT }
     private static Step step = Step.IDLE;
     private static int ticks;

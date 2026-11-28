@@ -33,7 +33,7 @@ public final class BedtimeBuddyGoal extends Goal {
                         && dog.isFrenchieSleeping() && besideBed(dog, owner.getSleepingPos().orElseThrow())).isEmpty();
         if (hasBuddy) {
             owner.addEffect(new MobEffectInstance(FrenchieRegistry.WELL_RESTED, 20 * 120, 0, false, false, true));
-            owner.sendOverlayMessage(Component.translatable("frenchie.florafauna.bedtime.rested"));
+            owner.sendOverlayMessage(Component.translatable("frenchie.frenchies.bedtime.rested"));
         }
     }
 

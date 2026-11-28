@@ -13,7 +13,7 @@ public enum FrenchieStatusIcon {
     private final AtlasSprite sprite;
 
     FrenchieStatusIcon(String path) {
-        sprite = new AtlasSprite(AtlasIds.GUI, Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "frenchie/" + path));
+        sprite = new AtlasSprite(AtlasIds.GUI, Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "frenchie/" + path));
     }
 
     public static @Nullable FrenchieStatusIcon of(FrenchieEntity dog) {

@@ -13,7 +13,7 @@ import net.minecraft.resources.Identifier;
 
 public final class FabricFrontpackClient {
     public static void register() {
-        var id = Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "front_pack");
+        var id = Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "front_pack");
         //? if <26.4 {
         ItemTintSources.ID_MAPPER.put(id, FrontpackTint.CODEC);
         SpecialModelRenderers.ID_MAPPER.put(id, FrontpackItemRenderer.Unbaked.CODEC);

@@ -24,6 +24,7 @@ public final class CompanionReactions {
 
     public Goal lavaAvoidance() { return lava; }
     public Goal ownerConcern() { return concern; }
+    public boolean isFrightened() { return concern.frightened(); }
     public Goal quietCompanionship() { return quiet; }
 
     public boolean interruptsPlay() { return lava.active() || concern.active(); }

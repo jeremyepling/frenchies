@@ -24,8 +24,8 @@ tasks.named('check') { dependsOn tasks.named('gametestClasses') }
 loom {
     accessWidenerPath = rootProject.file('src/gametest/resources/frenchies-gametest.accesswidener')
     mods {
-        florafauna_frenchies { sourceSet sourceSets.main }
-        florafauna_frenchies_gametest { sourceSet gameTests }
+        frenchies { sourceSet sourceSets.main }
+        frenchies_gametest { sourceSet gameTests }
     }
     runs {
         client { runDir 'run/client' }

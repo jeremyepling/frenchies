@@ -24,7 +24,7 @@ import java.nio.file.Files;
 
 @EventBusSubscriber(modid = Frenchies.MOD_ID, value = Dist.CLIENT)
 public final class DeliveryMultiplayerClient {
-    private static final String ROLE = System.getProperty("florafauna_frenchies.deliveryTest.client");
+    private static final String ROLE = System.getProperty("frenchies.deliveryTest.client");
     private enum Step { IDLE, USE_BUNDLE, CHOOSE, PREVIEW, CONFIRM, FRAME, CAPTURE, ACCEPT, EXIT }
     private static Step step = Step.IDLE;
     private static volatile boolean heardBark;
@@ -88,7 +88,7 @@ public final class DeliveryMultiplayerClient {
             }
             case CONFIRM -> {
                 if (!Files.isRegularFile(mc.gameDirectory.toPath().resolve("screenshots/courier-envelope.png"))) return;
-                if (DeliveryPlaytest.pressLabel(mc, Component.translatable("frenchie.florafauna.delivery.confirm").getString())) {
+                if (DeliveryPlaytest.pressLabel(mc, Component.translatable("frenchie.frenchies.delivery.confirm").getString())) {
                     LogUtils.getLogger().info("Owner confirmed delivery to FFVisitor at the displayed {} s ETA", DeliveryMultiplayerServer.ETA);
                     step = Step.IDLE;
                 }

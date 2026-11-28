@@ -8,7 +8,7 @@ import org.jspecify.annotations.Nullable;
 
 final class FrontpackRenderData {
     private static final ContextKey<FrontpackAppearance> KEY = new ContextKey<>(
-            Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "frontpack_appearance"));
+            Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "frontpack_appearance"));
 
     static @Nullable FrontpackAppearance get(AvatarRenderState state) {
         return state.getRenderData(KEY);

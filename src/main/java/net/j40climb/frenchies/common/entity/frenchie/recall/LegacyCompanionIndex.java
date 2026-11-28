@@ -1,6 +1,7 @@
 package net.j40climb.frenchies.common.entity.frenchie.recall;
 
 import com.mojang.logging.LogUtils;
+import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
@@ -83,7 +84,7 @@ public final class LegacyCompanionIndex {
     }
 
     private static void visit(ServerLevel level, GlobalPos chunk, CompoundTag tag) {
-        if ("florafauna:frenchie".equals(tag.getStringOr("id", ""))) {
+        if (FrenchieRegistry.FRENCHIE_KEY.identifier().toString().equals(tag.getStringOr("id", ""))) {
             var owner = tag.read("Owner", UUIDUtil.CODEC);
             var dog = tag.read("UUID", UUIDUtil.CODEC);
             if (owner.isPresent() && dog.isPresent()) {

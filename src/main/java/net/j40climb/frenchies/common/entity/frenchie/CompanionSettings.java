@@ -14,12 +14,15 @@ public final class CompanionSettings {
     private CompanionSettings() {}
 
     public static void load(Path directory) {
-        var file = directory.resolve("florafauna_frenchies.properties");
+        var file = directory.resolve("frenchies.properties");
         try {
             if (Files.notExists(file)) {
                 Files.createDirectories(directory);
                 Files.writeString(file, """
                         # Frenchie companion behaviors. Restart the server or game after editing.
+                        automaticAdventureOutfits=true
+                        miningHelmetDynamicLight=true
+                        snowAccumulation=true
                         weatherReactions=true
                         visibleSnow=true
                         thunderFear=true
@@ -46,6 +49,9 @@ public final class CompanionSettings {
         return !"false".equalsIgnoreCase(options.getProperty(key, "true").trim());
     }
 
+    public static boolean automaticAdventureOutfits() { return enabled("automaticAdventureOutfits"); }
+    public static boolean miningHelmetDynamicLight() { return enabled("miningHelmetDynamicLight"); }
+    public static boolean snowAccumulation() { return enabled("snowAccumulation"); }
     public static boolean weatherReactions() { return enabled("weatherReactions"); }
     public static boolean visibleSnow() { return enabled("visibleSnow"); }
     public static boolean thunderFear() { return enabled("thunderFear"); }

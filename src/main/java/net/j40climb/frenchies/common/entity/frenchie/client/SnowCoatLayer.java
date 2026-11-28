@@ -12,7 +12,7 @@ final class SnowCoatLayer extends RenderLayer<FrenchieRenderState, FrenchieModel
     private static final Identifier[] TEXTURES = new Identifier[5];
     static {
         for (int i = 0; i < TEXTURES.length; i++) {
-            TEXTURES[i] = Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE,
+            TEXTURES[i] = Identifier.fromNamespaceAndPath(Frenchies.MOD_ID,
                     "textures/entity/frenchie/snow_" + (i + 1) + ".png");
         }
     }

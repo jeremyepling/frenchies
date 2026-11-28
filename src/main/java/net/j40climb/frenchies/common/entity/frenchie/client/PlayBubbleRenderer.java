@@ -21,7 +21,7 @@ public final class PlayBubbleRenderer extends EntityRenderer<PlayBubbleEntity, E
     //?} else {
     /*private static final RenderType FILM = RenderTypes.entityTranslucentCull(
     *///?}
-            Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "textures/entity/play_bubble.png"));
+            Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "textures/entity/play_bubble.png"));
 
     public PlayBubbleRenderer(EntityRendererProvider.Context context) {
         super(context);

@@ -2,6 +2,7 @@ package net.j40climb.frenchies.test;
 
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
+import net.j40climb.frenchies.common.entity.frenchie.play.PlayStages;
 import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -67,12 +68,17 @@ final class CompanionSafetyTests {
         var level = h.getLevel();
         float health = dog.getHealth();
         h.startSequence().thenWaitUntil(() -> h.assertTrue(dog.onGround(), "Dog has not landed"))
-        .thenExecute(dog::tryCelebrate)
-        .thenWaitUntil(() -> h.assertTrue(dog.celebrationStage() != 0, "Celebration never began"))
+        .thenExecute(() -> {
+            owner.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BONE));
+            owner.setShiftKeyDown(true);
+            dog.mobInteract(owner, InteractionHand.MAIN_HAND);
+            owner.setShiftKeyDown(false);
+        }).thenWaitUntil(() -> h.assertTrue(dog.trickStage() == PlayStages.Trick.CROUCH, "Owner-requested trick never began"))
         .thenExecute(() -> {
             dog.hurtServer(level, dog.damageSources().playerAttack(owner), 10);
             h.assertTrue(dog.dangerReaction().name().equals("STARTLE"), "An accidental hit gave no startle");
-        }).thenExecuteAfter(3, () -> h.assertTrue(dog.celebrationStage() == 0 && dog.hurtTime == 0, "Hit left the play goal active"))
+        }).thenExecuteAfter(3, () -> h.assertTrue(dog.trickStage() == PlayStages.Trick.NONE && dog.hurtTime == 0,
+                "Hit left the trick active or hurt the dog"))
         .thenExecuteAfter(20, () -> {
             dog.hurtServer(level, dog.damageSources().playerAttack(owner), 10);
             h.assertTrue(dog.dangerReaction().name().equals("NONE"), "Hits replayed the reaction during cooldown");

@@ -51,17 +51,17 @@ public final class DeliveryMultiplayerServer {
 
     @SubscribeEvent
     public static void start(ServerStartedEvent event) throws IOException {
-        String path = System.getProperty("florafauna_frenchies.deliveryTest.root");
+        String path = System.getProperty("frenchies.deliveryTest.root");
         if (path == null) {
-            path = System.getProperty("florafauna_frenchies.playTest.root");
+            path = System.getProperty("frenchies.playTest.root");
             testingPlay = path != null;
         }
         if (path == null) {
-            path = System.getProperty("florafauna_frenchies.whistleTest.root");
+            path = System.getProperty("frenchies.whistleTest.root");
             testingWhistle = path != null;
         }
         if (path == null) {
-            path = System.getProperty("florafauna_frenchies.legacyTest.root");
+            path = System.getProperty("frenchies.legacyTest.root");
             testingLegacy = path != null;
         }
         if (path == null) return;

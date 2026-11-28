@@ -6,6 +6,7 @@ import net.j40climb.frenchies.common.entity.frenchie.reaction.DangerReaction;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.j40climb.frenchies.Frenchies;
+import net.j40climb.frenchies.common.entity.frenchie.AdventureOutfit;
 import net.minecraft.client.animation.KeyframeAnimation;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -18,7 +19,7 @@ import net.minecraft.util.Mth;
 public class FrenchieModel extends EntityModel<FrenchieRenderState> {
 
     public static final ModelLayerLocation FRENCHIE = new ModelLayerLocation(
-            Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "frenchie"), "frenchie"); // is path is folder under textures/entity?
+            Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "frenchie"), "frenchie"); // is path is folder under textures/entity?
 
     private final KeyframeAnimation walkingAnimation;
     private final KeyframeAnimation swimmingAnimation;
@@ -33,12 +34,15 @@ public class FrenchieModel extends EntityModel<FrenchieRenderState> {
     private final ModelPart root;
     private final ModelPart body;
     private final ModelPart head;
+    private final ModelPart[] feet;
 
     public FrenchieModel(ModelPart root) {
         super(root);
         this.root = root.getChild("root");
         this.body = this.root.getChild("body");
         this.head = this.body.getChild("head");
+        this.feet = new ModelPart[]{body.getChild("leg_front_left"), body.getChild("leg_front_right"),
+                body.getChild("leg_back_left"), body.getChild("leg_back_right")};
 
         this.walkingAnimation = FrenchieAnimations.ANIM_WALK.bake(root);
         this.swimmingAnimation = FrenchieAnimations.ANIM_SWIM.bake(root);
@@ -93,6 +97,7 @@ public class FrenchieModel extends EntityModel<FrenchieRenderState> {
     public void setupAnim(FrenchieRenderState renderState) {
         super.setupAnim(renderState);
         head.getChild("tongue").visible = renderState.captain;
+        if (renderState.outfit == AdventureOutfit.CAPTAIN) head.zScale = 1.4F;
 
         if (renderState.dangerReaction != DangerReaction.NONE) {
             if (renderState.captain || renderState.isSitting) sitPoseAnimation.applyStatic();
@@ -152,20 +157,12 @@ public class FrenchieModel extends EntityModel<FrenchieRenderState> {
             head.xRot -= 0.25F;
             return;
         }
-        if (renderState.celebrationStage == PlayStages.Celebration.BOW) {
-            body.xRot = 0.32F;
-            body.y += 1.2F;
-            head.xRot = -0.24F;
-            body.getChild("leg_front_left").xRot = -1.05F;
-            body.getChild("leg_front_right").xRot = -1.05F;
-            return;
-        }
         if (renderState.playPose == PlayPose.AMBIENT_SIT) {
             sitPoseAnimation.applyStatic();
             applyHeadRotation(renderState.yRot, renderState.xRot);
             return;
         }
-        if (renderState.celebrationStage == PlayStages.Celebration.SPLOOT || renderState.playPose == PlayPose.AMBIENT_REST) {
+        if (renderState.playPose == PlayPose.AMBIENT_REST) {
             body.y += 1.9F;
             head.y += 1.0F;
             head.xRot = -0.1F;
@@ -219,7 +216,18 @@ public class FrenchieModel extends EntityModel<FrenchieRenderState> {
 
         // Apply idle animation
         this.idlingAnimation.apply(renderState.idleAnimationState, renderState.ageInTicks, 1.0F);
-        float attention = renderState.toyEarLift;
+        float celebration = renderState.isSleeping || renderState.isSwimming || renderState.presenting ? 0f : renderState.celebrationBow;
+        if (celebration > 0f) {
+            float bow = celebration * (1f - Math.clamp(renderState.walkAnimationSpeed * 10f, 0f, 1f));
+            head.xRot -= 0.25F * celebration;
+            if (!renderState.isSitting && renderState.playPose == PlayPose.NONE) {
+                body.xRot += 0.32F * bow;
+                body.y += 1.2F * bow;
+                body.getChild("leg_front_left").xRot -= 1.05F * bow;
+                body.getChild("leg_front_right").xRot -= 1.05F * bow;
+            }
+        }
+        float attention = Math.max(renderState.toyEarLift, celebration);
         if (renderState.playPose == PlayPose.SLIME_NOTICE || renderState.playPose == PlayPose.BUBBLE_NOSE) {
             head.zRot += renderState.playPose == PlayPose.SLIME_NOTICE ? 0.23F : -0.15F;
             attention = 1;
@@ -236,6 +244,38 @@ public class FrenchieModel extends EntityModel<FrenchieRenderState> {
             head.getChild("earR").y -= lift;
         }
         applyEndermanLook(renderState);
+        applyAdventurePose(renderState);
+    }
+
+    private void applyAdventurePose(FrenchieRenderState state) {
+        if (state.adventureFlying) FrenchieTravelGesture.flattenEars(head, 1F);
+        if (state.dragonDuckTime > 0 && !state.isSleeping && !state.isSwimming) {
+            float duck = Math.clamp(Math.min(22F - state.dragonDuckTime, state.dragonDuckTime) / 4F, 0F, 1F);
+            head.xRot += 0.47F * duck;
+            head.y += 0.95F * duck;
+            body.y += (state.isSitting ? 0.2F : 0.85F) * duck;
+            if (!state.isSitting) {
+                feet[0].xRot -= 0.39F * duck;
+                feet[1].xRot -= 0.39F * duck;
+            }
+        }
+    }
+
+    void translateToHead(PoseStack pose) {
+        translateToBody(pose);
+        head.translateAndRotate(pose);
+    }
+
+    void translateToFoot(PoseStack pose, int foot) {
+        translateToBody(pose);
+        feet[foot].translateAndRotate(pose);
+    }
+
+    private void translateToBody(PoseStack pose) {
+        // The keyframe lookup binds "root" to the outer baked part. Swimming pitches that part.
+        root().translateAndRotate(pose);
+        root.translateAndRotate(pose);
+        body.translateAndRotate(pose);
     }
 
     private void applySideSleep(float blend) {
@@ -419,15 +459,8 @@ public class FrenchieModel extends EntityModel<FrenchieRenderState> {
     }
 
     void translateToChest(PoseStack pose) {
-        root.translateAndRotate(pose);
-        body.translateAndRotate(pose);
+        translateToBody(pose);
         body.getChild("chest").translateAndRotate(pose);
-    }
-
-    void translateToHead(PoseStack pose) {
-        root.translateAndRotate(pose);
-        body.translateAndRotate(pose);
-        head.translateAndRotate(pose);
     }
 
     void translateToMouth(PoseStack pose) {

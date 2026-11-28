@@ -6,18 +6,13 @@ import net.j40climb.frenchies.setup.FrenchieRegistry;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 
 import static net.j40climb.frenchies.test.CompanionTravelTests.disconnect;
-import static net.j40climb.frenchies.test.CompanionTravelTests.dog;
 import static net.j40climb.frenchies.test.CompanionTravelTests.player;
-import static net.j40climb.frenchies.test.CompanionTravelTests.reload;
 
 final class CompanionPlayTests {
     private static final InteractionHand HAND = InteractionHand.MAIN_HAND;
-    private static final int BOW = 1, RUN = 2, HOP = 3, SPLOOT = 4;
 
     static String playState(GameTestHelper h, FrenchieEntity dog) {
         var owner = dog.getOwner();
@@ -30,23 +25,6 @@ final class CompanionPlayTests {
                 + ", ground=" + dog.onGround() + ", asleep=" + dog.isFrenchieSleeping()
                 + ", sit=" + dog.isOrderedToSit() + ", warned=" + dog.isWarningFlash()
                 + ", goals=" + goals + ", nearby=" + neighbors;
-    }
-
-    static void interruptCelebration(GameTestHelper h) {
-        var owner = player(h, 5.5, 4);
-        var dog = dog(h, owner);
-        h.startSequence().thenWaitUntil(() -> h.assertTrue(dog.onGround(), "Dog has not landed"))
-                .thenExecute(dog::tryCelebrate)
-                .thenWaitUntil(() -> h.assertTrue(dog.celebrationStage() != 0, "Celebration never began"))
-                .thenExecute(() -> owner.interactOn(dog, HAND, Vec3.ZERO))
-                .thenWaitUntil(() -> h.assertTrue(dog.isOrderedToSit() && dog.celebrationStage() == 0,
-                        "Sit order failed to interrupt celebration"))
-                .thenExecute(() -> {
-                    var restored = reload(h, dog);
-                    h.assertTrue(restored.isOrderedToSit() && restored.celebrationStage() == 0,
-                            "A reload discarded the sit order or resumed an interrupted celebration");
-                    disconnect(owner);
-                }).thenSucceed();
     }
 
     static void audience(GameTestHelper h) {
@@ -83,44 +61,5 @@ final class CompanionPlayTests {
                     "A dog's own squeaks recruited another audience");
             disconnect(owner);
         }).thenSucceed();
-    }
-
-    static void zoomies(GameTestHelper h, boolean open) {
-        var owner = player(h, 9.5, 9.5);
-        var dog = dog(h, owner);
-        var sequence = h.startSequence()
-                .thenWaitUntil(() -> h.assertTrue(dog.onGround(), "Frenchie has not landed"))
-                .thenExecute(dog::tryCelebrate)
-                .thenWaitUntil(() -> h.assertTrue(dog.celebrationStage() == BOW, "No opening play bow"));
-        if (open) {
-            sequence.thenWaitUntil(() -> h.assertTrue(dog.celebrationStage() == RUN, "No run on the clear stone yard"));
-            double centerZ = dog.getZ();
-            for (int lap = 0; lap < 2; lap++) {
-                sequence.thenWaitUntil(() -> h.assertTrue(dog.celebrationStage() == RUN && dog.getZ() > centerZ + 1,
-                                "Dog did not reach the south side of lap"))
-                        .thenWaitUntil(() -> h.assertTrue(dog.celebrationStage() == RUN && dog.getZ() < centerZ - 1,
-                                "Dog did not reach the north side of lap"));
-            }
-        } else {
-            sequence.thenExecute(() -> {
-                var crop = dog.blockPosition().west(2).south(2);
-                h.getLevel().setBlockAndUpdate(crop.below(), Blocks.FARMLAND.defaultBlockState());
-                h.getLevel().setBlockAndUpdate(crop, Blocks.WHEAT.defaultBlockState());
-            });
-        }
-        boolean[] ran = {false};
-        sequence.thenWaitUntil(() -> {
-            ran[0] |= dog.celebrationStage() == RUN;
-            h.assertTrue(dog.celebrationStage() == HOP, "No finish hop");
-        }).thenWaitUntil(() -> h.assertTrue(dog.celebrationStage() == SPLOOT, "No belly-down landing"))
-                .thenWaitUntil(() -> h.assertTrue(dog.celebrationStage() == 0, "Sploot became permanent"))
-                .thenExecute(() -> {
-                    h.assertTrue(open || !ran[0], "Dog ran a lap through crops");
-                    h.assertTrue(!dog.isOrderedToSit() && !dog.isFrenchieSleeping(), "Celebration imposed a rest order");
-                    dog.tryCelebrate();
-                }).thenExecuteAfter(8, () -> {
-                    h.assertTrue(dog.celebrationStage() == 0, "Celebration cooldown allowed an immediate restart");
-                    disconnect(owner);
-                }).thenSucceed();
     }
 }

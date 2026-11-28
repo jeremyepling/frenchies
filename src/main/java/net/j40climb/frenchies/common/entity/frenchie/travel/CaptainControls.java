@@ -41,11 +41,11 @@ public final class CaptainControls {
             boolean ashore = landing != null;
             if (!ashore) landing = findWater(dog, boat);
             if (landing == null) return;
-            boolean celebrate = ashore && tripOrigin != null && dog.distanceToSqr(tripOrigin) >= 16;
+            boolean completedTrip = ashore && tripOrigin != null && dog.distanceToSqr(tripOrigin) >= 16;
             dog.stopRiding();
             if (!dog.isPassenger()) {
                 dog.snapTo(landing.x, landing.y, landing.z, boat.getYRot(), 0F);
-                if (celebrate) dog.tryCelebrate();
+                if (completedTrip) dog.celebrate();
             }
         } else if (!dog.isPassenger() && owner != null && owner.getVehicle() instanceof AbstractBoat boat
                 && dog.distanceToSqr(boat) <= 36 && canJoin(dog, boat) && dog.hasLineOfSight(boat)

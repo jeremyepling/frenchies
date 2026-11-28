@@ -21,7 +21,7 @@ import java.util.Set;
 /** Captures actual tracked poses from a second client, while the owner drives the two click gestures. */
 @EventBusSubscriber(modid = Frenchies.MOD_ID, value = Dist.CLIENT)
 public final class PlayfulInteractionClient {
-    private static final String ROLE = System.getProperty("florafauna_frenchies.playfulTest.client");
+    private static final String ROLE = System.getProperty("frenchies.playfulTest.client");
     private enum OwnerStep { IDLE, TRICK, BELLY, RUB, EXIT }
     private static OwnerStep ownerStep = OwnerStep.IDLE;
     private static int ownerTicks;

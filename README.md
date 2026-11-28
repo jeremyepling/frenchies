@@ -19,6 +19,8 @@ Take a French bulldog on your next expedition. It can ride on the bow while you 
 
 Frenchies come in fawn and brindle. To meet one in Creative, use the Frenchie Spawn Egg. Offer a bone to tame it, then right-click with an empty hand to switch between sitting and following. Feed two adult Frenchies glow berries to breed a pup.
 
+Use `/summon frenchies:frenchie` or `/give @s frenchies:frenchie_spawn_egg` to meet one by command. Worlds saved with the earlier `florafauna` IDs need a separate migration to retain their existing dogs, equipment and courier data.
+
 Tamed Frenchies stay healthy through ordinary hazards and never need healing. They react to danger, try to get clear, and can return to you for safety. A following dog catches up after ordinary separation. A dog you ask to sit waits there until called or until it needs rescuing.
 
 Taming your first dog gives you a **Frenchie Whistle**. Right-click to call your selected Frenchie, or crouch and right-click to dismiss it until next time. Type `/frenchie select` and click a name to choose among your dogs, even while they are away. Use `/frenchie whistle` for a free replacement. Calls work across dimensions and interrupt jobs. A recalled courier keeps its parcel for you to collect with an empty hand. Move to open, dry ground if your dog can't land. Active dogs rejoin you after respawn. Dismissed dogs wait for your whistle.
@@ -26,7 +28,7 @@ Taming your first dog gives you a **Frenchie Whistle**. Right-click to call your
 - **Play fetch.** Craft a squeaky toy with orange wool and a slimeball. Right-click to squeak it and watch the ears turn your way. Squeak a few times to draw a small audience, or crouch and right-click to throw it. When your dog brings it back, right-click with an empty hand to take it.
 - **Blow bubbles.** Craft a bubble toy with a glass bottle, a slimeball and a stick in any arrangement. Right-click to blow a small fan of bubbles. Up to three nearby Frenchies can join in. A sitting dog watches from its spot, and a lucky hunter might catch one on its nose. You can blow another group after two seconds.
 - **Watch a Frenchie tease a slime.** Give an idle dog and a tiny slime a little room on level ground. The dog cocks its head, barks, bows and hops from side to side, then circles for another invitation. The slime can go about its business the whole time.
-- **Catch the zoomies.** A reunion, a finished delivery or a good game of fetch can earn a play bow, a couple of loops, and a belly-down sploot. A nearby Frenchie can join the fun.
+- **Share a little celebration.** A completed fetch or delivery, a reunion, or reaching a destination can earn a brief bow. The dog is still free to follow you.
 - **Ask for a trick.** Crouch and use a bone on your Frenchie to see its ambitious attempt at a backflip. Give it room for the victory lap.
 - **Offer belly rubs.** Crouch beside an idle Frenchie with empty hands for a moment, then use an empty hand to rub its belly. Walk away or give a command when playtime is over.
 - **Watch the drying routine.** After a real swim, a Frenchie shakes off and may roll on nearby grass or moss before dragging its belly forward.
@@ -34,7 +36,7 @@ Taming your first dog gives you a **Frenchie Whistle**. Right-click to call your
 - **Bring a digging assistant.** Dig nearby dirt or sand with a shovel and an available Frenchie may dig beside you, then proudly carry its reusable toy stick. Its digging leaves the ground untouched.
 - **Take the boat.** Board with your dog following and it rides at the bow, leaving the passenger seat free. Its life jacket appears automatically on the water. When you step out, it looks for a safe landing.
 - **Follow its nose.** Use an ordinary compass or a recovery compass on your dog and follow it toward your last death in this dimension. It waits if you fall behind and signals when you reach the spot.
-- **Explore with a map.** Use a structure explorer map on your Frenchie to let it lead the way. Use the same map again to stop, or use another map to change destinations. The dog carries its own satchel and wears pirate gear for buried treasure. If it can verify the chest and reach the ground above it, it shows you where to dig.
+- **Explore with a map.** Use a structure explorer map on your Frenchie to let it lead the way to the map's marked destination. Structure guidance requires a map supplied by the owner; the dog does not independently discover structures. Use the same map again to stop, or use another map to change destinations. The dog carries its own satchel and wears pirate gear for buried treasure. If it can verify the chest and reach the ground above it, it shows you where to dig.
 - **Listen for two barks.** An awake Frenchie turns toward a visible creeper within 12 blocks. A green creeper face flashes with each bark, even above the hotbar when you're carrying the dog. Warnings have an eight-second cooldown.
 - **Share a bedtime.** Use a bed within ten blocks of your dog and it can curl up by your pillow, even after a sit order. Each time it falls asleep, it may settle on its belly or roll onto its side. Sleep through the night together for two minutes of **Well Rested** and 10% faster block breaking.
 
@@ -47,8 +49,18 @@ In falling snow, a dusting spreads across your Frenchie's head and back over abo
 - **Weather a storm together.** A nearby lightning strike can send a following dog to your side with a quiet whimper. It settles down about 15–30 seconds after the last nearby strike. A dog you asked to sit holds its place.
 - **Lead a herd.** Walk with wheat in either hand while sheep or cows follow. Your Frenchie works along the outside and can gently nudge a straggler on clear, level ground. Put the wheat away to end the help.
 - **Bring home a stick.** After you chop a log, your dog may pick up one freshly dropped stick once nearby players step away. It brings the stick to your inventory and leaves saplings for replanting. If your inventory is full, take the stick from its mouth with an empty hand.
-- **Take a breather.** Watch a standing Frenchie closely and you can see its ribs rise and an ear twitch. Stay still for a while and your dog may sit beside you, then stretch out. It favors a sheltered spot or a place near a lit campfire. Start walking and it gets up on its own.
+- **Take a breather.** Watch a standing Frenchie closely and you can see its ribs rise and an ear twitch. Stay still for a while and your dog may sit beside you, then stretch out. It favors a sheltered spot. Start walking and it gets up on its own.
 - **Explore a ravine.** If a fall costs you at least two hearts, a Frenchie within 24 blocks may come check on you. If it can't find safe footing down, it looks toward you from where it stands. At an exposed lava edge, it looks for room to back away and can wait back while you mine.
+
+## Adventure outfits
+
+Frenchies automatically dress for the trip. The captain wears a cap and life jacket at the bow. When you dive with enough water overhead, a following Frenchie can enter from a nearby bank and swim to you in a clear rectangular helmet, four flippers, and a small air tank. It returns to surface swimming when you come up.
+
+In dark caves a Frenchie puts on a hard hat, keeps close, and sometimes looks at ore or watches you use a pickaxe. For the lamp to illuminate nearby terrain, install the matching [LambDynamicLights](https://modrinth.com/mod/lambdynamiclights) client mod on Fabric or NeoForge. The server needs only Frenchies. The lamp provides constant level-11 point light and makes no changes to world blocks.
+
+A snowy biome brings out boots and a scarf wrapped around the shoulders. Exposed snowfall gradually collects on the coat and melts under cover or in warmer surroundings. Frenchies sometimes shake off snow or rain, and a nearby thunderclap can send them back to their owner with a soft whimper. A dog asked to stay keeps its place.
+
+In the Nether, the backpack fan speeds up near lava and a following dog waits if you venture too close to a lava edge. In the End, a Frenchie wears a square white helmet with an antenna and ducks when a flying dragon passes overhead. A dog carried in a front pack wears its aviator outfit during Elytra or Happy Ghast flight and keeps its goggles on for a moment after landing.
 
 ## Send a special delivery
 
@@ -72,12 +84,15 @@ On a quiet nighttime walk, your passenger can close its eyes, lower its head, an
 
 ## Companion settings
 
-Fabric and NeoForge generate `config/florafauna_frenchies.properties` on startup. The settings apply to every Frenchie on the server, or in your local game for singleplayer. All default to `true`. To lead livestock yourself, for example, set `automaticHerding=false` and restart. You can add any missing option to an existing file. Each dog's sit and follow orders still come from its owner.
+Fabric and NeoForge generate `config/frenchies.properties` on startup. The settings apply to every Frenchie on the server, or in your local game for singleplayer. All default to `true`. To lead livestock yourself, for example, set `automaticHerding=false` and restart. You can add any missing option to an existing file. Each dog's sit and follow orders still come from its owner.
 
 | Option | Controls |
 | --- | --- |
+| `automaticAdventureOutfits` | Show automatic adventure outfits |
+| `miningHelmetDynamicLight` | Illuminate nearby terrain when the hard hat is active and the client has LambDynamicLights |
+| `snowAccumulation` | Let exposed snowfall collect on the coat and build up enough for a snow shake |
 | `weatherReactions` | Rain and snow exposure, precipitation shakes, and thunder reactions |
-| `visibleSnow` | Draw snow on the coat when `weatherReactions` is enabled |
+| `visibleSnow` | Draw the accumulated snow on the coat |
 | `thunderFear` | Seek company or cover after a lightning strike when `weatherReactions` is enabled |
 | `automaticHerding` | Assisting sheep and cows that follow wheat |
 | `fallReactions` | Checking on an owner who loses at least two hearts to a fall |
@@ -88,13 +103,19 @@ Fabric and NeoForge generate `config/florafauna_frenchies.properties` on startup
 
 ## Development
 
+The [behavior decisions](docs/behavior-decisions.md) record the accepted scope and remaining ideas.
+
+### Editing outfits in Blockbench
+
+Open and save the editable `.bbmodel` files directly in the Frenchies checkout. Minecraft loads separate Java model code and runtime textures, so apply the corresponding changes there and check the outfit in-game before committing. [Blockbench outfit workflow](art/blockbench/adventure-outfits/Start%20Here.md)
+
 ### Building and testing
 
 `FrenchieEntity` connects Minecraft interactions, goal priorities and synchronized entity state. The packages beneath `common.entity.frenchie` group the code by feature.
 
 | Package | What lives there |
 | --- | --- |
-| `play` | Toys, fetch, tree-stick retrieval, bubbles, tricks, celebrations, and shared play rules |
+| `play` | Toys, fetch, tree-stick retrieval, bubbles, tricks, and shared play rules |
 | `assistance` | Livestock herding and digging assistance |
 | `travel` | Boat boarding and dismounting, and following a trail to the owner's last death |
 | `delivery` | Courier trips, parcel handoffs, the destination picker, and its packets |
@@ -115,6 +136,8 @@ For the NeoForge scripted clients on Windows with PowerShell 7, run `./scripts/t
 
 To play with FloraFauna, Hammer and Frenchies together, run `./gradlew -PdevMods=all :26.1-neoforge:runClient` or `:26.3-neoforge:runClient` from a matching FloraFauna checkout. [FloraFauna development setup](https://github.com/jeremyepling/florafauna#play-with-the-hammer-and-frenchies)
 
-For companion reactions, run the NeoForge GameTests with `-PgameTestFilter=florafauna_frenchies:companion_reaction_*`. The scripted client accepts `-Scenario weather` to capture the same dog as its snow coat builds, shakes off, and begins to build again.
+For companion reactions, run the NeoForge GameTests with `-PgameTestFilter=frenchies:companion_reaction_*`. The scripted client accepts `-Scenario weather` to capture the same dog as its snow coat builds, shakes off, and begins to build again.
 
-Use `-Scenario rest` to see the standing idle and both sleep poses beside a bed, then watch the packed dog doze, snore, and wake for a creeper or daylight. The shared GameTest `florafauna_frenchies:frenchie_sleep_pose_save` covers saved poses and older worlds.
+Use `-PgameTestFilter=frenchies:adventure_*` for outfit and traversal GameTests. The scripted client accepts `-Scenario adventure` for outfits and cave light and `-Scenario adventureflight` for a packed Frenchie on a Happy Ghast.
+
+Use `-Scenario rest` to see the standing idle and both sleep poses beside a bed, then watch the packed dog doze, snore, and wake for a creeper or daylight. The shared GameTest `frenchies:frenchie_sleep_pose_save` covers saved poses and older worlds.

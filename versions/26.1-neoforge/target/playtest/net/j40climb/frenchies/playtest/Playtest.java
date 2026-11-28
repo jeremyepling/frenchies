@@ -51,13 +51,16 @@ public final class Playtest {
                 Path expected = directory.resolve("saves/playtest").toRealPath();
                 require(mc.gameDirectory.toPath().toRealPath().equals(directory.toRealPath()), "Wrong game directory");
                 require(mc.getSingleplayerServer().getWorldPath(LevelResource.ROOT).toRealPath().equals(expected), "Wrong save");
-                require(Files.readString(directory.resolve(".florafauna-playtest")).trim().equals(scenario), "Missing test marker");
+                require(Files.readString(directory.resolve(".frenchies-playtest")).trim().equals(scenario), "Missing test marker");
             } catch (IOException e) {
                 throw new IllegalStateException("Cannot verify the copied world", e);
             }
             return true;
         });
         switch (scenario) {
+            case "adventure" -> AdventureOutfitPlaytest.steps(this, phase);
+            case "adventureflight" -> AdventureOutfitPlaytest.flight(this, phase);
+            case "adventurenether" -> AdventureOutfitPlaytest.nether(this, phase);
             case "frontpack" -> FrontpackPlaytest.steps(this, phase);
             case "companions" -> CompanionIconsPlaytest.steps(this);
             case "delivery" -> DeliveryPlaytest.steps(this, phase);
@@ -113,12 +116,12 @@ public final class Playtest {
 
     @SubscribeEvent
     public static void tick(ClientTickEvent.Post event) {
-        String path = System.getProperty("florafauna_frenchies.playtest.directory");
+        String path = System.getProperty("frenchies.playtest.directory");
         if (path == null) return;
         Minecraft mc = Minecraft.getInstance();
         if (active == null) {
-            active = new Playtest(Path.of(path), System.getProperty("florafauna_frenchies.playtest.scenario"),
-                    Integer.getInteger("florafauna_frenchies.playtest.phase"));
+            active = new Playtest(Path.of(path), System.getProperty("frenchies.playtest.scenario"),
+                    Integer.getInteger("frenchies.playtest.phase"));
         }
         if (!active.finished) active.advance(mc);
     }

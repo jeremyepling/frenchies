@@ -124,7 +124,7 @@ public final class DeathTrackingGoal extends Goal {
     @Override
     public boolean canUse() {
         if (map == null) return target != null;
-        return dog.getOwner() instanceof ServerPlayer owner && owner.isAlive() && !owner.isSpectator()
+        return !dog.wantsToDiveWithOwner() && dog.getOwner() instanceof ServerPlayer owner && owner.isAlive() && !owner.isSpectator()
                 && owner.level() == dog.level() && !owner.isPassenger() && !owner.isFallFlying()
                 && !dog.isPassenger() && !dog.isOrderedToSit() && !dog.isLeashed() && dog.getTarget() == null;
     }
@@ -236,7 +236,7 @@ public final class DeathTrackingGoal extends Goal {
                 tellExplorer(owner, "arrived");
                 cancel();
                 dog.perkToyEars();
-                dog.tryCelebrate();
+                dog.celebrate();
                 return;
             }
             if (treasure == null && !reportedArea) {
@@ -375,10 +375,10 @@ public final class DeathTrackingGoal extends Goal {
     }
 
     private void tell(ServerPlayer owner, String key) {
-        owner.sendOverlayMessage(Component.translatable("frenchie.florafauna.tracking." + key, dog.getName()));
+        owner.sendOverlayMessage(Component.translatable("frenchie.frenchies.tracking." + key, dog.getName()));
     }
 
     private void tellExplorer(ServerPlayer owner, String key) {
-        owner.sendOverlayMessage(Component.translatable("frenchie.florafauna.explorer." + key, dog.getName()));
+        owner.sendOverlayMessage(Component.translatable("frenchie.frenchies.explorer." + key, dog.getName()));
     }
 }

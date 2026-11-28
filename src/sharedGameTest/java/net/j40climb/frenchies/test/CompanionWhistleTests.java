@@ -285,33 +285,28 @@ final class CompanionWhistleTests {
         }).thenSucceed();
     }
 
-    static void boatOrPlay(GameTestHelper h, boolean boat, boolean dismiss) {
+    static void boat(GameTestHelper h, boolean dismiss) {
         var owner = player(h, 4.5, 4.5);
         var dog = dog(h, owner, 5, 5);
         dog.standUp();
         var id = dog.getUUID();
-        var sequence = h.startSequence();
-        if (boat) {
-            var vessel = h.spawn(EntityType.OAK_BOAT, 5, 1, 6);
-            owner.interactOn(vessel, HAND, Vec3.ZERO);
-            sequence.thenWaitUntil(() -> h.assertTrue(dog.getVehicle() == vessel, "Frenchie did not board owner's boat"));
-        } else {
-            sequence.thenWaitUntil(() -> h.assertTrue(dog.onGround(), "Dog has not landed")).thenExecute(dog::tryCelebrate)
-                    .thenWaitUntil(() -> h.assertTrue(dog.celebrationStage() != 0, "Dog did not begin play"));
-        }
-        sequence.thenExecute(() -> {
-            equip(owner);
-            whistle(owner, dismiss);
-        });
-        if (dismiss) sequence.thenWaitUntil(() -> h.assertTrue(h.getLevel().getEntity(id) == null, "Playing/riding dog failed to dismiss"))
+        var vessel = h.spawn(EntityType.OAK_BOAT, 5, 1, 6);
+        owner.interactOn(vessel, HAND, Vec3.ZERO);
+        var sequence = h.startSequence()
+                .thenWaitUntil(() -> h.assertTrue(dog.getVehicle() == vessel, "Frenchie did not board owner's boat"))
+                .thenExecute(() -> {
+                    equip(owner);
+                    whistle(owner, dismiss);
+                });
+        if (dismiss) sequence.thenWaitUntil(() -> h.assertTrue(h.getLevel().getEntity(id) == null, "Riding dog failed to dismiss"))
                 .thenExecute(() -> { owner.stopRiding(); whistle(owner, false); });
         sequence.thenWaitUntil(() -> {
             var current = near(h, owner, id);
-            h.assertTrue(current.celebrationStage() == 0 && !current.isPassenger(), "Call left play or boat travel active");
+            h.assertTrue(!current.isPassenger(), "Call left the Frenchie riding the boat");
         }).thenExecute(() -> {
             owner.stopRiding();
             h.assertTrue(h.getLevel().getEntities(FrenchieRegistry.FRENCHIE.get(), d -> d.isOwnedBy(owner)).size() == 1,
-                    "Interrupting play or riding duplicated the dog");
+                    "Interrupting riding duplicated the dog");
             disconnect(owner);
         }).thenSucceed();
     }

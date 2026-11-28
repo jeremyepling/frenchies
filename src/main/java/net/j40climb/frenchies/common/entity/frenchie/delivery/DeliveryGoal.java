@@ -328,7 +328,7 @@ public final class DeliveryGoal extends Goal {
             dog.resetLastPoseChangeTick(dog.level().getGameTime());
         } else if (!goingHome && back && !hasParcel()) {
             dog.standUp();
-            if (completedDelivery) dog.tryCelebrate();
+            if (completedDelivery) dog.celebrate();
             completedDelivery = false;
         }
         dog.syncCompanionJob();
@@ -452,7 +452,7 @@ public final class DeliveryGoal extends Goal {
     }
 
     static Component label(String key, Object... args) {
-        return Component.translatable("frenchie.florafauna.delivery." + key, args);
+        return Component.translatable("frenchie.frenchies.delivery." + key, args);
     }
 
     public static void tell(@Nullable ServerPlayer player, String key, Object... args) {

@@ -23,22 +23,22 @@ import java.util.function.Supplier;
 
 class FrenchieRegistries {
     static Identifier id(String name) {
-        return Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, name);
+        return Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, name);
     }
-    static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, Frenchies.LEGACY_NAMESPACE);
+    static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, Frenchies.MOD_ID);
     static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =
-            DeferredRegister.create(Registries.RECIPE_SERIALIZER, Frenchies.LEGACY_NAMESPACE);
+            DeferredRegister.create(Registries.RECIPE_SERIALIZER, Frenchies.MOD_ID);
 
-    static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, Frenchies.LEGACY_NAMESPACE);
+    static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, Frenchies.MOD_ID);
 
-    static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, Frenchies.LEGACY_NAMESPACE);
+    static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, Frenchies.MOD_ID);
 
     static final DeferredRegister<TicketType> TICKET_TYPES =
-            DeferredRegister.create(Registries.TICKET_TYPE, Frenchies.LEGACY_NAMESPACE);
+            DeferredRegister.create(Registries.TICKET_TYPE, Frenchies.MOD_ID);
 
-    static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Frenchies.LEGACY_NAMESPACE);
+    static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Frenchies.MOD_ID);
 
-    static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT, Frenchies.LEGACY_NAMESPACE);
+    static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT, Frenchies.MOD_ID);
     public static final Holder<MobEffect> WELL_RESTED = MOB_EFFECTS.register("well_rested", WellRestedEffect::new);
 
     public static final Supplier<AttachmentType<FrontpackWarning>> FRENCHIE_WARNING =

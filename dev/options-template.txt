@@ -165,12 +165,11 @@ key_key.debug.dumpVersion:key.keyboard.v
 key_key.debug.profilingChart:key.keyboard.1
 key_key.debug.fpsCharts:key.keyboard.2
 key_key.debug.networkCharts:key.keyboard.3
-key_key.florafauna.summon_lightning:key.keyboard.r
-key_key.florafauna.teleport_surface:key.keyboard.m
+key_key.hammer.summon_lightning:key.keyboard.r
+key_key.hammer.teleport_surface:key.keyboard.m
 key_key.florafauna.dash:key.mouse.4
-key_key.florafauna.hammer_config:key.keyboard.p
-key_key.florafauna.throw_item:key.keyboard.comma
-key_key.florafauna.cycle_mining_mode:key.keyboard.c
+key_key.hammer.throw_item:key.keyboard.comma
+key_key.hammer.cycle_mining_mode:key.keyboard.c
 soundCategory_master:1.0
 soundCategory_music:0.0
 soundCategory_record:1.0

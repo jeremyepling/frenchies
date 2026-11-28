@@ -12,7 +12,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -61,8 +60,7 @@ final class QuietCompanyGoal extends Goal {
         var side = dog.getRandom().nextBoolean() ? facing.getClockWise() : facing.getCounterClockWise();
         var places = new BlockPos[]{anchor.relative(side, 2), anchor.relative(side.getOpposite(), 2),
                 anchor.relative(facing.getOpposite(), 2)};
-        var fire = nearbyCampfire(level, anchor);
-        Arrays.sort(places, Comparator.comparingInt(pos -> comfortPenalty(level, pos, fire)));
+        Arrays.sort(places, Comparator.comparing(level::canSeeSky));
         for (var pos : places) {
             var target = Vec3.atBottomCenterOf(pos);
             approach = null;
@@ -77,19 +75,6 @@ final class QuietCompanyGoal extends Goal {
         }
         approach = null;
         return false;
-    }
-
-    private static @Nullable BlockPos nearbyCampfire(ServerLevel level, BlockPos owner) {
-        for (var pos : BlockPos.withinManhattan(owner, 4, 1, 4)) {
-            if (level.hasChunkAt(pos) && CampfireBlock.isLitCampfire(level.getBlockState(pos))) return pos.immutable();
-        }
-        return null;
-    }
-
-    private static int comfortPenalty(ServerLevel level, BlockPos pos, @Nullable BlockPos fire) {
-        int penalty = level.canSeeSky(pos) ? 1 : 0;
-        if (fire != null && (pos.distSqr(fire) < 4 || pos.distSqr(fire) > 16)) penalty += 2;
-        return penalty;
     }
 
     @Override

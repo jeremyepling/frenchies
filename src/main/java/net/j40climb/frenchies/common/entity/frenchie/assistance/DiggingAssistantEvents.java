@@ -1,5 +1,6 @@
 package net.j40climb.frenchies.common.entity.frenchie.assistance;
 
+import net.j40climb.frenchies.common.entity.frenchie.CompanionSettings;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
 
 import net.minecraft.core.BlockPos;
@@ -14,6 +15,13 @@ public final class DiggingAssistantEvents {
     private DiggingAssistantEvents() {}
 
     public static void ownerDigs(ServerLevel level, Player player, BlockPos pos, BlockState state, ItemStack tool) {
+        if (tool.is(ItemTags.PICKAXES)) {
+            if (CompanionSettings.automaticAdventureOutfits() && level.getRandom().nextInt(9) == 0) {
+                level.getEntitiesOfClass(FrenchieEntity.class, player.getBoundingBox().inflate(6), dog -> dog.isOwnedBy(player))
+                        .stream().anyMatch(dog -> dog.watchOwnerMine(pos));
+            }
+            return;
+        }
         if (!tool.is(ItemTags.SHOVELS)
                 || !DiggingAssistantGoal.diggable(state)
                 || level.getRandom().nextInt(5) != 0) return;

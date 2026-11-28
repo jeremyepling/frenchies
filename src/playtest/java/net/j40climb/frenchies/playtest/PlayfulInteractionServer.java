@@ -71,7 +71,7 @@ public final class PlayfulInteractionServer {
 
     @SubscribeEvent
     public static void started(ServerStartedEvent event) throws IOException {
-        String path = System.getProperty("florafauna_frenchies.playfulTest.root");
+        String path = System.getProperty("frenchies.playfulTest.root");
         if (path == null) return;
         root = Path.of(path).toRealPath();
         require(event.getServer().getWorldPath(LevelResource.ROOT).toRealPath()

@@ -16,8 +16,8 @@ public final class PreviewClientRegistries {
     public static void registerRenderers() {
         EntityRendererProvider<FrenchieEntity> frenchie = FrenchieRenderer::new;
         EntityRendererProvider<PlayBubbleEntity> bubble = PlayBubbleRenderer::new;
-        Registry.register(BuiltInClientRegistries.ENTITY_RENDERER, Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "frenchie"), frenchie);
-        Registry.register(BuiltInClientRegistries.ENTITY_RENDERER, Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "play_bubble"), bubble);
+        Registry.register(BuiltInClientRegistries.ENTITY_RENDERER, Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "frenchie"), frenchie);
+        Registry.register(BuiltInClientRegistries.ENTITY_RENDERER, Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "play_bubble"), bubble);
     }
 
     public static void registerFrontpackModels(Identifier id) {

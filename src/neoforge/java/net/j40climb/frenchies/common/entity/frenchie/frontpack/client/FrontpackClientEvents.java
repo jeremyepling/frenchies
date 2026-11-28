@@ -29,12 +29,12 @@ public class FrontpackClientEvents {
     //? if <26.4 {
     @SubscribeEvent
     public static void registerItemTints(RegisterColorHandlersEvent.ItemTintSources event) {
-        event.register(Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "front_pack"), FrontpackTint.CODEC);
+        event.register(Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "front_pack"), FrontpackTint.CODEC);
     }
 
     @SubscribeEvent
     public static void registerItemModels(RegisterSpecialModelRendererEvent event) {
-        event.register(Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "front_pack"), FrontpackItemRenderer.Unbaked.CODEC);
+        event.register(Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "front_pack"), FrontpackItemRenderer.Unbaked.CODEC);
     }
     //?}
 

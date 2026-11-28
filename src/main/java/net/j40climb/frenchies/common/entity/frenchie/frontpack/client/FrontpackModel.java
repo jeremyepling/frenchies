@@ -1,6 +1,7 @@
 package net.j40climb.frenchies.common.entity.frenchie.frontpack.client;
 
 import net.j40climb.frenchies.Frenchies;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.j40climb.frenchies.common.entity.frenchie.client.FrenchieTravelGesture;
 import net.minecraft.client.animation.KeyframeAnimation;
 import net.minecraft.client.model.EntityModel;
@@ -23,13 +24,16 @@ import java.util.Set;
 public class FrontpackModel extends EntityModel<AvatarRenderState> {
 
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
-            Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "french_frontpack"), "main");
+            Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "french_frontpack"), "main");
 
     private final KeyframeAnimation idlingAnimation;
     private final AnimationState idleAnimationState = new AnimationState();
 
     // Model pixels in front of the player's chest. The original pouch projected 2 pixels.
     private static final float POUCH_PROJECTION = 4.0F;
+    private static final float POUCH_TEXTURE_WIDTH = 7.0F;
+    private static final float POUCH_WORN_WIDTH = 7.3F;
+    private static final float POUCH_GLIDE_WIDTH = 7.2F;
     // Restore some of the packed pose's 0.6 depth scale along the player's front-to-back axis.
     private static final float DOG_DEPTH_SCALE = 0.8F / 0.6F;
 
@@ -61,9 +65,10 @@ public class FrontpackModel extends EntityModel<AvatarRenderState> {
         PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
 
         PartDefinition carrier = root.addOrReplaceChild("carrier", CubeListBuilder.create(), PartPose.offset(2.7F, -9.0F, -1.1F));
-        // Anchor the top of the original six-pixel texture and extend the hem just below the rump.
-        carrier.addOrReplaceChild("pouch", CubeListBuilder.create().texOffs(44, 0).addBox(-6.2F, 0, -3.0F, 7.0F, 6.0F, 3.0F),
-                PartPose.ZERO.scaled(1, 6.75F / 6, (1 + POUCH_PROJECTION) / 3).translated(0, 2.0F, 0.1F));
+        // Anchor the wider pouch at its fitted top corner and retain the original UV size.
+        carrier.addOrReplaceChild("pouch", CubeListBuilder.create().texOffs(44, 0).addBox(0, 0, -3.0F, POUCH_TEXTURE_WIDTH, 6.0F, 3.0F),
+                PartPose.ZERO.scaled(POUCH_WORN_WIDTH / POUCH_TEXTURE_WIDTH, 6.75F / 6, (1 + POUCH_PROJECTION) / 3)
+                        .translated(-6.4F, 2.0F, 0.1F));
 
         addShoulderStrap(carrier, "strap_left", 1);
         addShoulderStrap(carrier, "strap_right", -1);
@@ -142,16 +147,21 @@ public class FrontpackModel extends EntityModel<AvatarRenderState> {
         if (!carrying) return;
 
         float glide = renderState.isFallFlying ? renderState.fallFlyingScale() : 0F;
-        if (glide > 0F) {
-            // Raise the rim to the shoulders without lifting the seam under the rump.
+        float airborne = renderState.isFallFlying ? glide : pack.flying() ? 0.75F : 0F;
+        if (airborne > 0F) {
+            // Keep the pouch close to the carrier, with the hem above the rear paws.
             var pouch = carrier.getChild("pouch");
-            pouch.y -= 2.28F * glide;
-            pouch.yScale += 0.38F * glide;
-            pouch.zScale += 1.6F * glide;
-            dog.z -= 3.8F * glide;
+            pouch.xScale += (POUCH_GLIDE_WIDTH - POUCH_WORN_WIDTH) / POUCH_TEXTURE_WIDTH * airborne;
+            pouch.y += 0.45F * airborne;
+            pouch.yScale -= 0.46F * airborne;
+            pouch.zScale -= 0.4F * airborne;
+            dog.z -= 0.95F * airborne;
         }
         if (fabricOnly) return;
         this.idlingAnimation.apply(this.idleAnimationState, renderState.ageInTicks, 1.0F);
+        // The dog is upright in the pouch, so moving along its Y axis brings the muzzle forward.
+        head.y += 0.85F * airborne;
+        head.z -= 0.32F * airborne;
         var tongue = head.getChild("tongue");
         var lids = head.getChild("eyelids");
         float doze = renderState.isFallFlying || pack.alertYaw() != null ? 0F : pack.doze();
@@ -182,5 +192,17 @@ public class FrontpackModel extends EntityModel<AvatarRenderState> {
             head.getChild("earR").zRot -= 0.2F;
             head.getChild("earL").zRot += 0.2F;
         }
+        if (pack.flying()) FrenchieTravelGesture.flattenEars(head, 1F);
+    }
+
+    void translateToHead(PoseStack pose) {
+        root().translateAndRotate(pose);
+        root.translateAndRotate(pose);
+        var carriedDog = root.getChild("carried_dog");
+        carriedDog.translateAndRotate(pose);
+        var frenchie = carriedDog.getChild("frenchie");
+        frenchie.translateAndRotate(pose);
+        frenchie.getChild("body").translateAndRotate(pose);
+        head.translateAndRotate(pose);
     }
 }

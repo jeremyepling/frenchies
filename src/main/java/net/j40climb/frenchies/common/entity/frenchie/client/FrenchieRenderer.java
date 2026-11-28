@@ -1,5 +1,6 @@
 package net.j40climb.frenchies.common.entity.frenchie.client;
 
+import net.j40climb.frenchies.common.entity.frenchie.AdventureOutfit;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieEntity;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieStatusIcon;
 import net.j40climb.frenchies.common.entity.frenchie.FrenchieVariant;
@@ -36,9 +37,9 @@ public class FrenchieRenderer extends MobRenderer<FrenchieEntity, FrenchieRender
     private static final Map<FrenchieVariant, Identifier> TEXTURE_LOCATION_BY_VARIANT =
             Util.make(Maps.newEnumMap(FrenchieVariant.class), map -> {
                 map.put(FrenchieVariant.FAWN,
-                        Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "textures/entity/frenchie/frenchie_fawn_texture.png"));
+                        Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "textures/entity/frenchie/frenchie_fawn_texture.png"));
                 map.put(FrenchieVariant.BRINDLE,
-                        Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, "textures/entity/frenchie/frenchie_brindle_texture.png"));
+                        Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, "textures/entity/frenchie/frenchie_brindle_texture.png"));
             });
 
     private final ItemModelResolver itemResolver;
@@ -47,7 +48,7 @@ public class FrenchieRenderer extends MobRenderer<FrenchieEntity, FrenchieRender
         super(context, new FrenchieModel(context.bakeLayer(FrenchieModel.FRENCHIE)), 0.4f);
         addLayer(new SnowCoatLayer(this));
         addLayer(new FlotationVestLayer(this));
-        addLayer(new ExplorerOutfitLayer(this));
+        addLayer(new AdventureOutfitLayer(this));
         itemResolver = context.getItemModelResolver();
         addLayer(new FrenchieMouthLayer(this));
     }
@@ -105,13 +106,17 @@ public class FrenchieRenderer extends MobRenderer<FrenchieEntity, FrenchieRender
         reusedState.explorerOutfit = entity.explorerOutfit();
         reusedState.hideExplorerHeadwear = entity.isEyeInFluid(FluidTags.WATER);
         reusedState.endermanLook = entity.endermanLook(partialTick);
+        reusedState.outfit = entity.adventureOutfit();
+        reusedState.adventureFlying = entity.adventureFlying();
+        reusedState.fanAngle = entity.adventureFanAngle(partialTick);
+        reusedState.dragonDuckTime = entity.dragonDuckTime(partialTick);
         itemResolver.updateForLiving(reusedState.mouthItem, entity.getMouthItem(),
                 ItemDisplayContext.GROUND, entity);
         reusedState.toyStick = entity.getOffhandItem().is(Items.STICK) || entity.isShowingToyStick();
         reusedState.presenting = entity.handoffPhase() != 0;
         reusedState.toyEarLift = entity.toyEarLift(partialTick);
+        reusedState.celebrationBow = entity.onGround() ? entity.celebrationBow(partialTick) : 0f;
         reusedState.variant = entity.getVariant();
-        reusedState.celebrationStage = entity.celebrationStage();
         reusedState.digStage = entity.digStage();
         reusedState.digStageAge = entity.digStageAge(partialTick);
         reusedState.trickStage = entity.trickStage();

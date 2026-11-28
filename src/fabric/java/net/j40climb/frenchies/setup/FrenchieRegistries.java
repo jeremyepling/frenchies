@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 
 class FrenchieRegistries {
     static Identifier id(String name) {
-        return Identifier.fromNamespaceAndPath(Frenchies.LEGACY_NAMESPACE, name);
+        return Identifier.fromNamespaceAndPath(Frenchies.MOD_ID, name);
     }
 
     record Entries<T>(Registry<T> registry) {
