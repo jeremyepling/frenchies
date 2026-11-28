@@ -42,7 +42,7 @@ if (playtestId != null && (!(playtestId ==~ /[0-9a-f]{32}/) || !(playtestScenari
 }
 
 sourceSets.create('playtest') {
-    java.srcDir 'target/playtest'
+    java.srcDir new File(sharedTarget, "playtest")
     compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
     runtimeClasspath += sourceSets.main.runtimeClasspath
 }
@@ -143,7 +143,7 @@ configurations {
 }
 
 dependencies {
-    if (minecraft_version == '26.1') {
+    if (sharedVersion == '26.1') {
         compileOnly 'top.theillusivec4.curios:curios-neoforge:15.0.0-beta.1+26.1:api'
         compileOnly 'maven.modrinth:DHpbnc1G:t4UkCgZP' // Baubles 2, version 1.0
     } else {
@@ -166,7 +166,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
     ]
     inputs.properties replaceProperties
     expand replaceProperties
-    from 'target/templates'
+    from new File(sharedTarget, "templates")
     into "build/generated/sources/modMetadata"
 }
 sourceSets.main.resources.srcDir generateModMetadata

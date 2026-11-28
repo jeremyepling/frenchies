@@ -27,10 +27,10 @@ rootProject.name = 'frenchies'
 stonecutter {
     centralScript = 'build.gradle'
     create(rootProject) {
-        version('26.1-neoforge', '26.1')
-        version('26.3-neoforge', '26.3')
-        version('26.1-fabric', '26.1').buildscript('fabric.gradle')
-        version('26.3-fabric', '26.3').buildscript('fabric.gradle')
+        ['26.1', '26.1.1', '26.1.2', '26.3'].each { game ->
+            version("${game}-neoforge", game)
+            version("${game}-fabric", game).buildscript('fabric.gradle')
+        }
         vcsVersion = '26.1-neoforge'
     }
 }
